@@ -1,0 +1,250 @@
+@import "tailwindcss";
+
+:root {
+  /* CELPIP Decoded brand palette (BRAND-01).
+
+     Three colours carry the brand:
+
+       ink navy      #12314F  trust, structure, headings, dark surfaces
+       emerald-teal  #0E9F6E  progress, correct states, accents
+       warm off-white #F4F1EA  calm background surfaces
+
+     The two deep variants below are not new brand colours. Solid teal at
+     #0E9F6E under white text only reaches about 3.4:1, so the fill used
+     behind white button labels is the deeper teal and the brand teal
+     stays for rules, dots, borders and tints. Same idea for the navy.
+
+     Deliberately absent: the official CELPIP blue-red pairing and the
+     competitor purple. */
+  --brand-ink: #12314f;
+  --brand-ink-deep: #0c2338;
+  --brand-ink-soft: #e7edf4;
+  --brand-teal: #0e9f6e;
+  --brand-teal-deep: #0a7a54;
+  --brand-teal-soft: #e4f5ee;
+  --brand-offwhite: #f4f1ea;
+  --brand-offwhite-deep: #eae5d9;
+
+  --background: var(--brand-offwhite);
+  --foreground: var(--brand-ink);
+
+  /* Accent used for the public site buttons and eyebrows. */
+  --brand: var(--brand-teal-deep);
+  --brand-dark: #085c40;
+
+  /* Section tones on the public site. */
+  --cream: var(--brand-offwhite);
+  --cream-soft: var(--brand-offwhite-deep);
+  --ink: var(--brand-ink);
+  --ink-soft: var(--brand-ink-deep);
+
+  /* Signed in app palette. Ink navy leads, emerald-teal supports as the
+     progress and primary action colour, and a plain error red is kept
+     only for destructive and expired states. The red is deliberately not
+     the official CELPIP red.
+
+     The academy-* names are internal token names and are unchanged by the
+     rebrand: components read them through
+     src/features/design/design-tokens.ts, so the palette swap happens
+     here and flows through the whole signed in product. */
+  --academy-navy: var(--brand-ink);
+  --academy-navy-dark: var(--brand-ink-deep);
+  --academy-navy-soft: var(--brand-ink-soft);
+  --academy-blue: var(--brand-teal-deep);
+  --academy-blue-soft: var(--brand-teal-soft);
+  --academy-red: #b3261e;
+  --academy-red-soft: #fbeceb;
+  /* Warning tone, used by the exam countdown timer for the closing part
+     of a timed window. It sits between the neutral navy and the red so a
+     learner gets a step of notice before the final seconds, and it is
+     dark enough to keep its contrast against the pale exam chrome. */
+  --academy-amber: #a1591a;
+  --academy-paper: #ffffff;
+  --academy-paper-warm: var(--brand-offwhite);
+  --academy-line: #dfe4ec;
+  /* Exam mode surfaces (EXAM-15F). The rest of the signed in product sits
+     on the warm off-white above, which is a brand surface colour. Inside
+     a test that reads as a marketing background, so exam mode has its own
+     pair of flat, cool neutrals and uses no alpha over anything warm.
+
+     exam-surface is the desk the exam window sits on, both inside the
+     locked viewport and on the internal part routes. exam-gutter is the
+     grey the white canvas sits in. Together with the existing navy-soft
+     bars and the white paper they make one neutral ramp, darkest at the
+     outside and lightest on the sheet a learner reads:
+
+       surface #e6eaf0  <  bars #e7edf4  <  gutter #eff2f6  <  paper #fff
+
+     Neither is a brand colour and neither is used outside the exam
+     engine. */
+  --academy-exam-surface: #e6eaf0;
+  --academy-exam-gutter: #eff2f6;
+
+  /* Mock test player skin (EXAM-UI-02).
+
+     The four Mock Test 1 player routes are not product pages. They are a
+     practice exam simulator, and a learner sitting one should see a plain
+     testing application rather than the CELPIP Decoded brand.
+
+     So the player has its own neutral ramp. Nothing here is a brand
+     colour, nothing here is used outside the player, and none of it is
+     taken from any official test provider: no official logo, no official
+     blue-red pairing, no official footer text. This is an original
+     practice simulator skin.
+
+       desk    #f2f2f2  the grey the exam window sits on
+       chrome  #e5e7eb  the compact top and bottom bars
+       line    #cfd4dc  the window border and the internal rules
+       paper   #ffffff  the content area a learner reads
+       ink     #1f2937  body text
+       blue    #1d4ed8  the primary exam action and instruction headings
+
+     The teal and navy that carry the CELPIP Decoded brand stay on the
+     dashboard, the landing page, login and admin. */
+  --player-desk: #f2f2f2;
+  --player-chrome: #e5e7eb;
+  --player-chrome-soft: #eceef1;
+  --player-line: #cfd4dc;
+  --player-paper: #ffffff;
+  --player-ink: #1f2937;
+  --player-blue: #1d4ed8;
+  --player-blue-dark: #1b3fa8;
+  --player-blue-soft: #eaf0fb;
+  /* Instruction copy (EXAM-UI-03).
+
+     blue-ink #1a5b8f  the blue an instruction line and a rule are set in
+
+     A quieter blue than the action blue above, because instruction copy
+     is read as several lines of prose and the action blue is tuned to be
+     the loudest thing on the screen. It is only ever used for text. */
+  --player-blue-ink: #1a5b8f;
+  /* The chosen answer wash (EXAM-UI-03).
+
+     green-soft #eef6e9  the fill under a selected option row
+     green-line #6f9c57  the hairline ring around it
+
+     Pale on purpose. A saturated green on a test screen reads as "this
+     one is right", which a practice test must never say before marking,
+     so the pair is tuned to be legible against white paper and against
+     the pale blue answer column and no louder than that. */
+  --player-green-soft: #eef6e9;
+  --player-green-line: #6f9c57;
+  /* The chosen position wash (EXAM-UI-04).
+
+     orange-soft #fdf1e4  the fill under a chosen Writing Task 2 position
+     orange-line #c07f3a  the hairline ring around it
+
+     Used on the Writing Task 2 choice rows and nowhere else. A Task 2
+     position is not a right or a wrong answer, so it is the one place in
+     the player where a warmer chosen state cannot be read as marking. It
+     also has to be told apart from the pale green the pointer leaves as
+     it passes over a row, which is why the chosen state here is warm and
+     the hover is green rather than the other way round. Every graded
+     option row in Listening and Reading keeps the green wash above. */
+  --player-orange-soft: #fdf1e4;
+  --player-orange-line: #c07f3a;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-brand: var(--brand);
+  --color-brand-dark: var(--brand-dark);
+  --color-brand-ink: var(--brand-ink);
+  --color-brand-ink-deep: var(--brand-ink-deep);
+  --color-brand-ink-soft: var(--brand-ink-soft);
+  --color-brand-teal: var(--brand-teal);
+  --color-brand-teal-deep: var(--brand-teal-deep);
+  --color-brand-teal-soft: var(--brand-teal-soft);
+  --color-brand-offwhite: var(--brand-offwhite);
+  --color-cream: var(--cream);
+  --color-cream-soft: var(--cream-soft);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-academy-navy: var(--academy-navy);
+  --color-academy-navy-dark: var(--academy-navy-dark);
+  --color-academy-navy-soft: var(--academy-navy-soft);
+  --color-academy-blue: var(--academy-blue);
+  --color-academy-blue-soft: var(--academy-blue-soft);
+  --color-academy-red: var(--academy-red);
+  --color-academy-red-soft: var(--academy-red-soft);
+  --color-academy-amber: var(--academy-amber);
+  --color-academy-paper: var(--academy-paper);
+  --color-academy-paper-warm: var(--academy-paper-warm);
+  --color-academy-line: var(--academy-line);
+  --color-academy-exam-surface: var(--academy-exam-surface);
+  --color-academy-exam-gutter: var(--academy-exam-gutter);
+  --color-player-desk: var(--player-desk);
+  --color-player-chrome: var(--player-chrome);
+  --color-player-chrome-soft: var(--player-chrome-soft);
+  --color-player-line: var(--player-line);
+  --color-player-paper: var(--player-paper);
+  --color-player-ink: var(--player-ink);
+  --color-player-blue: var(--player-blue);
+  --color-player-blue-dark: var(--player-blue-dark);
+  --color-player-blue-soft: var(--player-blue-soft);
+  --color-player-blue-ink: var(--player-blue-ink);
+  --color-player-green-soft: var(--player-green-soft);
+  --color-player-green-line: var(--player-green-line);
+  --color-player-orange-soft: var(--player-orange-soft);
+  --color-player-orange-line: var(--player-orange-line);
+  /* One humanist sans carries the whole brand. The serif slot is mapped
+     to the same family on purpose, so the existing font-serif heading
+     classes keep working and render in the brand face. */
+  --font-sans: var(--font-brand-sans);
+  --font-serif: var(--font-brand-sans);
+  --font-mono: var(--font-brand-mono);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-brand-sans), "Segoe UI", system-ui, -apple-system,
+    Arial, Helvetica, sans-serif;
+}
+
+/* Mock test player skin (EXAM-UI-02).
+
+   Replaces the full bleed exam mode rules that used to live here.
+
+   Those rules did the opposite of what this ticket asks for. Inside the
+   locked viewport they lifted the frame's width cap and stripped its
+   border and its rounded corners, so the test was painted edge to edge
+   across whatever monitor it was opened on. A 27 inch browser drew a
+   38 question Listening screen 2500 pixels wide, which is what the client
+   reported as stretched. A real computer based test is a window, not a
+   wallpaper, so the frame now keeps its cap, its border and its corners
+   everywhere, and the desk behind it is what fills the screen.
+
+   What is left here is the one thing a class on a component cannot do:
+   re-point the palette for everything inside the player at once.
+
+   The exam screen recipes in src/features/exam-engine/exam-theme.ts are
+   written against the academy-* tokens, which the rebrand pointed at the
+   CELPIP Decoded ink navy and emerald teal. That is right on the
+   dashboard and wrong inside a test: a learner should see plain testing
+   software, not a branded product. Re-pointing those five variables on
+   the player root swaps the whole exam surface to the neutral player ramp
+   without touching a single recipe, and nothing outside
+   data-mock-test-player is affected.
+
+   This works because the palette is declared with @theme inline, so a
+   utility such as bg-academy-navy-soft compiles to
+   background-color: var(--academy-navy-soft) and picks up whatever the
+   nearest ancestor has that variable set to. */
+[data-mock-test-player] {
+  --academy-navy: var(--player-ink);
+  --academy-navy-dark: #111827;
+  --academy-navy-soft: var(--player-chrome);
+  --academy-blue: var(--player-blue);
+  --academy-blue-soft: var(--player-blue-soft);
+  --academy-line: var(--player-line);
+  --academy-paper: var(--player-paper);
+  --academy-paper-warm: var(--player-paper);
+  --academy-exam-surface: var(--player-desk);
+  --academy-exam-gutter: var(--player-paper);
+}

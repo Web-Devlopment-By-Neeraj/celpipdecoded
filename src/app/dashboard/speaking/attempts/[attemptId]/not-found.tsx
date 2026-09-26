@@ -1,0 +1,33 @@
+import Link from "next/link";
+import { speakingCopy } from "@/features/speaking/task-copy";
+
+// Friendly 404 for invalid or missing attempt ids, including attempts
+// that belong to another account. Renders inside the dashboard layout,
+// so the header stays visible.
+export default function SpeakingAttemptNotFound() {
+  return (
+    <div className="mx-auto w-full max-w-md rounded-3xl bg-white p-8 text-center shadow-sm ring-1 ring-ink/5">
+      <h1 className="font-serif text-2xl font-semibold tracking-tight text-ink">
+        Attempt not found
+      </h1>
+      <p className="mt-3 text-sm leading-6 text-ink/70">
+        We could not find that practice attempt. It may have been removed, or
+        it may belong to a different account.
+      </p>
+      <div className="mt-6 flex flex-col items-center gap-3">
+        <Link
+          href="/dashboard/speaking"
+          className="inline-flex h-11 items-center justify-center rounded-full bg-brand px-6 text-sm font-semibold text-white shadow-lg shadow-brand/20 transition-colors hover:bg-brand-dark"
+        >
+          {speakingCopy.backToTasks}
+        </Link>
+        <Link
+          href="/dashboard"
+          className="text-sm font-semibold text-brand transition-colors hover:text-brand-dark"
+        >
+          {speakingCopy.backToDashboard}
+        </Link>
+      </div>
+    </div>
+  );
+}
