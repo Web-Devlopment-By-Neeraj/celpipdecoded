@@ -7,7 +7,7 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 // Account creation form. Uses the browser Supabase client only.
 // full_name is stored in user metadata so the database trigger can copy it
 // into public.profiles.
-export function SignupForm() {
+export function SignupForm({ nextPath }: { nextPath?: string | null }) {
   const router = useRouter();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -34,6 +34,9 @@ export function SignupForm() {
     const appUrl =
       process.env.NEXT_PUBLIC_APP_URL ?? window.location.origin;
 
+    const callback = new URL(`${appUrl}/auth/callback`);
+    if (nextPath) callback.searchParams.set("next", nextPath);
+
     const supabase = createSupabaseBrowserClient();
     const { data, error } = await supabase.auth.signUp({
       email: email.trim(),
@@ -42,7 +45,7 @@ export function SignupForm() {
         data: {
           full_name: fullName.trim(),
         },
-        emailRedirectTo: `${appUrl}/auth/callback`,
+        emailRedirectTo: callback.toString(),
       },
     });
 
@@ -60,7 +63,7 @@ export function SignupForm() {
       return;
     }
 
-    router.push("/dashboard");
+    router.push(nextPath || "/dashboard");
     router.refresh();
   }
 

@@ -1,0 +1,12 @@
+#!/bin/sh
+# Blocks a commit made while main or master is checked out, then runs
+# lint, the TypeScript check, and the test suite.
+branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || true)"
+if [ "$branch" = "main" ] || [ "$branch" = "master" ]; then
+  echo "Direct commits to $branch are blocked. Create a feature branch and open a pull request."
+  exit 1
+fi
+
+npm run lint
+npm run typecheck
+npm test

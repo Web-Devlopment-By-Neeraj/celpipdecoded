@@ -5,6 +5,7 @@ import { CelpipDecodedLogo } from "@/components/brand/CelpipDecodedLogo";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { SignupForm } from "@/components/auth/SignupForm";
+import { safeInternalPath } from "@/features/platform/security";
 
 export const metadata: Metadata = {
   title: "Create account - CELPIP Decoded",
@@ -12,7 +13,12 @@ export const metadata: Metadata = {
     "Create your CELPIP Decoded account and start practicing.",
 };
 
-export default async function SignupPage() {
+export default async function SignupPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ next?: string }>;
+}) {
+  const nextPath = safeInternalPath((await searchParams).next);
   // Already signed in users go straight to the dashboard.
   const supabase = await createSupabaseServerClient();
   const {
@@ -20,7 +26,7 @@ export default async function SignupPage() {
   } = await supabase.auth.getUser();
 
   if (user) {
-    redirect("/dashboard");
+    redirect(nextPath ?? "/dashboard");
   }
 
   return (
@@ -39,7 +45,7 @@ export default async function SignupPage() {
         </div>
 
         <div className="mt-8 rounded-3xl bg-white p-6 shadow-sm ring-1 ring-ink/5 sm:p-8">
-          <SignupForm />
+          <SignupForm nextPath={nextPath} />
         </div>
 
         <p className="mt-6 text-center text-sm text-ink/70">

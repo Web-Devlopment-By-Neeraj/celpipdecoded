@@ -1,0 +1,36 @@
+name: Check
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: bash -n scripts/deploy.sh
+      - run: bash -n scripts/protect-main.sh
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - name: Production build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: public-anon-key
+          SUPABASE_SERVICE_ROLE_KEY: service-role-key
+          NEXT_PUBLIC_APP_URL: http://localhost:3000
+        run: npm run build
+      - run: npm audit --audit-level=high
+        continue-on-error: true

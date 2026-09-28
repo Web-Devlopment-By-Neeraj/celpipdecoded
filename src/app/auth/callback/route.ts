@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { safeInternalPath } from "@/features/platform/security";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 // Handles the redirect from Supabase auth emails, for example the signup
@@ -10,7 +11,7 @@ export async function GET(request: Request) {
 
   // Only allow internal redirect targets.
   const nextParam = searchParams.get("next");
-  const next = nextParam && nextParam.startsWith("/") ? nextParam : "/dashboard";
+  const next = safeInternalPath(nextParam) ?? "/dashboard";
 
   if (code) {
     const supabase = await createSupabaseServerClient();

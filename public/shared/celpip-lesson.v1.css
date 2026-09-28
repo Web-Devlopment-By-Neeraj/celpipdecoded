@@ -1,0 +1,18 @@
+html, body {
+  margin: 0;
+  max-width: 100%;
+  overflow-x: hidden;
+  font-family: "Inter", "Avenir Next", sans-serif;
+  color: #12314f;
+  background: #f4f1ea;
+}
+
+body {
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+h1, p, button {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}

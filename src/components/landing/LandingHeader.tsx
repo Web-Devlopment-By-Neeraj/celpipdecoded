@@ -7,6 +7,7 @@ import { CelpipDecodedLogo } from "@/components/brand/CelpipDecodedLogo";
 const navLinks = [
   { label: "The method", href: "#program" },
   { label: "AI practice", href: "#ai-practice" },
+  { label: "CRS calculator", href: "/crs" },
   { label: "Live classes", href: "#live-classes" },
   { label: "Pricing", href: "#pricing" },
 ];

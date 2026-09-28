@@ -1,36 +1,115 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CELPIP Decoded
 
-## Getting Started
+Practice app for CELPIP listening, reading, writing, and speaking. The site runs on [Next.js](https://nextjs.org) and deploys to [Vercel](https://vercel.com). Data and auth live in [Supabase](https://supabase.co).
 
-First, run the development server:
+Scores shown in the product are practice estimates. They are not official CELPIP results.
+
+## Prerequisites
+
+- Node.js 22
+- npm 10
+- A Supabase project
+- A Vercel project linked to this repo
+- The [Supabase CLI](https://supabase.com/docs/guides/cli) and [Vercel CLI](https://vercel.com/docs/cli) when you deploy from a machine (`npx` can fetch both)
+
+## Local setup
 
 ```bash
+npm ci
+cp .env.example .env.local
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Fill `.env.local` from the Supabase project settings (API URL, anon key, service role key) and the Vercel project settings. Never commit `.env.local`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Open [http://localhost:3000](http://localhost:3000).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Apply the database to a Supabase project before using auth or saved attempts:
 
-## Learn More
+```bash
+export SUPABASE_ACCESS_TOKEN=...
+export SUPABASE_PROJECT_REF=...
+export SUPABASE_DB_PASSWORD=...
+bash scripts/deploy.sh production --migrate-only
+```
 
-To learn more about Next.js, take a look at the following resources:
+`SUPABASE_DB_URL` can replace the three variables above. Use the direct database URI (port 5432), not the transaction pooler.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+In the Supabase dashboard, add these Auth redirect URLs:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `http://localhost:3000/auth/callback`
+- `https://<your-production-domain>/auth/callback`
 
-## Deploy on Vercel
+Set `ADMIN_EMAILS` to the staff addresses that may open `/dashboard/admin`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Checks
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run lint
+npm run typecheck
+npm test
+```
+
+The pre-commit hook refuses commits on `main` or `master`, then runs those three commands. Work on a feature branch and open a pull request.
+
+## Deploy
+
+Production ships from `main` after a pull request merge. GitHub Actions (`.github/workflows/deploy.yml`) applies `supabase/migrations` in order, then builds and deploys the app to Vercel production. The daily job in `vercel.json` calls `POST /api/cron/tick`.
+
+From a clean `main` that matches `origin/main`:
+
+```bash
+bash scripts/deploy.sh production
+```
+
+Preview, from any branch, does not change the database unless you pass `--migrate`:
+
+```bash
+bash scripts/deploy.sh preview
+```
+
+| Command | What it does |
+| --- | --- |
+| `bash scripts/deploy.sh preview` | Lint, typecheck, test, then a Vercel preview deployment |
+| `bash scripts/deploy.sh production` | Same checks, then migrations, then Vercel production |
+| `bash scripts/deploy.sh production --migrate-only` | Pending Supabase migrations only |
+| `bash scripts/deploy.sh production --skip-migrate` | App deploy only |
+| `bash scripts/deploy.sh production --sync-env` | Copy non-empty `.env.local` values into Vercel, then deploy |
+
+`--skip-checks` is for CI, which already ran the suite.
+
+### GitHub Actions secrets
+
+| Secret | Used for |
+| --- | --- |
+| `VERCEL_TOKEN` | Vercel CLI |
+| `VERCEL_ORG_ID` | Team or user id from `.vercel/project.json` |
+| `VERCEL_PROJECT_ID` | Project id from `.vercel/project.json` |
+| `SUPABASE_ACCESS_TOKEN` | Supabase CLI, from [account tokens](https://supabase.com/dashboard/account/tokens) |
+| `SUPABASE_PROJECT_REF` | Project reference in the Supabase URL |
+| `SUPABASE_DB_PASSWORD` | Database password used by `supabase link` |
+| `SUPABASE_DB_URL` | Optional. When set, migrations use this URI and the three Supabase secrets above are not required |
+
+Create the Vercel token at [Account tokens](https://vercel.com/account/tokens). After `npx vercel link`, copy `orgId` and `projectId` from `.vercel/project.json`.
+
+Put the application environment variables in the Vercel project for Production, Preview, and Development. The names are listed in `.env.example`. `CRON_SECRET` must be set in Vercel so the scheduled job can authenticate.
+
+### Lock `main`
+
+Local commits to `main` are already blocked. To block them on GitHub as well, from a repo admin account:
+
+```bash
+bash scripts/protect-main.sh
+```
+
+That requires a pull request and the `check` status before a merge. The deploy workflow also stops if a commit on `main` did not come from a pull request.
+
+## Layout
+
+- `src/app` — routes, including `/crs` and `/api`
+- `src/features/platform` — scoring, payments, player, and access rules covered by Vitest
+- `supabase/migrations` — schema, applied in filename order
+- `scripts/deploy.sh` — Vercel and Supabase deploy
+- `docs/runbook` — backups, calendar sync, and the deploy checklist
+
+More detail: [docs/runbook/vercel-supabase.md](docs/runbook/vercel-supabase.md).

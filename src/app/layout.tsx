@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { brandCopy, BRAND_NAME } from "@/features/brand/brand-copy";
+import { AssistantBubble } from "@/components/platform/AssistantBubble";
 
 // CELPIP Decoded typography (BRAND-01).
 //
@@ -40,6 +41,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-cream text-foreground">
         {children}
+        <AssistantBubble />
       </body>
     </html>
   );
