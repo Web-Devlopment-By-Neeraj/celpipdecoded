@@ -112,4 +112,15 @@ That requires a pull request and the `check` status before a merge. The deploy w
 - `scripts/deploy.sh` — Vercel and Supabase deploy
 - `docs/runbook` — backups, calendar sync, and the deploy checklist
 
+What is still open against the task pack: [docs/remaining.md](docs/remaining.md).
+
+End-to-end tests boot the app and run in Chromium:
+
+```bash
+npx playwright install chromium
+npm run test:e2e
+```
+
+The pre-commit hook runs the unit suite. The GitHub check workflow runs the unit suite and the end-to-end suite.
+
 More detail: [docs/runbook/vercel-supabase.md](docs/runbook/vercel-supabase.md).

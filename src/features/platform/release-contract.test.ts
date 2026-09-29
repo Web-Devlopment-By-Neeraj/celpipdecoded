@@ -36,4 +36,12 @@ describe("release contract", () => {
     expect(deploy).toContain("npm run typecheck");
     expect(deploy).toContain("npm test");
   });
+
+  it("keeps a remaining-work note for every Neeraj task", () => {
+    const remaining = read("docs/remaining.md");
+    for (let index = 1; index <= 18; index += 1) {
+      expect(remaining).toContain(`N${String(index).padStart(2, "0")}`);
+    }
+    expect(remaining).toContain("npm run test:e2e");
+  });
 });
