@@ -23,8 +23,9 @@ export const INSTRUCTOR_NAME = "Amar";
 export const COMMUNITY_NAME = "The Codebreakers";
 
 // The full legal line. Shown once per surface, in the footer.
+// Required footer line, word for word (task pack section 21.1).
 export const BRAND_DISCLAIMER =
-  "Not affiliated with, endorsed by, or acting on behalf of Paragon Testing Enterprises, Prometric, or CELPIP. CELPIP is a trademark of its owner. AI feedback is a practice estimate, not an official CELPIP result.";
+  "CELPIP is a registered trademark of Paragon Testing Enterprises, a subsidiary of the University of British Columbia. CELPIP Decoded is independent and not affiliated with or endorsed by Paragon.";
 
 // The short line used beside a score or an estimated level, where the
 // full disclaimer would crowd the result.

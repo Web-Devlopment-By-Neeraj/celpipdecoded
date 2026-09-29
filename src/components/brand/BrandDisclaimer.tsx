@@ -14,7 +14,7 @@ import { BRAND_DISCLAIMER } from "@/features/brand/brand-copy";
 export type BrandDisclaimerTone = "light" | "reversed";
 
 const toneStyles: Record<BrandDisclaimerTone, string> = {
-  light: "text-academy-navy/55",
+  light: "text-academy-navy",
   reversed: "text-cream/60",
 };
 
@@ -26,7 +26,7 @@ export function BrandDisclaimer({
   className?: string;
 }) {
   return (
-    <p className={cx("text-xs leading-5", toneStyles[tone], className)}>
+    <p className={cx("text-base leading-6", toneStyles[tone], className)}>
       {BRAND_DISCLAIMER}
     </p>
   );

@@ -36,6 +36,7 @@ import { isExamModeRoute } from "@/features/navigation/exam-mode-routes";
 export type AppShellFrameProps = {
   sideNav: ReactNode;
   topNav: ReactNode;
+  mobileNav: ReactNode;
   breadcrumbs: ReactNode;
   footer: ReactNode;
   children: ReactNode;
@@ -44,6 +45,7 @@ export type AppShellFrameProps = {
 export function AppShellFrame({
   sideNav,
   topNav,
+  mobileNav,
   breadcrumbs,
   footer,
   children,
@@ -64,6 +66,7 @@ export function AppShellFrame({
 
       <div className="flex min-w-0 flex-1 flex-col">
         {topNav}
+        {mobileNav}
 
         <main className="w-full flex-1 px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
           <div className="mx-auto w-full max-w-5xl">

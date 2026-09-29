@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/mini-courses/lesson.css">
+  <title>Answer shape</title>
+</head>
+<body>
+  <article class="lesson">
+    <h1>Answer shape</h1>
+    <p>Start with the point, then one reason, then one detail.</p>
+    <button type="button" id="finish">Finish</button>
+  </article>
+  <script>
+    document.getElementById("finish").addEventListener("click", function () {
+      parent.postMessage({ type: "mini_event", name: "finish" }, "*");
+    });
+  </script>
+</body>
+</html>

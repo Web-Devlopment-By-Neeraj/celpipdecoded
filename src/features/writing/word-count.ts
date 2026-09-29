@@ -10,14 +10,19 @@ export const DEFAULT_WORD_MAX = 200;
 // target itself is guidance only and never blocks submission.
 export const MIN_SUBMIT_WORD_COUNT = 20;
 
-// Counts words by trimming the text and splitting on whitespace.
-// Empty and whitespace-only strings count as zero words.
+// Shared word count for the writing box and the evaluation server.
+//
+// A token counts when it contains at least one letter. Hyphenated words
+// and contractions stay one word because we split only on whitespace.
+// A number on its own, a dash, and other punctuation-only tokens do not
+// count. Empty and whitespace-only strings count as zero.
 export function countWords(text: string): number {
   const trimmed = text.trim();
   if (!trimmed) {
     return 0;
   }
-  return trimmed.split(/\s+/).length;
+
+  return trimmed.split(/\s+/).filter((token) => /\p{L}/u.test(token)).length;
 }
 
 export type WordTargetStatus = "below" | "within" | "above";

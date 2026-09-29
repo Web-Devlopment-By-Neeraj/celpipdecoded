@@ -12,7 +12,15 @@ export type AppNavIconName =
   | "dashboard"
   | "speaking"
   | "writing"
-  | "liveClasses";
+  | "liveClasses"
+  | "practice"
+  | "mocks"
+  | "courses"
+  | "mini"
+  | "ask"
+  | "performance"
+  | "templates"
+  | "settings";
 
 export type AppNavItem = {
   label: string;
@@ -30,7 +38,13 @@ export const APP_NAV_ITEMS: readonly AppNavItem[] = [
     label: "Dashboard",
     href: "/dashboard",
     icon: "dashboard",
-    description: "Your practice modules and progress",
+    description: "Countdown, evaluations left, and your next step",
+  },
+  {
+    label: "Practice",
+    href: "/dashboard/practice",
+    icon: "practice",
+    description: "Writing and speaking tasks",
   },
   {
     label: "Speaking practice",
@@ -45,11 +59,58 @@ export const APP_NAV_ITEMS: readonly AppNavItem[] = [
     description: "Timed writing tasks and feedback",
   },
   {
+    label: "Mock tests",
+    href: "/dashboard/mocks",
+    icon: "mocks",
+    description: "Start a mock in Practice or Test mode",
+  },
+  {
+    label: "Courses",
+    href: "/dashboard/courses",
+    icon: "courses",
+    description: "Lessons in English and Hindi",
+  },
+  {
+    label: "Mini-courses",
+    href: "/dashboard/mini-courses",
+    icon: "mini",
+    description: "Short lessons for one skill",
+  },
+  {
     label: "Live classes",
-    href: "/#live-classes",
+    href: "/dashboard/live",
     icon: "liveClasses",
-    description: "Class options on the program page",
-    leavesApp: true,
+    description: "Strategy call, private hour, and batches",
+  },
+  {
+    label: "Ask Amar",
+    href: "/dashboard/ask",
+    icon: "ask",
+    description: "A question, with a reply in your account",
+  },
+  {
+    label: "Performance",
+    href: "/dashboard/performance",
+    icon: "performance",
+    description: "Practice estimates over time",
+  },
+  {
+    label: "My answers",
+    href: "/dashboard/answers",
+    icon: "writing",
+    description: "Every attempt, replayable",
+  },
+  {
+    label: "Templates",
+    href: "/dashboard/templates",
+    icon: "templates",
+    description: "Answer shapes by plan",
+  },
+  {
+    label: "Account settings",
+    href: "/dashboard/settings",
+    icon: "settings",
+    description: "Profile, plan, language, and your data",
   },
 ] as const;
 
@@ -70,6 +131,15 @@ const SEGMENT_LABELS: Record<string, string> = {
   attempts: "Attempt history",
   practice: "Practice",
   tasks: "Task",
+  mocks: "Mock tests",
+  courses: "Courses",
+  "mini-courses": "Mini-courses",
+  live: "Live classes",
+  ask: "Ask Amar",
+  performance: "Performance",
+  answers: "My answers",
+  templates: "Templates",
+  settings: "Account settings",
 };
 
 export type AppBreadcrumb = {

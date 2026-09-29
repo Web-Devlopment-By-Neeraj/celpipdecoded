@@ -115,18 +115,10 @@ export function buildWritingSectionFlow(
 // How many words are in a typed response.
 //
 // The one word count in the app, reused rather than rewritten.
-// countWords already trims, splits on runs of whitespace, and returns 0
-// for an empty or whitespace only string, which is exactly what the
-// ticket asks a word count to do. Importing it also means the mock test
-// editor and the standalone Writing Practice editor can never disagree
-// about what a word is, which would be a confusing thing for a learner to
-// discover.
-//
-// It is re-exported under a Writing mock name rather than imported
-// directly by the components, so the exam engine has one place to change
-// if the two ever have to count differently. Nothing about the standalone
-// flow is modified by this: word-count.ts is a pure module and is read,
-// not edited.
+// countWords trims, splits on whitespace, and counts a token only when
+// it contains a letter. Importing it means the mock test editor and the
+// standalone Writing Practice editor report the same number the
+// evaluation stores.
 export function countWritingWords(text: string): number {
   return countWords(text);
 }

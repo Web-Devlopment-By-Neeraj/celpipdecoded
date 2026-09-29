@@ -3,6 +3,7 @@ import { BrandDisclaimer } from "@/components/brand/BrandDisclaimer";
 import { CelpipDecodedLogo } from "@/components/brand/CelpipDecodedLogo";
 import { AppBreadcrumbs } from "./AppBreadcrumbs";
 import { AppShellFrame } from "./AppShellFrame";
+import { AppMobileNavRow } from "./AppMobileNavRow";
 import { AppSideNav } from "./AppSideNav";
 import { AppTopNav } from "./AppTopNav";
 
@@ -42,6 +43,7 @@ export function AppShell({
     <AppShellFrame
       sideNav={<AppSideNav />}
       topNav={<AppTopNav userEmail={userEmail} />}
+      mobileNav={<AppMobileNavRow />}
       breadcrumbs={<AppBreadcrumbs />}
       footer={<AppShellFooter />}
     >

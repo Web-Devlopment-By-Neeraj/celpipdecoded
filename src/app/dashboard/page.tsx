@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { DashboardAccessSummary } from "@/components/dashboard/DashboardAccessSummary";
+import { StudentHome } from "@/components/app/phase2/StudentAreas";
 import { DashboardBadgePreview } from "@/components/dashboard/DashboardBadgePreview";
 import { DashboardHero } from "@/components/dashboard/DashboardHero";
 import { DashboardMockTestCard } from "@/components/dashboard/DashboardMockTestCard";
 import { DashboardModuleGrid } from "@/components/dashboard/DashboardModuleGrid";
 import { DashboardProgressOverview } from "@/components/dashboard/DashboardProgressOverview";
 import { DashboardRecentFeedback } from "@/components/dashboard/DashboardRecentFeedback";
-import { DashboardRecommendedPractice } from "@/components/dashboard/DashboardRecommendedPractice";
 import { DASHBOARD_MODULE_SLUGS } from "@/features/dashboard/dashboard-copy";
 import { getDashboardRecommendation } from "@/features/dashboard/dashboard-recommendations";
 import {
@@ -146,11 +146,16 @@ export default async function DashboardPage() {
         continueLabel={recommendation.ctaLabel}
       />
 
-      <div className="mt-8 grid grid-cols-1 gap-5 lg:grid-cols-2">
+      <StudentHome
+        email={user.email ?? null}
+        freeRemaining={accessResult.ok ? accessResult.summary.freeAttemptsRemaining : 3}
+        freeUsed={accessResult.ok ? accessResult.summary.freeAttemptsUsed : 0}
+      />
+
+      <div className="mt-8">
         <DashboardAccessSummary
           summary={accessResult.ok ? accessResult.summary : null}
         />
-        <DashboardRecommendedPractice recommendation={recommendation} />
       </div>
 
       <div className="mt-10">

@@ -1,5 +1,5 @@
+import { WritingBox } from "@/components/site/WritingBox";
 import { MockTestWritingEditorFrame } from "../player/MockTestWritingEditorFrame";
-import { playerWritingEditor } from "@/features/exam-engine/mock-test-player-theme";
 import { countWritingWords } from "@/features/exam-engine/writing-mock-flow";
 import {
   formatWritingWordCount,
@@ -64,7 +64,6 @@ export function WritingResponseEditor({
   editorId,
   value,
   onChange,
-  placeholder,
   targetMin,
   targetMax,
   copy = writingMockCopy,
@@ -86,17 +85,12 @@ export function WritingResponseEditor({
       }
       hint={copy.editorHint}
     >
-      <textarea
+      <WritingBox
         id={editorId}
         value={value}
-        onChange={(event) => onChange(event.target.value)}
-        placeholder={placeholder}
-        // Off, because a response is prose rather than a form field and
-        // an autofilled name in the middle of an email would be worse
-        // than typing it.
-        autoComplete="off"
-        spellCheck
-        className={playerWritingEditor.field}
+        showCount={false}
+        ariaLabel={copy.editorLabel}
+        onChange={(text) => onChange(text)}
       />
     </MockTestWritingEditorFrame>
   );
