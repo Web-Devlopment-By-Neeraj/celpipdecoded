@@ -14,6 +14,7 @@
     "deploy:preview": "bash scripts/deploy.sh preview",
     "deploy:production": "bash scripts/deploy.sh production",
     "db:push": "bash scripts/deploy.sh production --migrate-only",
+    "videos:upload": "node scripts/upload-instructional-videos.mjs",
     "prepare": "husky",
     "assets:audit": "node scripts/audit-and-optimize-assets.mjs --audit",
     "assets:optimize": "node scripts/audit-and-optimize-assets.mjs --optimize",

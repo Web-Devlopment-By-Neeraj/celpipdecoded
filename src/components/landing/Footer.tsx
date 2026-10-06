@@ -27,6 +27,16 @@ export function Footer() {
 
           <BrandDisclaimer tone="reversed" className="max-w-2xl text-sm leading-6" />
 
+          <nav aria-label="Footer" className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-sm">
+            <Link href="/pricing" className="underline">Pricing</Link>
+            <Link href="/courses" className="underline">Course</Link>
+            <Link href="/ask" className="underline">Ask Amar</Link>
+            <Link href="/book" className="underline">Book</Link>
+            <Link href="/legal/privacy" className="underline">Privacy</Link>
+            <Link href="/legal/terms" className="underline">Terms</Link>
+            <Link href="/legal/refunds" className="underline">Refunds</Link>
+          </nav>
+
           <p className="text-xs text-cream/40">
             {year} {brandCopy.name}. All rights reserved.
           </p>

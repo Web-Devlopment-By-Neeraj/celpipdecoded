@@ -52,7 +52,7 @@ export type ExamInstructionalVideoAsset = {
   // "Listening instructional video".
   title: string;
   // Raw public path, for example
-  // "/assets/instructional-thumbnails/2. Listening Instructional Video.mp4".
+  // "https://<project>.supabase.co/storage/v1/object/public/instructional-videos/listening.mp4".
   src: string;
   // Still image shown before playback starts.
   poster?: string;

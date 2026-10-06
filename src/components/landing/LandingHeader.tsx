@@ -9,7 +9,8 @@ const navLinks = [
   { label: "AI practice", href: "#ai-practice" },
   { label: "CRS calculator", href: "/crs" },
   { label: "Live classes", href: "#live-classes" },
-  { label: "Pricing", href: "#pricing" },
+  { label: "Pricing", href: "/pricing" },
+  { label: "Draws", href: "/draws" },
 ];
 
 export function LandingHeader() {

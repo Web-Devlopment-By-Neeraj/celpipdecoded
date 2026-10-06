@@ -26,6 +26,11 @@ export default async function SettingsPage() {
         <li><Link className="underline" href="/dashboard/admin/platform/calibration">Calibration</Link></li>
         <li><Link className="underline" href="/dashboard/admin/platform/cohort">What works</Link></li>
         <li><Link className="underline" href="/dashboard/admin/platform/calendar">Calendar</Link></li>
+        <li><Link className="underline" href="/dashboard/admin/platform/queue">Today</Link></li>
+        <li><Link className="underline" href="/dashboard/admin/platform/students">Students</Link></li>
+        <li><Link className="underline" href="/dashboard/admin/platform/inbox">Ask Amar</Link></li>
+        <li><Link className="underline" href="/dashboard/admin/platform/reviews">Reviews</Link></li>
+        <li><Link className="underline" href="/dashboard/admin/platform/costs">AI cost</Link></li>
       </ul>
       <div className="mt-6 space-y-3">
         {(Object.keys(SETTINGS) as Array<keyof typeof SETTINGS>).map((key) => (

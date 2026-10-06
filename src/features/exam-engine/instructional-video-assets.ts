@@ -1,11 +1,9 @@
 // Registry of the instructional videos the practice test engine plays
 // (EXAM-02).
 //
-// The five clips already sit in the repository under
-// public/assets/instructional-thumbnails/. Nothing was downloaded, moved,
-// or renamed by this ticket. The folder name says thumbnails and the
-// files are mp4 videos, which is recorded as a follow up in
-// docs/product/exam-engine-instruction-screens.md.
+// The clips are objects in the public Supabase bucket
+// instructional-videos. They are not stored in git. Upload them with
+// scripts/upload-instructional-videos.mjs after the bucket migration.
 //
 // Strings and pure helpers only, no side effects, so this file is safe to
 // import from a client component.
@@ -17,9 +15,13 @@ import type {
   ExamSectionKey,
 } from "./instruction-screen-types";
 
-// Where the clips live today. Kept as one constant so a later move is a
-// one line change here rather than five edits.
-const INSTRUCTIONAL_VIDEO_DIRECTORY = "/assets/instructional-thumbnails";
+const INSTRUCTIONAL_VIDEO_BUCKET = "instructional-videos";
+
+function instructionalVideoUrl(fileName: string): string {
+  const base = process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\/$/, "");
+  if (!base) return "";
+  return `${base}/storage/v1/object/public/${INSTRUCTIONAL_VIDEO_BUCKET}/${fileName}`;
+}
 
 // The five clips, keyed by section.
 //
@@ -34,35 +36,35 @@ export const INSTRUCTIONAL_VIDEO_ASSETS: Record<
   overview: {
     section: "overview",
     title: "Complete test overview video",
-    src: `${INSTRUCTIONAL_VIDEO_DIRECTORY}/1. Overview Instructional Video.mp4`,
+    src: instructionalVideoUrl("overview.mp4"),
     description:
       "How a full CELPIP Decoded practice test runs from start to finish, and what to expect in each of the four sections.",
   },
   listening: {
     section: "listening",
     title: "Listening instructional video",
-    src: `${INSTRUCTIONAL_VIDEO_DIRECTORY}/2. Listening Instructional Video.mp4`,
+    src: instructionalVideoUrl("listening.mp4"),
     description:
       "How the Listening section works in this practice test engine, including the audio screens and the answer windows.",
   },
   reading: {
     section: "reading",
     title: "Reading instructional video",
-    src: `${INSTRUCTIONAL_VIDEO_DIRECTORY}/3. Reading Instructional Video.mp4`,
+    src: instructionalVideoUrl("reading.mp4"),
     description:
       "How the Reading section works in this practice test engine, including the split screen layout and the part timer.",
   },
   writing: {
     section: "writing",
     title: "Writing instructional video",
-    src: `${INSTRUCTIONAL_VIDEO_DIRECTORY}/4. Writing Instructional Video.mp4`,
+    src: instructionalVideoUrl("writing.mp4"),
     description:
       "How the Writing section works in this practice test engine, including the editor, the word count, and the task timing.",
   },
   speaking: {
     section: "speaking",
     title: "Speaking instructional video",
-    src: `${INSTRUCTIONAL_VIDEO_DIRECTORY}/5. Speaking Instructional Video.mp4`,
+    src: instructionalVideoUrl("speaking.mp4"),
     description:
       "How the Speaking section works in this practice test engine, including the preparation phase and the recording phase.",
   },
@@ -93,14 +95,8 @@ export function listInstructionalVideoAssets(): ExamInstructionalVideoAsset[] {
 
 // Make a raw public path safe to use as a media src.
 //
-// The current file names contain spaces and a leading "1. ", so the raw
-// path is not a valid URL. Each path segment is encoded and the slashes
-// are kept, which turns
-// "/assets/instructional-thumbnails/1. Overview Instructional Video.mp4"
-// into a path the browser can request.
-//
-// An absolute URL, for example a Cloudinary link, is returned unchanged,
-// because it is already encoded by whoever issued it.
+// An absolute URL, including a Supabase storage URL, is returned unchanged.
+// A site-relative path has each segment encoded so spaces stay valid.
 export function resolveExamMediaSrc(src: string): string {
   if (/^[a-z][a-z0-9+.-]*:/i.test(src)) {
     return src;

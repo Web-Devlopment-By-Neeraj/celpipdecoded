@@ -112,7 +112,7 @@ That requires a pull request and the `check` status before a merge. The deploy w
 - `scripts/deploy.sh` — Vercel and Supabase deploy
 - `docs/runbook` — backups, calendar sync, and the deploy checklist
 
-What is still open against the task pack: [docs/remaining.md](docs/remaining.md).
+What is still open: [docs/still-to-do.md](docs/still-to-do.md). Task-by-task gaps: [docs/remaining.md](docs/remaining.md).
 
 End-to-end tests boot the app and run in Chromium:
 

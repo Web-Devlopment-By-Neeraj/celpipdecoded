@@ -63,6 +63,9 @@ next-env.d.ts
 # husky internals
 .husky/_
 
+# Instructional mp4s live in the Supabase bucket instructional-videos.
+public/assets/instructional-thumbnails/*.mp4
+
 # private visual references (EXAM-UI-03)
 #
 # Screenshots of the real CELPIP practice test are used as private layout

@@ -1,5 +1,7 @@
 # Remaining work
 
+The current owner checklist, including Supabase, Stripe, Vercel, and the video upload, is in [still-to-do.md](still-to-do.md).
+
 Reviewed against the Neeraj task pack (Website Build Pack v3.1, prepared 29 Sep 2026). A criterion is listed here when the running app cannot demonstrate it yet. Rules that already pass in `npm test` are named so they are not rebuilt.
 
 End-to-end coverage that can run without owner accounts is `npm run test:e2e`. It does not replace the real-phone, Stripe, Cal.com, or restore checks below.
