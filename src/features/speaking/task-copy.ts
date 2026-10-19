@@ -14,6 +14,8 @@ export const speakingCopy = {
   backToDashboard: "Back to dashboard",
   backToTasks: "Back to speaking tasks",
   emptyStateMessage: "No speaking tasks are available yet.",
+  dataNotice:
+    "Speaking tasks and saved progress could not be loaded. Please try again in a moment.",
   timedPracticeButton: "Start timed practice",
   comingSoonNote:
     "Run the timed flow for this task. Recording and AI-supported feedback will be added in the next step.",

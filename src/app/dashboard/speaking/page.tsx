@@ -17,6 +17,7 @@ import {
 } from "@/features/speaking/attempt-history";
 import { buildProgressSummary } from "@/features/speaking/progress-summary";
 import type { SpeakingTaskRow } from "@/features/speaking/task-types";
+import { speakingCopy } from "@/features/speaking/task-copy";
 import { normalizeSpeakingTask } from "@/features/speaking/task-utils";
 
 export const metadata: Metadata = {
@@ -44,44 +45,69 @@ export default async function SpeakingPage() {
   // The session-scoped client enforces RLS on attempts and badges, so
   // only the user's own rows come back. The explicit user_id filters
   // are a second guard.
-  const [tasksResult, attemptsResult, badgesResult] = await Promise.all([
-    supabase
-      .from("tasks")
-      .select(
-        "id, task_type, title, prompt, status, sort_order, modules!inner(slug), speaking_task_details(task_number, prep_seconds, speaking_seconds, scoring_focus)",
-      )
-      .eq("modules.slug", "celpip-speaking")
-      .eq("status", "active")
-      .order("sort_order", { ascending: true }),
-    supabase
-      .from("attempts")
-      .select(ATTEMPT_HISTORY_SELECT)
-      .eq("user_id", user.id)
-      .in("status", [...HISTORY_STATUSES])
-      .order("created_at", { ascending: false }),
-    supabase
-      .from("user_badges")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", user.id),
-  ]);
+  let taskList: ReturnType<typeof normalizeSpeakingTask>[] = [];
+  let attempts: ReturnType<typeof normalizeAttemptHistoryRow>[] = [];
+  let badgesEarned = 0;
+  let practiceDataFailed = false;
 
-  if (tasksResult.error) {
-    throw new Error("Could not load speaking tasks. Please try again.");
+  try {
+    const [tasksResult, attemptsResult, badgesResult] = await Promise.all([
+      supabase
+        .from("tasks")
+        .select(
+          "id, task_type, title, prompt, status, sort_order, modules!inner(slug), speaking_task_details(task_number, prep_seconds, speaking_seconds, scoring_focus)",
+        )
+        .eq("modules.slug", "celpip-speaking")
+        .eq("status", "active")
+        .order("sort_order", { ascending: true }),
+      supabase
+        .from("attempts")
+        .select(ATTEMPT_HISTORY_SELECT)
+        .eq("user_id", user.id)
+        .in("status", [...HISTORY_STATUSES])
+        .order("created_at", { ascending: false }),
+      supabase
+        .from("user_badges")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user.id),
+    ]);
+
+    // A failed read used to throw. Production hides that message and
+    // replaces the page with the generic server error, so keep the
+    // speaking home on screen instead.
+    if (tasksResult.error) {
+      console.error("Speaking tasks query failed:", tasksResult.error.message);
+      practiceDataFailed = true;
+    } else {
+      taskList = (
+        (tasksResult.data ?? []) as unknown as SpeakingTaskRow[]
+      ).map(normalizeSpeakingTask);
+    }
+
+    if (attemptsResult.error) {
+      console.error(
+        "Speaking attempts query failed:",
+        attemptsResult.error.message,
+      );
+      practiceDataFailed = true;
+    } else {
+      attempts = (
+        (attemptsResult.data ?? []) as unknown as AttemptHistoryRow[]
+      ).map(normalizeAttemptHistoryRow);
+    }
+
+    if (!badgesResult.error) {
+      badgesEarned = badgesResult.count ?? 0;
+    }
+  } catch (err) {
+    console.error("Speaking practice data request failed:", err);
+    practiceDataFailed = true;
+    taskList = [];
+    attempts = [];
+    badgesEarned = 0;
   }
 
-  if (attemptsResult.error) {
-    throw new Error("Could not load your speaking progress. Please try again.");
-  }
-
-  const taskList = (
-    (tasksResult.data ?? []) as unknown as SpeakingTaskRow[]
-  ).map(normalizeSpeakingTask);
-
-  const attempts = (
-    (attemptsResult.data ?? []) as unknown as AttemptHistoryRow[]
-  ).map(normalizeAttemptHistoryRow);
-
-  const summary = buildProgressSummary(attempts, badgesResult.count ?? 0);
+  const summary = buildProgressSummary(attempts, badgesEarned);
 
   // USAGE-01: remaining AI feedback access, shown as a small badge so
   // the learner knows before recording whether a report is available.
@@ -89,6 +115,15 @@ export default async function SpeakingPage() {
 
   return (
     <>
+      {practiceDataFailed ? (
+        <p
+          role="status"
+          className="mb-6 rounded-2xl bg-white px-4 py-3 text-sm leading-6 text-ink/70 shadow-sm ring-1 ring-ink/5"
+        >
+          {speakingCopy.dataNotice}
+        </p>
+      ) : null}
+
       <SpeakingHero />
 
       {accessResult.ok ? (

@@ -10,6 +10,7 @@ import { WritingTaskGrid } from "@/components/writing/WritingTaskGrid";
 import { ScoredAttemptBalanceBadge } from "@/components/usage/ScoredAttemptBalanceBadge";
 import { getUsageAccessSummary } from "@/features/usage/get-usage-access-summary";
 import type { WritingTaskRow } from "@/features/writing/task-types";
+import { writingCopy } from "@/features/writing/task-copy";
 import { normalizeWritingTask } from "@/features/writing/task-utils";
 import {
   normalizeWritingAttemptHistoryRow,
@@ -47,55 +48,79 @@ export default async function WritingPage() {
   // user's own rows come back. The explicit user_id filter is a second
   // guard, and the module filter keeps speaking attempts out of the
   // writing progress values.
-  const [tasksResult, attemptsResult] = await Promise.all([
-    supabase
-      .from("tasks")
-      .select(
-        "id, task_type, title, prompt, status, sort_order, modules!inner(slug), writing_task_details(task_number, time_seconds, word_min, word_max, evaluation_focus)",
-      )
-      .eq("modules.slug", WRITING_MODULE_SLUG)
-      .eq("status", "active")
-      .order("sort_order", { ascending: true }),
-    supabase
-      .from("attempts")
-      .select(WRITING_ATTEMPT_HISTORY_SELECT)
-      .eq("user_id", user.id)
-      .eq("tasks.modules.slug", WRITING_MODULE_SLUG)
-      .in("status", [...WRITING_HISTORY_STATUSES])
-      .order("created_at", { ascending: false }),
-  ]);
+  let taskList: ReturnType<typeof normalizeWritingTask>[] = [];
+  let attempts: ReturnType<typeof normalizeWritingAttemptHistoryRow>[] = [];
+  let practiceDataFailed = false;
 
-  if (tasksResult.error) {
-    throw new Error("Could not load writing tasks. Please try again.");
+  try {
+    const [tasksResult, attemptsResult] = await Promise.all([
+      supabase
+        .from("tasks")
+        .select(
+          "id, task_type, title, prompt, status, sort_order, modules!inner(slug), writing_task_details(task_number, time_seconds, word_min, word_max, evaluation_focus)",
+        )
+        .eq("modules.slug", WRITING_MODULE_SLUG)
+        .eq("status", "active")
+        .order("sort_order", { ascending: true }),
+      supabase
+        .from("attempts")
+        .select(WRITING_ATTEMPT_HISTORY_SELECT)
+        .eq("user_id", user.id)
+        .eq("tasks.modules.slug", WRITING_MODULE_SLUG)
+        .in("status", [...WRITING_HISTORY_STATUSES])
+        .order("created_at", { ascending: false }),
+    ]);
+
+    if (tasksResult.error) {
+      console.error("Writing tasks query failed:", tasksResult.error.message);
+      practiceDataFailed = true;
+    } else {
+      taskList = (
+        (tasksResult.data ?? []) as unknown as WritingTaskRow[]
+      ).map(normalizeWritingTask);
+    }
+
+    if (attemptsResult.error) {
+      console.error(
+        "Writing attempts query failed:",
+        attemptsResult.error.message,
+      );
+      practiceDataFailed = true;
+    } else {
+      attempts = (
+        (attemptsResult.data ?? []) as unknown as WritingAttemptHistoryRow[]
+      ).map(normalizeWritingAttemptHistoryRow);
+    }
+  } catch (err) {
+    console.error("Writing practice data request failed:", err);
+    practiceDataFailed = true;
+    taskList = [];
+    attempts = [];
   }
-
-  if (attemptsResult.error) {
-    throw new Error("Could not load your writing progress. Please try again.");
-  }
-
-  const taskList = (
-    (tasksResult.data ?? []) as unknown as WritingTaskRow[]
-  ).map(normalizeWritingTask);
-
-  const attempts = (
-    (attemptsResult.data ?? []) as unknown as WritingAttemptHistoryRow[]
-  ).map(normalizeWritingAttemptHistoryRow);
 
   // Badges tied to this user's writing attempts, counted from the
   // attempt ids above so speaking badges never appear here.
   let badgesEarned = 0;
 
   if (attempts.length > 0) {
-    const { count } = await supabase
-      .from("user_badges")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", user.id)
-      .in(
-        "attempt_id",
-        attempts.map((attempt) => attempt.id),
-      );
+    try {
+      const { count, error } = await supabase
+        .from("user_badges")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user.id)
+        .in(
+          "attempt_id",
+          attempts.map((attempt) => attempt.id),
+        );
 
-    badgesEarned = count ?? 0;
+      if (error) {
+        console.error("Writing badges query failed:", error.message);
+      } else {
+        badgesEarned = count ?? 0;
+      }
+    } catch (err) {
+      console.error("Writing badges request failed:", err);
+    }
   }
 
   const summary = buildWritingProgressSummary(attempts, badgesEarned);
@@ -106,6 +131,15 @@ export default async function WritingPage() {
 
   return (
     <>
+      {practiceDataFailed ? (
+        <p
+          role="status"
+          className="mb-6 rounded-2xl bg-white px-4 py-3 text-sm leading-6 text-ink/70 shadow-sm ring-1 ring-ink/5"
+        >
+          {writingCopy.dataNotice}
+        </p>
+      ) : null}
+
       <WritingHero />
 
       {accessResult.ok ? (

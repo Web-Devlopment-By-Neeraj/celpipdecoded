@@ -14,6 +14,8 @@ export const writingCopy = {
   backToDashboard: "Back to dashboard",
   backToTasks: "Back to writing tasks",
   emptyStateMessage: "No writing tasks are available yet.",
+  dataNotice:
+    "Writing tasks and saved progress could not be loaded. Please try again in a moment.",
   startWritingButton: "Start timed writing",
   startWritingNote:
     "You will see the prompt again with a timer, a word target, and a writing editor. Submit your response to receive AI-supported feedback.",
