@@ -6,7 +6,7 @@ Scores shown in the product are practice estimates. They are not official CELPIP
 
 ## Prerequisites
 
-- Node.js 22
+- Node.js 20.19 or newer. The default `nvm` Node on some machines is 18, which cannot run the test suite. Run `nvm use` in this folder.
 - npm 10
 - A Supabase project
 - A Vercel project linked to this repo
@@ -111,6 +111,8 @@ That requires a pull request and the `check` status before a merge. The deploy w
 - `supabase/migrations` — schema, applied in filename order
 - `scripts/deploy.sh` — Vercel and Supabase deploy
 - `docs/runbook` — backups, calendar sync, and the deploy checklist
+
+End-to-end checklist for all three task packs: [docs/e2e-checklist.md](docs/e2e-checklist.md).
 
 What is still open: [docs/still-to-do.md](docs/still-to-do.md). Task-by-task gaps: [docs/remaining.md](docs/remaining.md).
 

@@ -7,6 +7,46 @@ if [ "$branch" = "main" ] || [ "$branch" = "master" ]; then
   exit 1
 fi
 
+# Vitest loads Vite with require(). Node 18 rejects that. nvm's default on
+# this machine is 18, so use a newer install when one is already present.
+node_is_new_enough() {
+  "$1" -e 'const p=process.versions.node.split(".").map(Number); process.exit(p[0]>20||(p[0]===20&&p[1]>=19)?0:1)' >/dev/null 2>&1
+}
+
+if ! command -v node >/dev/null 2>&1 || ! node_is_new_enough node; then
+  best=""
+  best_ver=""
+  for bin in "$HOME"/.nvm/versions/node/v*/bin/node /opt/homebrew/bin/node /usr/local/bin/node; do
+    if [ ! -x "$bin" ]; then
+      continue
+    fi
+    if ! node_is_new_enough "$bin"; then
+      continue
+    fi
+    ver=$("$bin" -p "process.versions.node" 2>/dev/null || true)
+    if [ -z "$ver" ]; then
+      continue
+    fi
+    if [ -z "$best_ver" ]; then
+      best="$bin"
+      best_ver="$ver"
+      continue
+    fi
+    wins=$("$bin" -p "const a=process.versions.node.split('.').map(Number); const b=process.argv[1].split('.').map(Number); let r=0; for (let i=0;i<3;i++){ const d=(a[i]||0)-(b[i]||0); if(d){ r=d; break; } } r>0?'yes':'no'" "$best_ver" 2>/dev/null || echo no)
+    if [ "$wins" = "yes" ]; then
+      best="$bin"
+      best_ver="$ver"
+    fi
+  done
+  if [ -z "$best" ]; then
+    echo "Node.js 20.19 or newer is required. This shell is using $(node -v 2>/dev/null || echo 'no node')."
+    echo "Install it with: nvm install 20"
+    exit 1
+  fi
+  PATH="$(dirname "$best"):$PATH"
+  export PATH
+fi
+
 npm run lint
 npm run typecheck
 npm test

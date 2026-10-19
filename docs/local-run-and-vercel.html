@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>CELPIP Decoded — variables, local run, and Vercel</title>
+<style>
+  @page { size: A4; margin: 16mm 16mm 18mm; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    color: #1a1a1a;
+    font: 11pt/1.45 "Iowan Old Style", Palatino, "Palatino Linotype", Georgia, serif;
+  }
+  h1 { font-size: 22pt; line-height: 1.15; margin: 0 0 6px; letter-spacing: -0.02em; }
+  h2 { font-size: 14pt; margin: 22px 0 8px; page-break-after: avoid; border-bottom: 1px solid #ddd; padding-bottom: 3px; }
+  h3 { font-size: 12pt; margin: 14px 0 4px; page-break-after: avoid; }
+  p { margin: 0 0 8px; }
+  ol, ul { margin: 0 0 10px; padding-left: 1.2em; }
+  li { margin: 0 0 4px; }
+  code, .mono { font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace; font-size: 9.5pt; }
+  table { width: 100%; border-collapse: collapse; margin: 6px 0 12px; page-break-inside: avoid; font-size: 9.5pt; }
+  th, td { border: 1px solid #ccc; padding: 4px 6px; vertical-align: top; text-align: left; }
+  th { background: #f3f3f3; font-weight: 600; }
+  .meta { color: #444; margin-bottom: 14px; }
+  .box { border: 1px solid #ccc; background: #fafafa; padding: 8px 10px; margin: 8px 0 12px; page-break-inside: avoid; }
+  .keep { page-break-inside: avoid; }
+  pre {
+    background: #f6f6f6;
+    border: 1px solid #e2e2e2;
+    padding: 8px 10px;
+    font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    font-size: 9pt;
+    line-height: 1.4;
+    white-space: pre-wrap;
+    margin: 6px 0 12px;
+  }
+</style>
+</head>
+<body>
+
+<h1>CELPIP Decoded</h1>
+<p class="meta">How to get every environment variable this repo defines, run the app on your machine, and deploy it on Vercel. 13 October 2026. Secrets stay in <code>.env.local</code> and in the Vercel dashboard. Do not put real keys in git or in this PDF.</p>
+
+<div class="box">
+  <strong>Existing Supabase project.</strong> The app is already pointed at project <code>ewykjltuiipmyrybetbk</code>, URL <code>https://ewykjltuiipmyrybetbk.supabase.co</code>. Use that project. Create a new one only if you intend to start over.
+</div>
+
+<h2>1. The names this project uses</h2>
+<p>The running Next.js app reads the first group. The second group is in <code>.env.example</code> so the same file can be copied into Vercel, even where the current TypeScript does not read the name yet. The third group is only for the deploy script and GitHub Actions. Leave that third group commented out in <code>.env.local</code>, because <code>scripts/deploy.sh --sync-env</code> uploads every filled name.</p>
+
+<h3>Read by the app</h3>
+<table>
+  <tr><th>Name</th><th>Needed for</th></tr>
+  <tr><td><code>NEXT_PUBLIC_SUPABASE_URL</code></td><td>Sign-in, dashboard, saved attempts, instructional video URLs</td></tr>
+  <tr><td><code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code></td><td>Browser and server Supabase client. Use the JWT anon key (starts with <code>eyJ</code>), not only the newer <code>sb_publishable_</code> key</td></tr>
+  <tr><td><code>SUPABASE_SERVICE_ROLE_KEY</code></td><td>Server-only admin client and the video upload script. Never prefix this with <code>NEXT_PUBLIC_</code></td></tr>
+  <tr><td><code>NEXT_PUBLIC_APP_URL</code></td><td>Auth email links, sitemap, robots. Local value is <code>http://localhost:3000</code></td></tr>
+  <tr><td><code>ADMIN_EMAILS</code></td><td>Who may open <code>/dashboard/admin</code>. Comma-separated. Empty means nobody</td></tr>
+  <tr><td><code>NEXT_PUBLIC_SHOW_EXAM_ANSWER_KEY</code></td><td>Listening answer-key panel. Keep <code>false</code> except for a local debug session</td></tr>
+  <tr><td><code>OPENAI_API_KEY</code></td><td>Speaking transcription and writing or speaking scores</td></tr>
+  <tr><td><code>OPENAI_TRANSCRIPTION_MODEL</code></td><td>Default in this repo: <code>gpt-4o-mini-transcribe</code></td></tr>
+  <tr><td><code>OPENAI_SCORING_MODEL</code></td><td>Default: <code>gpt-5.4-mini</code></td></tr>
+  <tr><td><code>OPENAI_WRITING_MODEL</code></td><td>Default: <code>gpt-5.4-mini</code></td></tr>
+  <tr><td><code>STRIPE_SECRET_KEY</code></td><td>Checkout route. Card checkout stays unavailable until this is set</td></tr>
+  <tr><td><code>STRIPE_WEBHOOK_SECRET</code></td><td><code>POST /api/webhooks/payments</code></td></tr>
+  <tr><td><code>CRON_SECRET</code></td><td><code>POST /api/cron/tick</code>. Vercel’s daily job sends this as <code>Authorization: Bearer</code></td></tr>
+  <tr><td><code>MEDIA_SIGNING_SECRET</code></td><td><code>POST /api/app/media/sign</code>. If unset, local code falls back to <code>development-media-secret</code>. Set a real value on Vercel</td></tr>
+</table>
+
+<h3>Listed in <code>.env.example</code></h3>
+<table>
+  <tr><th>Name</th><th>Where it is used today</th></tr>
+  <tr><td><code>NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY</code></td><td>Template only. Current checkout checks the secret key</td></tr>
+  <tr><td><code>LESSON_ORIGIN</code></td><td>Template. Planned lesson iframe host: <code>https://lessons.celpipdecoded.com</code>. That host must not share the main site’s cookie domain</td></tr>
+  <tr><td><code>CAL_API_KEY</code></td><td>Template for live class booking</td></tr>
+  <tr><td><code>CAL_WEBHOOK_SECRET</code></td><td>Template. Create the webhook after the site URL exists</td></tr>
+  <tr><td><code>SENTRY_DSN</code></td><td>Optional. Leave empty to skip error reporting</td></tr>
+</table>
+
+<h3>Deploy script and GitHub Actions only</h3>
+<table>
+  <tr><th>Name</th><th>Used for</th></tr>
+  <tr><td><code>VERCEL_TOKEN</code></td><td>Vercel CLI</td></tr>
+  <tr><td><code>VERCEL_ORG_ID</code></td><td><code>orgId</code> in <code>.vercel/project.json</code></td></tr>
+  <tr><td><code>VERCEL_PROJECT_ID</code></td><td><code>projectId</code> in <code>.vercel/project.json</code></td></tr>
+  <tr><td><code>SUPABASE_ACCESS_TOKEN</code></td><td>Supabase CLI</td></tr>
+  <tr><td><code>SUPABASE_PROJECT_REF</code></td><td><code>ewykjltuiipmyrybetbk</code></td></tr>
+  <tr><td><code>SUPABASE_DB_PASSWORD</code></td><td>Password for <code>supabase link</code> and migrations</td></tr>
+  <tr><td><code>SUPABASE_DB_URL</code></td><td>Optional direct Postgres URI, port 5432. When this is set, the three Supabase secrets above are not required</td></tr>
+</table>
+
+<h2>2. Get each value</h2>
+
+<h3>Supabase URL and keys</h3>
+<ol>
+  <li>Open <span class="mono">https://supabase.com/dashboard/project/ewykjltuiipmyrybetbk/settings/api</span>.</li>
+  <li>If that page has moved, open the project, then <strong>Project Settings</strong>, then <strong>API</strong> or <strong>API Keys</strong>.</li>
+  <li>Copy <strong>Project URL</strong> into <code>NEXT_PUBLIC_SUPABASE_URL</code>.</li>
+  <li>Copy the <strong>anon</strong> / <strong>public</strong> JWT into <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code>. It is a long token starting with <code>eyJ</code> and its payload role is <code>anon</code>.</li>
+  <li>Reveal the <strong>service_role</strong> secret and copy it into <code>SUPABASE_SERVICE_ROLE_KEY</code>. It also starts with <code>eyJ</code>, and its role is <code>service_role</code>.</li>
+</ol>
+
+<h3>Auth redirects</h3>
+<p>These are dashboard settings, not environment variables. Sign-in emails fail until they are saved.</p>
+<ol>
+  <li>Open <span class="mono">https://supabase.com/dashboard/project/ewykjltuiipmyrybetbk/auth/url-configuration</span>.</li>
+  <li>Or: project, <strong>Authentication</strong>, <strong>URL Configuration</strong>.</li>
+  <li>Site URL for local work: <code>http://localhost:3000</code>.</li>
+  <li>Redirect URLs: <code>http://localhost:3000/auth/callback</code>.</li>
+  <li>After Vercel gives you a domain, add <code>https://&lt;that-domain&gt;/auth/callback</code> and set Site URL to the live domain.</li>
+</ol>
+
+<h3>Database password and connection string</h3>
+<ol>
+  <li>Project, <strong>Project Settings</strong>, <strong>Database</strong>.</li>
+  <li>The password was chosen when the project was created. If it is lost, use <strong>Reset database password</strong> on that page. Resetting it changes the password for every client that uses it.</li>
+  <li>Under <strong>Connection string</strong>, choose <strong>URI</strong> and <strong>Direct connection</strong>. The host uses port <code>5432</code>. That string is <code>SUPABASE_DB_URL</code>.</li>
+  <li>Do not use the transaction pooler (port <code>6543</code>) for migrations.</li>
+</ol>
+
+<h3>Supabase access token</h3>
+<ol>
+  <li>Open <span class="mono">https://supabase.com/dashboard/account/tokens</span>.</li>
+  <li>Generate a token. That value is <code>SUPABASE_ACCESS_TOKEN</code>.</li>
+  <li>Project ref is the subdomain: <code>ewykjltuiipmyrybetbk</code>.</li>
+</ol>
+
+<h3>OpenAI</h3>
+<ol>
+  <li>Open <span class="mono">https://platform.openai.com/api-keys</span>.</li>
+  <li>Create a secret key. Paste it into <code>OPENAI_API_KEY</code>. The key is shown once.</li>
+  <li>Set the three model names to the defaults in section 1. Change a model name only when you want a different model.</li>
+</ol>
+<p>If a key was pasted into chat, revoke it on that page and create a new one before you deploy.</p>
+
+<h3>Stripe</h3>
+<ol>
+  <li>Open <span class="mono">https://dashboard.stripe.com</span> and turn <strong>Test mode</strong> on.</li>
+  <li><strong>Developers</strong>, <strong>API keys</strong>.</li>
+  <li>Publishable key → <code>NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY</code>.</li>
+  <li>Secret key → <code>STRIPE_SECRET_KEY</code>.</li>
+  <li>Create the webhook after the Vercel domain exists. <strong>Developers</strong>, <strong>Webhooks</strong>, <strong>Add endpoint</strong>. URL: <code>https://&lt;your-domain&gt;/api/webhooks/payments</code>.</li>
+  <li>Open the endpoint and copy the signing secret (<code>whsec_…</code>) into <code>STRIPE_WEBHOOK_SECRET</code>.</li>
+</ol>
+
+<h3>Cal.com</h3>
+<ol>
+  <li>API key: <span class="mono">https://app.cal.com/settings/developer/api-keys</span> → <code>CAL_API_KEY</code>.</li>
+  <li>Webhook secret, after the site URL exists: <span class="mono">https://app.cal.com/settings/developer/webhooks</span> → <code>CAL_WEBHOOK_SECRET</code>.</li>
+</ol>
+
+<h3>App secrets you generate</h3>
+<p>Run this twice. Use one result for <code>CRON_SECRET</code> and the other for <code>MEDIA_SIGNING_SECRET</code>. Generate a second pair for Vercel. Do not reuse the local pair in production.</p>
+<pre>openssl rand -hex 32</pre>
+
+<h3>Values you type yourself</h3>
+<ul>
+  <li><code>NEXT_PUBLIC_APP_URL</code> locally: <code>http://localhost:3000</code>. On Vercel: the real site URL, including <code>https://</code>.</li>
+  <li><code>ADMIN_EMAILS</code>: <code>gsahil0508@gmail.com,neeraj190499@gmail.com,avisingh0002@gmail.com</code></li>
+  <li><code>NEXT_PUBLIC_SHOW_EXAM_ANSWER_KEY</code>: <code>false</code></li>
+  <li><code>LESSON_ORIGIN</code>: <code>https://lessons.celpipdecoded.com</code></li>
+  <li><code>SENTRY_DSN</code>: leave empty, or paste a DSN from a Sentry project if you create one.</li>
+</ul>
+
+<h2>3. Run the project locally</h2>
+<ol>
+  <li>Install Node.js 20.19 or newer. This repo’s <code>.nvmrc</code> is <code>20</code>. Node 18 cannot load the test runner. In this folder run <code>nvm use</code>.</li>
+  <li>Install dependencies and create the env file:</li>
+</ol>
+<pre>cd /Users/novostack/projects/celpipdecoded
+nvm use
+npm ci
+cp .env.example .env.local</pre>
+<ol start="3">
+  <li>Open <code>.env.local</code> and paste the values from section 2. The minimum that lets sign-in and pages load is the two public Supabase values, the service role key, <code>NEXT_PUBLIC_APP_URL=http://localhost:3000</code>, and <code>ADMIN_EMAILS</code>.</li>
+  <li>Save the Auth redirect URLs from section 2 before you test sign-up email.</li>
+  <li>Start the app:</li>
+</ol>
+<pre>npm run dev</pre>
+<ol start="6">
+  <li>Open <span class="mono">http://localhost:3000</span>. After any edit to <code>.env.local</code>, stop the server and run <code>npm run dev</code> again. Next.js reads that file at startup.</li>
+  <li>Optional checks:</li>
+</ol>
+<pre>npm run lint
+npm run typecheck
+npm test</pre>
+<p>The pre-commit hook refuses commits on <code>main</code> or <code>master</code>, then runs lint, typecheck, and tests. Work on a feature branch.</p>
+<p>Speaking and writing scores need <code>OPENAI_API_KEY</code>. Checkout needs the Stripe secret. The daily job needs <code>CRON_SECRET</code>, and that job only runs on Vercel.</p>
+
+<h3>Apply the database</h3>
+<p>Auth and saved attempts need the SQL in <code>supabase/migrations</code>. The deploy script applies those migrations only from a clean <code>main</code> that matches <code>origin/main</code>. From that checkout:</p>
+<pre>export SUPABASE_DB_URL='postgresql://...'   # direct URI, port 5432
+bash scripts/deploy.sh production --migrate-only</pre>
+<p>Or export <code>SUPABASE_ACCESS_TOKEN</code>, <code>SUPABASE_PROJECT_REF=ewykjltuiipmyrybetbk</code>, and <code>SUPABASE_DB_PASSWORD</code> instead of the URI. After the migration that creates the <code>instructional-videos</code> bucket, upload the five local mp4 files with <code>npm run videos:upload</code>.</p>
+
+<h2>4. Deploy on Vercel</h2>
+<p>One owner can deploy on the Hobby plan. A Pro plan is only required when several people must be members of the Vercel team.</p>
+<p>The GitHub production workflow deploys <code>main</code> after a pull request merge. The branch that currently holds this work is <code>feature/phase2-neeraj</code>. For a first deploy of that branch, set it as the production branch in the Vercel import screen, or deploy it as a preview and switch production to <code>main</code> after the pull request is merged.</p>
+
+<h3>Create the project</h3>
+<ol>
+  <li>Sign in at <span class="mono">https://vercel.com</span> with the account that will own the site.</li>
+  <li><strong>Add New</strong>, <strong>Project</strong>, and import the GitHub repository. The remote used by this repo is <code>Web-Devlopment-By-Neeraj/celpipdecoded</code>.</li>
+  <li>Framework preset: Next.js. Build command: <code>npm run build</code>. Leave the output directory on the Next.js default.</li>
+  <li>Before <strong>Deploy</strong>, open <strong>Environment Variables</strong>.</li>
+  <li>Add every name from the first two tables in section 1. Enable <strong>Production</strong>, <strong>Preview</strong>, and <strong>Development</strong> for each.</li>
+  <li>Use new <code>CRON_SECRET</code> and <code>MEDIA_SIGNING_SECRET</code> values. Set <code>NEXT_PUBLIC_SHOW_EXAM_ANSWER_KEY</code> to <code>false</code>.</li>
+  <li>If the production URL is not known yet, set <code>NEXT_PUBLIC_APP_URL</code> to a placeholder, deploy, then replace it with the real <code>https://</code> URL and redeploy.</li>
+  <li>Choose the production branch (<code>feature/phase2-neeraj</code> for this work, or <code>main</code> after merge) and click <strong>Deploy</strong>.</li>
+</ol>
+<p>The project page shows a URL such as <code>https://&lt;project&gt;.vercel.app</code>. Later pushes to the production branch build again on their own.</p>
+
+<h3>Finish the live site</h3>
+<ol>
+  <li>Set <code>NEXT_PUBLIC_APP_URL</code> in Vercel to that exact URL for Production and Preview, then redeploy.</li>
+  <li>Add <code>https://&lt;that-domain&gt;/auth/callback</code> in Supabase URL Configuration.</li>
+  <li>Create the Stripe webhook at <code>https://&lt;that-domain&gt;/api/webhooks/payments</code>, paste <code>STRIPE_WEBHOOK_SECRET</code>, and redeploy.</li>
+  <li>Confirm the cron in <code>vercel.json</code> is attached. It calls <code>POST /api/cron/tick</code> every day at 14:00 UTC. The route accepts the call only when the <code>Bearer</code> token equals <code>CRON_SECRET</code>.</li>
+</ol>
+
+<h3>Optional: deploy from the terminal</h3>
+<p>Use this when you want the same path as GitHub Actions. Production still requires a clean <code>main</code> matching <code>origin/main</code>.</p>
+<ol>
+  <li>Create a token at <span class="mono">https://vercel.com/account/tokens</span>. That is <code>VERCEL_TOKEN</code>.</li>
+  <li>From the repo: <code>npx vercel link</code>.</li>
+  <li>Open <code>.vercel/project.json</code>. Copy <code>orgId</code> to <code>VERCEL_ORG_ID</code> and <code>projectId</code> to <code>VERCEL_PROJECT_ID</code>.</li>
+  <li>Export those three values in the shell. Do not uncomment them inside <code>.env.local</code>.</li>
+  <li>Preview, from any branch, does not migrate the database unless you pass <code>--migrate</code>:</li>
+</ol>
+<pre>bash scripts/deploy.sh preview</pre>
+<ol start="6">
+  <li>Production, from updated <code>main</code>:</li>
+</ol>
+<pre>bash scripts/deploy.sh production</pre>
+
+<h3>Optional: GitHub Actions</h3>
+<p>Repo <strong>Settings</strong>, <strong>Secrets and variables</strong>, <strong>Actions</strong>. Add <code>VERCEL_TOKEN</code>, <code>VERCEL_ORG_ID</code>, <code>VERCEL_PROJECT_ID</code>, and either <code>SUPABASE_DB_URL</code> or the three Supabase deploy secrets. <code>.github/workflows/deploy.yml</code> then migrates and runs <code>vercel deploy --prebuilt --prod</code> when a pull request is merged to <code>main</code>. From a repo admin account, <code>bash scripts/protect-main.sh</code> requires the <code>check</code> status before a merge.</p>
+
+</body>
+</html>

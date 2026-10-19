@@ -44,4 +44,18 @@ describe("release contract", () => {
     }
     expect(remaining).toContain("npm run test:e2e");
   });
+
+  it("lists every Neeraj, Avinash, and Sahil task in the e2e checklist", () => {
+    const checklist = read("docs/e2e-checklist.md");
+    expect(checklist).toContain("npm run test:e2e");
+    for (let index = 1; index <= 18; index += 1) {
+      expect(checklist).toContain(`N${String(index).padStart(2, "0")}`);
+    }
+    for (let index = 1; index <= 30; index += 1) {
+      expect(checklist).toContain(`A${String(index).padStart(2, "0")}`);
+    }
+    for (let index = 1; index <= 34; index += 1) {
+      expect(checklist).toContain(`S${String(index).padStart(2, "0")}`);
+    }
+  });
 });
