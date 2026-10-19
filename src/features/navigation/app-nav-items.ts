@@ -23,6 +23,8 @@ export type AppNavItem = {
   // True when the destination sits outside the signed in app. These
   // items never take the active style.
   leavesApp?: boolean;
+  // Marks the link for the product tour highlight.
+  tourId?: string;
 };
 
 export const APP_NAV_ITEMS: readonly AppNavItem[] = [
@@ -31,18 +33,21 @@ export const APP_NAV_ITEMS: readonly AppNavItem[] = [
     href: "/dashboard",
     icon: "dashboard",
     description: "Your practice modules and progress",
+    tourId: "nav-dashboard",
   },
   {
     label: "Speaking practice",
     href: "/dashboard/speaking",
     icon: "speaking",
     description: "Timed speaking tasks and feedback",
+    tourId: "nav-speaking",
   },
   {
     label: "Writing practice",
     href: "/dashboard/writing",
     icon: "writing",
     description: "Timed writing tasks and feedback",
+    tourId: "nav-writing",
   },
   {
     label: "Live classes",
@@ -50,6 +55,7 @@ export const APP_NAV_ITEMS: readonly AppNavItem[] = [
     icon: "liveClasses",
     description: "Class options on the program page",
     leavesApp: true,
+    tourId: "nav-live",
   },
 ] as const;
 

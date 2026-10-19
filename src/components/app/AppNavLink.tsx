@@ -50,6 +50,7 @@ export function AppNavLink({
     <Link
       href={item.href}
       onClick={onNavigate}
+      data-tour={item.tourId}
       aria-current={isActive ? "page" : undefined}
       className={cx(
         base,

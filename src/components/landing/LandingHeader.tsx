@@ -13,7 +13,7 @@ const navLinks = [
   { label: "Draws", href: "/draws" },
 ];
 
-export function LandingHeader() {
+export function LandingHeader({ signedIn = false }: { signedIn?: boolean }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   function closeMenu() {
@@ -44,18 +44,29 @@ export function LandingHeader() {
         </nav>
 
         <div className="flex items-center gap-2 sm:gap-3">
-          <Link
-            href="/login"
-            className="hidden h-10 items-center justify-center rounded-full px-4 text-sm font-semibold text-cream transition-colors hover:text-white sm:inline-flex"
-          >
-            Sign in
-          </Link>
-          <Link
-            href="/signup"
-            className="inline-flex h-10 items-center justify-center rounded-full bg-brand px-4 text-sm font-semibold text-white shadow-lg shadow-brand/20 transition-colors hover:bg-brand-dark sm:px-5"
-          >
-            Get started
-          </Link>
+          {signedIn ? (
+            <Link
+              href="/dashboard"
+              className="inline-flex h-10 items-center justify-center rounded-full bg-brand px-4 text-sm font-semibold text-white shadow-lg shadow-brand/20 transition-colors hover:bg-brand-dark sm:px-5"
+            >
+              Dashboard
+            </Link>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="hidden h-10 items-center justify-center rounded-full px-4 text-sm font-semibold text-cream transition-colors hover:text-white sm:inline-flex"
+              >
+                Sign in
+              </Link>
+              <Link
+                href="/signup"
+                className="inline-flex h-10 items-center justify-center rounded-full bg-brand px-4 text-sm font-semibold text-white shadow-lg shadow-brand/20 transition-colors hover:bg-brand-dark sm:px-5"
+              >
+                Get started
+              </Link>
+            </>
+          )}
           <button
             type="button"
             onClick={() => setMenuOpen((open) => !open)}
@@ -112,13 +123,23 @@ export function LandingHeader() {
                 {link.label}
               </a>
             ))}
-            <Link
-              href="/login"
-              onClick={closeMenu}
-              className="py-4 text-base font-medium text-cream/85 transition-colors hover:text-cream sm:hidden"
-            >
-              Sign in
-            </Link>
+            {signedIn ? (
+              <Link
+                href="/dashboard"
+                onClick={closeMenu}
+                className="py-4 text-base font-semibold text-cream transition-colors hover:text-white"
+              >
+                Dashboard
+              </Link>
+            ) : (
+              <Link
+                href="/login"
+                onClick={closeMenu}
+                className="py-4 text-base font-medium text-cream/85 transition-colors hover:text-cream sm:hidden"
+              >
+                Sign in
+              </Link>
+            )}
           </div>
         </nav>
       ) : null}

@@ -29,7 +29,7 @@ const proofPoints = [
   },
 ];
 
-export function ProgramHeroSection() {
+export function ProgramHeroSection({ signedIn = false }: { signedIn?: boolean }) {
   return (
     <section className="relative isolate overflow-hidden bg-ink text-cream">
       {/* Soft brand glow behind the panel side. */}
@@ -52,10 +52,10 @@ export function ProgramHeroSection() {
 
           <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
             <Link
-              href="/signup"
+              href={signedIn ? "/dashboard" : "/signup"}
               className="inline-flex h-13 items-center justify-center rounded-full bg-brand px-7 text-base font-semibold text-white shadow-lg shadow-brand/20 transition-colors hover:bg-brand-dark"
             >
-              Start free trial
+              {signedIn ? "Go to dashboard" : "Start free trial"}
             </Link>
             <Link
               href="/dashboard"

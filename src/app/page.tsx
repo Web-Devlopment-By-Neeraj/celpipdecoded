@@ -1,4 +1,5 @@
 import { LandingHeader } from "@/components/landing/LandingHeader";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { ProgramHeroSection } from "@/components/landing/ProgramHeroSection";
 import { IncludedSection } from "@/components/landing/IncludedSection";
 import { LiveClassesSection } from "@/components/landing/LiveClassesSection";
@@ -8,12 +9,18 @@ import { ProgramOptionsSection } from "@/components/landing/ProgramOptionsSectio
 import { EarlyAccessForm } from "@/components/landing/EarlyAccessForm";
 import { Footer } from "@/components/landing/Footer";
 
-export default function Home() {
+export default async function Home() {
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const signedIn = Boolean(user);
+
   return (
     <div className="flex flex-1 flex-col">
-      <LandingHeader />
+      <LandingHeader signedIn={signedIn} />
       <main className="flex-1">
-        <ProgramHeroSection />
+        <ProgramHeroSection signedIn={signedIn} />
         <IncludedSection />
         <LiveClassesSection />
         <AiPracticeSection />

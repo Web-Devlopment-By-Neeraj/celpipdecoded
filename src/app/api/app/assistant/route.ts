@@ -1,9 +1,14 @@
 import { NextResponse } from "next/server";
+import OpenAI from "openai";
+import {
+  ASSISTANT_SYSTEM_PROMPT,
+  recentAssistantMessages,
+  speakableText,
+} from "@/features/platform/assistant-conversation";
 import {
   ASSISTANT_CAP_MESSAGE,
-  HANDOVER_MESSAGE,
   IMMIGRATION_NOTICE,
-  respondToStudent,
+  classifyQuestion,
 } from "@/features/platform/assistant";
 import { requireAppUser } from "@/features/platform/guards";
 import { createRateLimiter } from "@/features/platform/security";
@@ -12,21 +17,6 @@ import { defaultSettings } from "@/features/platform/settings";
 export const runtime = "nodejs";
 
 const limiter = createRateLimiter(() => Date.now());
-
-const STARTER_KB = [
-  {
-    id: "kb-cancel",
-    question: "How do I cancel Test Sprint?",
-    answer: "Open account settings, choose Cancel Test Sprint, then confirm. Access stays on until the end of the paid month.",
-    active: true,
-  },
-  {
-    id: "kb-estimate",
-    question: "Is the level an official result?",
-    answer: "No. Every level on CELPIP Decoded is a practice estimate. It is not an official result.",
-    active: true,
-  },
-];
 
 export async function POST(request: Request) {
   const auth = await requireAppUser(request);
@@ -51,34 +41,74 @@ export async function POST(request: Request) {
 
   const body = (await request.json().catch(() => null)) as {
     question?: string;
+    messages?: unknown;
     messagesToday?: number;
-    studentMessagesInSession?: number;
   } | null;
 
-  const messagesToday = body?.messagesToday ?? 0;
-  if (messagesToday >= settings["assistant.daily_cap"]) {
+  const history = recentAssistantMessages(body?.messages);
+  const question = typeof body?.question === "string" ? body.question.trim() : "";
+  const messages =
+    history.length > 0
+      ? history
+      : question
+        ? [{ role: "user" as const, content: question.slice(0, 2000) }]
+        : [];
+
+  if (messages.length === 0 || messages[messages.length - 1]?.role !== "user") {
+    return NextResponse.json({ ok: false, error: "Type or say a message first." }, { status: 400 });
+  }
+
+  const messagesToday = Math.max(
+    body?.messagesToday ?? 0,
+    messages.filter((message) => message.role === "user").length,
+  );
+  if (messagesToday > settings["assistant.daily_cap"]) {
     return NextResponse.json({ ok: false, error: ASSISTANT_CAP_MESSAGE }, { status: 429 });
   }
 
-  const turn = respondToStudent({
-    question: body?.question ?? "",
-    entries: STARTER_KB,
-    studentMessagesInSession: body?.studentMessagesInSession ?? 1,
-    unresolvedLimit: settings["assistant.unresolved_limit"],
-    topK: settings["assistant.top_k"],
-    minSimilarity: settings["assistant.min_similarity"],
-    resolved: false,
-  });
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    return NextResponse.json(
+      { ok: false, error: "The assistant needs an OpenAI key on the server." },
+      { status: 503 },
+    );
+  }
 
-  return NextResponse.json({
-    ok: true,
-    answer: turn.answer,
-    handover: turn.handover,
-    handoverMessage: turn.handover ? HANDOVER_MESSAGE : null,
-    immigrationNotice: turn.category === "immigration" ? IMMIGRATION_NOTICE : null,
-    usedEntryIds: turn.usedEntryIds,
-    analytics: turn.handover
-      ? { name: "assistant_handover", reason: turn.handoverReason, category: turn.category }
-      : null,
-  });
+  const model = process.env.OPENAI_ASSISTANT_MODEL || process.env.OPENAI_WRITING_MODEL || "gpt-5.4-mini";
+  const lastUser = messages.filter((message) => message.role === "user").at(-1)?.content ?? "";
+  const category = classifyQuestion(lastUser);
+
+  try {
+    const openai = new OpenAI({ apiKey });
+    const completion = await openai.chat.completions.create({
+      model,
+      messages: [{ role: "system", content: ASSISTANT_SYSTEM_PROMPT }, ...messages],
+    });
+    let answer = speakableText(completion.choices[0]?.message?.content ?? "");
+    if (!answer) {
+      return NextResponse.json(
+        { ok: false, error: "I did not catch a reply. Please try again." },
+        { status: 502 },
+      );
+    }
+    if (category === "immigration" && !answer.toLowerCase().includes("licensed")) {
+      answer = speakableText(`${answer} ${IMMIGRATION_NOTICE}`);
+    }
+
+    return NextResponse.json({
+      ok: true,
+      answer,
+      handover: false,
+      handoverMessage: null,
+      immigrationNotice: category === "immigration" ? IMMIGRATION_NOTICE : null,
+      usedEntryIds: [],
+      analytics: null,
+    });
+  } catch (err) {
+    console.error("Assistant reply failed:", err);
+    return NextResponse.json(
+      { ok: false, error: "I could not answer just now. Please try again." },
+      { status: 502 },
+    );
+  }
 }

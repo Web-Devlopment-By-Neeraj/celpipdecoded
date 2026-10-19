@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { CelpipDecodedLogo } from "@/components/brand/CelpipDecodedLogo";
 import { brandCopy } from "@/features/brand/brand-copy";
 import { cx, focus, text } from "@/features/design/design-tokens";
+import { requestProductTour } from "@/features/navigation/product-tour";
 import { AppMobileNav } from "./AppMobileNav";
 import { AppUserMenu } from "./AppUserMenu";
 
@@ -79,7 +80,18 @@ export function AppTopNav({ userEmail }: { userEmail: string }) {
         </p>
 
         <div className="flex shrink-0 items-center gap-2">
-          <div className="hidden lg:block">
+          <button
+            type="button"
+            data-tour="tour-button"
+            onClick={() => requestProductTour()}
+            className={cx(
+              "inline-flex h-11 items-center justify-center rounded-full border border-academy-line bg-academy-paper px-3 text-sm font-semibold text-academy-navy transition-colors hover:bg-academy-navy-soft sm:px-4",
+              focus.ring,
+            )}
+          >
+            Take a tour
+          </button>
+          <div className="hidden lg:block" data-tour="account">
             <AppUserMenu userEmail={userEmail} />
           </div>
 
@@ -89,6 +101,7 @@ export function AppTopNav({ userEmail }: { userEmail: string }) {
             aria-label={isMenuOpen ? "Close main menu" : "Open main menu"}
             aria-expanded={isMenuOpen}
             aria-controls={MOBILE_NAV_ID}
+            data-tour="app-menu"
             className={cx(
               "inline-flex h-11 w-11 items-center justify-center rounded-full border border-academy-line bg-academy-paper text-academy-navy transition-colors hover:bg-academy-navy-soft lg:hidden",
               focus.ring,

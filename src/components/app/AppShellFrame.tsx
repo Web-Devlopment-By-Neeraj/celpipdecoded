@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { cx, surface } from "@/features/design/design-tokens";
 import { isExamModeRoute } from "@/features/navigation/exam-mode-routes";
+import { ProductTour } from "./ProductTour";
 
 // Chooses the frame a signed in route gets (EXAM-15F, second QA pass).
 //
@@ -74,6 +75,7 @@ export function AppShellFrame({
 
         {footer}
       </div>
+      <ProductTour />
     </div>
   );
 }

@@ -2,6 +2,7 @@
 
 import { cx, text } from "@/features/design/design-tokens";
 import { APP_NAV_ITEMS } from "@/features/navigation/app-nav-items";
+import { requestProductTour } from "@/features/navigation/product-tour";
 import { AppNavLink } from "./AppNavLink";
 import { AppUserMenu } from "./AppUserMenu";
 
@@ -37,7 +38,20 @@ export function AppMobileNav({
       className="fixed inset-x-0 bottom-0 top-16 z-40 overflow-y-auto overscroll-contain border-t border-academy-line bg-academy-paper lg:hidden"
     >
       <div className="mx-auto w-full max-w-2xl px-5 py-6">
-        <AppUserMenu userEmail={userEmail} variant="panel" />
+        <div data-tour="account">
+          <AppUserMenu userEmail={userEmail} variant="panel" />
+        </div>
+
+        <button
+          type="button"
+          className="mt-4 inline-flex h-11 w-full items-center justify-center rounded-full border border-academy-line text-sm font-semibold text-academy-navy"
+          onClick={() => {
+            onClose();
+            requestProductTour();
+          }}
+        >
+          Take a tour
+        </button>
 
         <nav aria-label="Main" className="mt-6">
           <ul className="space-y-2">

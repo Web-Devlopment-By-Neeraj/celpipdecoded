@@ -26,7 +26,8 @@ export default async function LoginPage({
   } = await supabase.auth.getUser();
 
   if (user) {
-    redirect(nextPath);
+    // A signed-in visit to Sign in opens the app, not the public home.
+    redirect(nextPath === "/" || nextPath.startsWith("/#") ? "/dashboard" : nextPath);
   }
 
   return (
