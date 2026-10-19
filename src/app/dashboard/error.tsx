@@ -4,6 +4,22 @@ import Link from "next/link";
 
 // Error boundary for dashboard pages. Renders inside the dashboard layout,
 // so the header and sign out button stay visible.
+
+const FALLBACK_MESSAGE = "We could not load your dashboard. Please try again.";
+
+// Production builds replace a server exception with a digest paragraph.
+// That text is not useful on the page, so the learner sees the fallback.
+function visibleErrorMessage(message: string | undefined): string {
+  if (!message) return FALLBACK_MESSAGE;
+  if (
+    message.includes("Server Components render") ||
+    message.includes("digest property")
+  ) {
+    return FALLBACK_MESSAGE;
+  }
+  return message;
+}
+
 export default function DashboardError({
   error,
   reset,
@@ -17,8 +33,7 @@ export default function DashboardError({
         Something went wrong
       </h1>
       <p className="mt-3 text-sm leading-6 text-ink/70">
-        {error.message ||
-          "We could not load your dashboard. Please try again."}
+        {visibleErrorMessage(error.message)}
       </p>
       <div className="mt-6 flex flex-col items-center gap-3">
         <button

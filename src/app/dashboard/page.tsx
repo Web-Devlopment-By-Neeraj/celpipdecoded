@@ -9,7 +9,10 @@ import { DashboardModuleGrid } from "@/components/dashboard/DashboardModuleGrid"
 import { DashboardProgressOverview } from "@/components/dashboard/DashboardProgressOverview";
 import { DashboardRecentFeedback } from "@/components/dashboard/DashboardRecentFeedback";
 import { DashboardRecommendedPractice } from "@/components/dashboard/DashboardRecommendedPractice";
-import { DASHBOARD_MODULE_SLUGS } from "@/features/dashboard/dashboard-copy";
+import {
+  DASHBOARD_MODULE_SLUGS,
+  dashboardCopy,
+} from "@/features/dashboard/dashboard-copy";
 import { getDashboardRecommendation } from "@/features/dashboard/dashboard-recommendations";
 import {
   buildDashboardSummaryFromRows,
@@ -52,6 +55,44 @@ type ModuleRow = {
   sort_order: number;
 };
 
+// Used when the modules table cannot be read, so Speaking and Writing
+// stay reachable from the dashboard instead of an empty catalog.
+const FALLBACK_MODULES: ModuleRow[] = [
+  {
+    id: "celpip-speaking",
+    slug: "celpip-speaking",
+    title: "CELPIP Speaking Practice",
+    description:
+      "Practice CELPIP speaking tasks with timed prompts and AI feedback.",
+    status: "active",
+    sort_order: 1,
+  },
+  {
+    id: "celpip-writing",
+    slug: "celpip-writing",
+    title: "CELPIP Writing Practice",
+    description: "Practice CELPIP writing tasks with guided feedback.",
+    status: "active",
+    sort_order: 2,
+  },
+  {
+    id: "celpip-reading",
+    slug: "celpip-reading",
+    title: "CELPIP Reading Practice",
+    description: "Practice CELPIP reading comprehension.",
+    status: "coming_soon",
+    sort_order: 3,
+  },
+  {
+    id: "celpip-listening",
+    slug: "celpip-listening",
+    title: "CELPIP Listening Practice",
+    description: "Practice CELPIP listening comprehension.",
+    status: "coming_soon",
+    sort_order: 4,
+  },
+];
+
 // PostgREST returns embeds as an object or an array depending on the
 // relationship and schema cache. Normalize both to a single object.
 function firstEmbed<T>(embed: T | T[] | null): T | null {
@@ -79,39 +120,86 @@ export default async function DashboardPage() {
   // The session-scoped client enforces RLS on attempts and user_badges,
   // so only this learner's rows come back. The explicit user_id filters
   // are a second guard.
-  const [modulesResult, attemptsResult, badgesResult] = await Promise.all([
-    supabase
-      .from("modules")
-      .select("id, slug, title, description, status, sort_order")
-      .in("slug", [...DASHBOARD_MODULE_SLUGS])
-      .order("sort_order", { ascending: true }),
-    supabase
-      .from("attempts")
-      .select(DASHBOARD_ATTEMPT_SELECT)
-      .eq("user_id", user.id)
-      .in("status", [...DASHBOARD_HISTORY_STATUSES])
-      .order("created_at", { ascending: false })
-      .limit(DASHBOARD_ATTEMPT_LIMIT),
-    supabase
-      .from("user_badges")
-      .select("id, earned_at, badges(slug, title, description)")
-      .eq("user_id", user.id)
-      .order("earned_at", { ascending: false })
-      .limit(BADGE_PREVIEW_LIMIT),
-  ]);
+  let modulesResult: {
+    data: ModuleRow[] | null;
+    error: { message: string } | null;
+  } = { data: [], error: null };
+  let attemptsResult: {
+    data: DashboardAttemptRow[] | null;
+    error: { message: string } | null;
+  } = { data: [], error: null };
+  let badgesResult: {
+    data: UserBadgeRow[] | null;
+    error: { message: string } | null;
+  } = { data: [], error: null };
+
+  try {
+    const [modulesQuery, attemptsQuery, badgesQuery] = await Promise.all([
+      supabase
+        .from("modules")
+        .select("id, slug, title, description, status, sort_order")
+        .in("slug", [...DASHBOARD_MODULE_SLUGS])
+        .order("sort_order", { ascending: true }),
+      supabase
+        .from("attempts")
+        .select(DASHBOARD_ATTEMPT_SELECT)
+        .eq("user_id", user.id)
+        .in("status", [...DASHBOARD_HISTORY_STATUSES])
+        .order("created_at", { ascending: false })
+        .limit(DASHBOARD_ATTEMPT_LIMIT),
+      supabase
+        .from("user_badges")
+        .select("id, earned_at, badges(slug, title, description)")
+        .eq("user_id", user.id)
+        .order("earned_at", { ascending: false })
+        .limit(BADGE_PREVIEW_LIMIT),
+    ]);
+
+    modulesResult = {
+      data: (modulesQuery.data ?? []) as ModuleRow[],
+      error: modulesQuery.error,
+    };
+    attemptsResult = {
+      data: (attemptsQuery.data ?? []) as unknown as DashboardAttemptRow[],
+      error: attemptsQuery.error,
+    };
+    badgesResult = {
+      data: (badgesQuery.data ?? []) as unknown as UserBadgeRow[],
+      error: badgesQuery.error,
+    };
+  } catch (err) {
+    console.error("Dashboard data request failed:", err);
+    modulesResult = { data: [], error: { message: "request failed" } };
+    attemptsResult = { data: [], error: { message: "request failed" } };
+  }
+
+  // A failed read used to throw, which production replaces with the
+  // generic Server Components message and hides the whole dashboard.
+  // Keep the page and say that saved practice did not load.
+  const practiceDataFailed = Boolean(
+    modulesResult.error || attemptsResult.error,
+  );
 
   if (modulesResult.error) {
-    throw new Error("Could not load practice modules. Please try again.");
+    console.error(
+      "Dashboard modules query failed:",
+      modulesResult.error.message,
+    );
   }
 
   if (attemptsResult.error) {
-    throw new Error("Could not load your practice progress. Please try again.");
+    console.error(
+      "Dashboard attempts query failed:",
+      attemptsResult.error.message,
+    );
   }
 
-  const moduleList = (modulesResult.data ?? []) as ModuleRow[];
+  const moduleList = modulesResult.error
+    ? FALLBACK_MODULES
+    : ((modulesResult.data ?? []) as ModuleRow[]);
 
   const summary = buildDashboardSummaryFromRows(
-    (attemptsResult.data ?? []) as unknown as DashboardAttemptRow[],
+    attemptsResult.error ? [] : (attemptsResult.data ?? []),
   );
 
   const recommendation = getDashboardRecommendation(summary);
@@ -119,7 +207,7 @@ export default async function DashboardPage() {
   // A failed badge read hides the badges rather than blocking the page,
   // so the rest of the dashboard still renders.
   const badges: DashboardBadgeItem[] = (
-    (badgesResult.data ?? []) as unknown as UserBadgeRow[]
+    badgesResult.error ? [] : (badgesResult.data ?? [])
   ).map((row) => {
     const badge = firstEmbed(row.badges);
 
@@ -139,6 +227,15 @@ export default async function DashboardPage() {
 
   return (
     <>
+      {practiceDataFailed ? (
+        <p
+          role="status"
+          className="mb-6 rounded-2xl bg-white px-4 py-3 text-sm leading-6 text-foreground/70 shadow-sm ring-1 ring-foreground/5"
+        >
+          {dashboardCopy.practiceDataNotice}
+        </p>
+      ) : null}
+
       <DashboardHero
         userEmail={user.email ?? null}
         hasPractice={summary.hasAnyPractice}

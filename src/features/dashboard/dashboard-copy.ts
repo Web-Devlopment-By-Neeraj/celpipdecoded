@@ -129,6 +129,12 @@ export const dashboardCopy = {
   modulesEmptyTitle: "No practice modules yet",
   modulesEmptyText:
     "Practice modules are not available right now. Please check back soon.",
+
+  // Shown when the modules or attempts read fails. The rest of the page
+  // still renders, so a missing table does not replace the dashboard
+  // with the production error screen.
+  practiceDataNotice:
+    "Saved practice could not be loaded. You can still start speaking practice, writing practice, and a mock test from this page.",
 } as const;
 
 // Reason lines for each recommendation rule. Written as full sentences
