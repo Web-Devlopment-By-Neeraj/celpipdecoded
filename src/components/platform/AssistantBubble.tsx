@@ -2,6 +2,17 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore, type FormEvent } from "react";
 import type { AssistantChatMessage } from "@/features/platform/assistant-conversation";
+import {
+  getAudioFileExtension,
+  pickRecordingMimeType,
+} from "@/features/speaking/audio-utils";
+
+const SUGGESTED_QUESTIONS = [
+  "What should I practice first?",
+  "How does a practice estimate work?",
+  "How do I book a live class?",
+  "How do I reset my password?",
+];
 
 const STORAGE_KEY = "celpip-assistant-chat";
 const CHAT_EVENT = "celpip-assistant-chat-change";
@@ -63,9 +74,32 @@ function messagesToday(): number {
   return Number.isFinite(value) ? value : 0;
 }
 
+type SpeechResult = { isFinal: boolean; 0?: { transcript?: string } };
+
+type BrowserRecognition = {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  onresult: ((event: { results: ArrayLike<SpeechResult> }) => void) | null;
+  onerror: ((event: { error: string }) => void) | null;
+  onend: (() => void) | null;
+  start: () => void;
+  stop: () => void;
+};
+
+function recognitionConstructor(): (new () => BrowserRecognition) | null {
+  if (typeof window === "undefined") return null;
+  const host = window as Window & {
+    SpeechRecognition?: new () => BrowserRecognition;
+    webkitSpeechRecognition?: new () => BrowserRecognition;
+  };
+  return host.SpeechRecognition ?? host.webkitSpeechRecognition ?? null;
+}
+
 export function AssistantBubble() {
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState("");
+  const draftRef = useRef("");
   const messages = useSyncExternalStore(subscribeToChat, readChat, () => EMPTY_CHAT);
   const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState<"idle" | "thinking" | "listening" | "speaking">("idle");
@@ -73,6 +107,7 @@ export function AssistantBubble() {
   const threadRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const recorderRef = useRef<MediaRecorder | null>(null);
+  const recognitionRef = useRef<BrowserRecognition | null>(null);
 
   useEffect(() => {
     threadRef.current?.scrollTo({ top: threadRef.current.scrollHeight });
@@ -119,12 +154,21 @@ export function AssistantBubble() {
     }
   }
 
+  function setMessage(text: string) {
+    draftRef.current = text;
+    setDraft(text);
+  }
+
   async function send(text: string) {
     const content = text.trim();
-    if (!content || busy === "thinking" || busy === "listening") return;
+    if (busy === "thinking") return;
+    if (!content) {
+      setNotice("Type a message, tap a question, or use Talk first.");
+      return;
+    }
     stopAudio();
     setNotice(null);
-    setDraft("");
+    setMessage("");
     const next = [...messages, { role: "user" as const, content }];
     remember(next);
     const count = messagesToday() + 1;
@@ -166,22 +210,63 @@ export function AssistantBubble() {
     }
   }
 
-  async function onSubmit(event: FormEvent) {
-    event.preventDefault();
-    await send(draft);
-  }
-
-  async function toggleMic() {
-    if (busy === "listening" && recorderRef.current) {
-      recorderRef.current.stop();
+  function stopListening() {
+    const recognition = recognitionRef.current;
+    const recorder = recorderRef.current;
+    recognitionRef.current = null;
+    recognition?.stop();
+    if (recorder) {
+      recorder.stop();
       return;
     }
-    if (busy === "thinking") return;
-    setNotice(null);
-    stopAudio();
+    setBusy("idle");
+  }
+
+  async function onSubmit(event: FormEvent) {
+    event.preventDefault();
+    if (busy === "listening") stopListening();
+    await send(draftRef.current);
+  }
+
+  function startRecognition() {
+    const Ctor = recognitionConstructor();
+    if (!Ctor) return false;
+    const recognition = new Ctor();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = "en-US";
+    recognition.onresult = (event) => {
+      let spoken = "";
+      for (let index = 0; index < event.results.length; index += 1) {
+        spoken += ` ${event.results[index]?.[0]?.transcript ?? ""}`;
+      }
+      setMessage(spoken.replace(/\s+/g, " ").trim());
+    };
+    recognition.onerror = (event) => {
+      if (event.error === "not-allowed" || event.error === "service-not-allowed") {
+        setNotice("Allow the microphone, then try again.");
+        setBusy("idle");
+        return;
+      }
+      if (event.error === "no-speech" || event.error === "aborted") return;
+      recognitionRef.current = null;
+      void startRecorder();
+    };
+    recognition.onend = () => {
+      if (recognitionRef.current !== recognition) return;
+      recognitionRef.current = null;
+      setBusy("idle");
+    };
+    recognitionRef.current = recognition;
+    recognition.start();
+    setBusy("listening");
+    return true;
+  }
+
+  async function startRecorder() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mimeType = MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : undefined;
+      const mimeType = pickRecordingMimeType();
       const recorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
       const chunks: Blob[] = [];
       recorder.ondataavailable = (event) => {
@@ -190,11 +275,12 @@ export function AssistantBubble() {
       recorder.onstop = () => {
         stream.getTracks().forEach((track) => track.stop());
         recorderRef.current = null;
-        const blob = new Blob(chunks, { type: recorder.mimeType || "audio/webm" });
-        void transcribe(blob);
+        const type = recorder.mimeType || mimeType || "audio/webm";
+        const blob = new Blob(chunks, { type });
+        void transcribe(blob, type);
       };
       recorderRef.current = recorder;
-      recorder.start();
+      recorder.start(250);
       setBusy("listening");
     } catch {
       setNotice("Allow the microphone, then try again.");
@@ -202,11 +288,23 @@ export function AssistantBubble() {
     }
   }
 
-  async function transcribe(blob: Blob) {
+  async function toggleMic() {
+    if (busy === "listening") {
+      stopListening();
+      return;
+    }
+    if (busy === "thinking") return;
+    setNotice(null);
+    stopAudio();
+    if (startRecognition()) return;
+    await startRecorder();
+  }
+
+  async function transcribe(blob: Blob, mimeType: string) {
     setBusy("thinking");
     try {
       const form = new FormData();
-      form.append("audio", blob, "speech.webm");
+      form.append("audio", blob, `speech.${getAudioFileExtension(mimeType)}`);
       const response = await fetch("/api/app/assistant/transcribe", {
         method: "POST",
         body: form,
@@ -217,8 +315,8 @@ export function AssistantBubble() {
         setBusy("idle");
         return;
       }
+      setMessage(payload.text);
       setBusy("idle");
-      await send(payload.text);
     } catch {
       setNotice("I could not hear that. Please try again.");
       setBusy("idle");
@@ -238,7 +336,7 @@ export function AssistantBubble() {
     <div className="fixed bottom-4 right-4 z-40 max-w-[calc(100vw-2rem)]">
       {open ? (
         <section
-          className="mb-3 flex h-[min(32rem,70vh)] w-[min(100vw-2rem,24rem)] flex-col rounded-3xl bg-white p-4 shadow-xl ring-1 ring-ink/10"
+          className="mb-3 flex h-[min(36rem,78vh)] w-[min(100vw-2rem,24rem)] flex-col rounded-3xl bg-white p-4 shadow-xl ring-1 ring-ink/10"
           aria-label="Alex, practice coach"
         >
           <div className="flex items-center justify-between gap-3">
@@ -284,6 +382,22 @@ export function AssistantBubble() {
           {status ? <p className="mt-2 text-xs font-medium text-ink/60">{status}</p> : null}
           {notice ? <p className="mt-2 text-sm leading-6 text-ink/80">{notice}</p> : null}
 
+          <div className="mt-3 flex flex-wrap gap-2">
+            {SUGGESTED_QUESTIONS.map((question) => (
+              <button
+                key={question}
+                type="button"
+                className="rounded-full bg-cream px-3 py-1 text-left text-xs font-medium text-ink ring-1 ring-ink/10"
+                onClick={() => {
+                  if (busy === "listening") stopListening();
+                  void send(question);
+                }}
+              >
+                {question}
+              </button>
+            ))}
+          </div>
+
           <form onSubmit={onSubmit} className="mt-3 flex items-end gap-2">
             <label className="sr-only" htmlFor="assistant-question">
               Your message
@@ -291,7 +405,7 @@ export function AssistantBubble() {
             <textarea
               id="assistant-question"
               value={draft}
-              onChange={(event) => setDraft(event.target.value)}
+              onChange={(event) => setMessage(event.target.value)}
               onKeyDown={(event) => {
                 if (event.key === "Enter" && !event.shiftKey) {
                   event.preventDefault();
@@ -299,7 +413,7 @@ export function AssistantBubble() {
                 }
               }}
               rows={2}
-              placeholder="Type a message"
+              placeholder={busy === "listening" ? "Listening... words appear here" : "Type a message"}
               className="block min-w-0 flex-1 resize-none rounded-2xl border border-ink/15 px-3 py-2 text-sm"
             />
             <button
@@ -313,7 +427,7 @@ export function AssistantBubble() {
             <button
               type="submit"
               className="h-11 rounded-full bg-brand px-4 text-sm font-semibold text-white"
-              disabled={busy === "thinking" || busy === "listening"}
+              disabled={busy === "thinking"}
             >
               Send
             </button>

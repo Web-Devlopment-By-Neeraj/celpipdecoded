@@ -106,8 +106,17 @@ export async function POST(request: Request) {
     });
   } catch (err) {
     console.error("Assistant reply failed:", err);
+    const detail = err instanceof Error ? err.message : "";
+    const outOfCredit = /credit balance is too low|no credits remaining|insufficient_quota|billing/i.test(
+      detail,
+    );
     return NextResponse.json(
-      { ok: false, error: "I could not answer just now. Please try again." },
+      {
+        ok: false,
+        error: outOfCredit
+          ? "The assistant is out of OpenAI credits. Add credits, then try again."
+          : "I could not answer just now. Please try again.",
+      },
       { status: 502 },
     );
   }

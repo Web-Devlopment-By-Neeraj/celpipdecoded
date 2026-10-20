@@ -39,26 +39,31 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: "I did not hear anything." }, { status: 400 });
   }
 
-  try {
-    const openai = new OpenAI({ apiKey });
-    const result = await openai.audio.transcriptions.create({
-      file: await toFile(audio, audio.name || "speech.webm"),
-      model: process.env.OPENAI_TRANSCRIPTION_MODEL || "gpt-4o-mini-transcribe",
-      language: "en",
-    });
-    const text = result.text?.trim() ?? "";
-    if (!text) {
-      return NextResponse.json(
-        { ok: false, error: "I could not make out the words. Please try again." },
-        { status: 422 },
-      );
+  const preferred = process.env.OPENAI_TRANSCRIPTION_MODEL || "gpt-4o-mini-transcribe";
+  const models = preferred === "whisper-1" ? [preferred] : [preferred, "whisper-1"];
+  const bytes = Buffer.from(await audio.arrayBuffer());
+  const filename = audio.name || "speech.webm";
+
+  let lastError: unknown = null;
+  const openai = new OpenAI({ apiKey });
+  for (const model of models) {
+    try {
+      const result = await openai.audio.transcriptions.create({
+        file: await toFile(bytes, filename),
+        model,
+        language: "en",
+      });
+      const text = result.text?.trim() ?? "";
+      if (text) return NextResponse.json({ ok: true, text });
+      lastError = new Error("empty transcript");
+    } catch (err) {
+      lastError = err;
     }
-    return NextResponse.json({ ok: true, text });
-  } catch (err) {
-    console.error("Assistant transcription failed:", err);
-    return NextResponse.json(
-      { ok: false, error: "I could not hear that. Please try again." },
-      { status: 502 },
-    );
   }
+
+  console.error("Assistant transcription failed:", lastError);
+  return NextResponse.json(
+    { ok: false, error: "I could not hear that. Please try again." },
+    { status: 502 },
+  );
 }
