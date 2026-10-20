@@ -101,6 +101,7 @@ export function AssistantBubble() {
       if (!response.ok) {
         const payload = (await response.json().catch(() => null)) as { error?: string } | null;
         setNotice(payload?.error ?? "I could not speak that reply.");
+        setBusy("idle");
         return;
       }
       const url = URL.createObjectURL(await response.blob());
@@ -127,7 +128,6 @@ export function AssistantBubble() {
     const next = [...messages, { role: "user" as const, content }];
     remember(next);
     const count = messagesToday() + 1;
-    window.localStorage.setItem(todayKey(), String(count));
     setBusy("thinking");
 
     try {
@@ -149,6 +149,7 @@ export function AssistantBubble() {
         setBusy("idle");
         return;
       }
+      window.localStorage.setItem(todayKey(), String(count));
       const withReply = [...next, { role: "assistant" as const, content: payload.answer }];
       remember(withReply);
       if (payload.immigrationNotice && !payload.answer.includes(payload.immigrationNotice)) {

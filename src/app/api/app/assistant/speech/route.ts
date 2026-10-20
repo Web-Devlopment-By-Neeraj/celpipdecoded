@@ -13,7 +13,7 @@ export const runtime = "nodejs";
 const limiter = createRateLimiter(() => Date.now());
 
 export async function POST(request: Request) {
-  const auth = await requireAppUser(request);
+  const auth = await requireAppUser(request, { allowUnconfirmed: true });
   if (!auth.ok) return auth.response;
 
   const settings = defaultSettings();
@@ -45,14 +45,26 @@ export async function POST(request: Request) {
 
   try {
     const openai = new OpenAI({ apiKey });
-    const speech = await openai.audio.speech.create({
-      model: process.env.OPENAI_TTS_MODEL || "gpt-4o-mini-tts",
-      voice: "marin",
-      input: text,
-      instructions: ASSISTANT_VOICE_INSTRUCTIONS,
-      response_format: "mp3",
-      speed: 0.96,
-    });
+    let speech;
+    try {
+      speech = await openai.audio.speech.create({
+        model: process.env.OPENAI_TTS_MODEL || "gpt-4o-mini-tts",
+        voice: "marin",
+        input: text,
+        instructions: ASSISTANT_VOICE_INSTRUCTIONS,
+        response_format: "mp3",
+        speed: 0.96,
+      });
+    } catch (primaryError) {
+      console.error("Primary assistant voice failed:", primaryError);
+      speech = await openai.audio.speech.create({
+        model: "tts-1",
+        voice: "nova",
+        input: text,
+        response_format: "mp3",
+        speed: 0.96,
+      });
+    }
     const bytes = new Uint8Array(await speech.arrayBuffer());
     return new NextResponse(bytes, {
       headers: {

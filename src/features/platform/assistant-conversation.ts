@@ -60,3 +60,47 @@ export function speakableText(answer: string): string {
     .trim()
     .slice(0, 4000);
 }
+
+// Chat models return either a string or a list of content parts.
+export function readModelText(content: unknown): string {
+  if (typeof content === "string") return content;
+  if (!Array.isArray(content)) return "";
+  return content
+    .map((part) => {
+      if (typeof part === "string") return part;
+      if (
+        part &&
+        typeof part === "object" &&
+        "text" in part &&
+        typeof (part as { text?: unknown }).text === "string"
+      ) {
+        return (part as { text: string }).text;
+      }
+      return "";
+    })
+    .join(" ");
+}
+
+export function assistantModels(preferred: string | undefined): string[] {
+  const primary = preferred?.trim() || "gpt-4o-mini";
+  return primary === "gpt-4o-mini" ? [primary] : [primary, "gpt-4o-mini"];
+}
+
+// Tries each model until one returns words. A missing or empty model
+// does not stop the assistant.
+export async function createAssistantReply(
+  models: string[],
+  complete: (model: string) => Promise<unknown>,
+): Promise<string> {
+  let lastError: unknown = null;
+  for (const model of models) {
+    try {
+      const text = speakableText(readModelText(await complete(model)));
+      if (text) return text;
+      lastError = new Error("empty reply");
+    } catch (err) {
+      lastError = err;
+    }
+  }
+  throw lastError instanceof Error ? lastError : new Error("The assistant could not answer.");
+}

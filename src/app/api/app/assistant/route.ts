@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import OpenAI from "openai";
 import {
   ASSISTANT_SYSTEM_PROMPT,
+  assistantModels,
+  createAssistantReply,
   recentAssistantMessages,
   speakableText,
 } from "@/features/platform/assistant-conversation";
@@ -19,7 +21,7 @@ export const runtime = "nodejs";
 const limiter = createRateLimiter(() => Date.now());
 
 export async function POST(request: Request) {
-  const auth = await requireAppUser(request);
+  const auth = await requireAppUser(request, { allowUnconfirmed: true });
   if (!auth.ok) return auth.response;
 
   const settings = defaultSettings();
@@ -74,23 +76,21 @@ export async function POST(request: Request) {
     );
   }
 
-  const model = process.env.OPENAI_ASSISTANT_MODEL || process.env.OPENAI_WRITING_MODEL || "gpt-5.4-mini";
+  const models = assistantModels(
+    process.env.OPENAI_ASSISTANT_MODEL || process.env.OPENAI_WRITING_MODEL,
+  );
   const lastUser = messages.filter((message) => message.role === "user").at(-1)?.content ?? "";
   const category = classifyQuestion(lastUser);
 
   try {
     const openai = new OpenAI({ apiKey });
-    const completion = await openai.chat.completions.create({
-      model,
-      messages: [{ role: "system", content: ASSISTANT_SYSTEM_PROMPT }, ...messages],
+    let answer = await createAssistantReply(models, async (model) => {
+      const completion = await openai.chat.completions.create({
+        model,
+        messages: [{ role: "system", content: ASSISTANT_SYSTEM_PROMPT }, ...messages],
+      });
+      return completion.choices[0]?.message?.content ?? "";
     });
-    let answer = speakableText(completion.choices[0]?.message?.content ?? "");
-    if (!answer) {
-      return NextResponse.json(
-        { ok: false, error: "I did not catch a reply. Please try again." },
-        { status: 502 },
-      );
-    }
     if (category === "immigration" && !answer.toLowerCase().includes("licensed")) {
       answer = speakableText(`${answer} ${IMMIGRATION_NOTICE}`);
     }

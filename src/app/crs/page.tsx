@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { CrsSpouseFields } from "@/components/crs/CrsSpouseFields";
 import { bestSingleChange } from "@/features/platform/crs-best";
 import {
   calculate,
@@ -80,11 +81,11 @@ function profileFromQuery(query: Query): CrsProfile | null {
   };
 }
 
-function LevelSelect({ name, label }: { name: string; label: string }) {
+function LevelSelect({ name, label, value }: { name: string; label: string; value?: string }) {
   return (
     <label className="block text-sm font-medium text-ink">
       {label}
-      <select name={name} defaultValue="7" className="mt-1 block w-full rounded-xl border border-ink/15 bg-white px-3 py-2">
+      <select name={name} defaultValue={value || "7"} className="mt-1 block w-full rounded-xl border border-ink/15 bg-white px-3 py-2">
         {LEVELS.map((item) => (
           <option key={String(item)} value={String(item)}>
             {item === "below_4" ? "Below 4" : `CELPIP ${item}`}
@@ -132,10 +133,10 @@ export default async function CrsPage({
               </select>
             </label>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <LevelSelect name="fr" label="Reading" />
-              <LevelSelect name="fwr" label="Writing" />
-              <LevelSelect name="fl" label="Listening" />
-              <LevelSelect name="fs" label="Speaking" />
+              <LevelSelect name="fr" label="Reading" value={one(query, "fr")} />
+              <LevelSelect name="fwr" label="Writing" value={one(query, "fwr")} />
+              <LevelSelect name="fl" label="Listening" value={one(query, "fl")} />
+              <LevelSelect name="fs" label="Speaking" value={one(query, "fs")} />
             </div>
             <label className="block text-sm font-medium">
               Canadian work experience, in years
@@ -146,53 +147,42 @@ export default async function CrsPage({
               I have a second official language
             </label>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <LevelSelect name="nr" label="Second language reading" />
-              <LevelSelect name="nwr" label="Second language writing" />
-              <LevelSelect name="nl" label="Second language listening" />
-              <LevelSelect name="ns" label="Second language speaking" />
+              <LevelSelect name="nr" label="Second language reading" value={one(query, "nr")} />
+              <LevelSelect name="nwr" label="Second language writing" value={one(query, "nwr")} />
+              <LevelSelect name="nl" label="Second language listening" value={one(query, "nl")} />
+              <LevelSelect name="ns" label="Second language speaking" value={one(query, "ns")} />
             </div>
           </fieldset>
 
-          <fieldset className="space-y-4 rounded-3xl bg-white p-4 shadow-sm ring-1 ring-ink/5">
-            <legend className="px-1 text-base font-semibold">Spouse or partner</legend>
-            <label className="flex items-center gap-2 text-sm">
-              <input type="checkbox" name="spouse" value="yes" defaultChecked={one(query, "spouse") === "yes"} />
-              Applying with a spouse or common-law partner
-            </label>
-            <p className="text-sm text-ink/70">Spouse fields are used only when that box is checked. Otherwise spouse points are zero.</p>
-            <label className="block text-sm font-medium">
-              Spouse education
-              <select name="se" defaultValue="secondary" className="mt-1 block w-full rounded-xl border border-ink/15 bg-white px-3 py-2">
-                {EDUCATIONS.map(([value, label]) => (
-                  <option key={value} value={value}>{label}</option>
-                ))}
-              </select>
-            </label>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <LevelSelect name="pr" label="Spouse reading" />
-              <LevelSelect name="pwr" label="Spouse writing" />
-              <LevelSelect name="pl" label="Spouse listening" />
-              <LevelSelect name="ps" label="Spouse speaking" />
-            </div>
-          </fieldset>
+          <CrsSpouseFields
+            checked={one(query, "spouse") === "yes"}
+            education={one(query, "se") || "secondary"}
+            educations={EDUCATIONS}
+            levels={{
+              reading: one(query, "pr") || "7",
+              writing: one(query, "pwr") || "7",
+              listening: one(query, "pl") || "7",
+              speaking: one(query, "ps") || "7",
+            }}
+          />
 
           <fieldset className="space-y-4 rounded-3xl bg-white p-4 shadow-sm ring-1 ring-ink/5">
             <legend className="px-1 text-base font-semibold">Additional</legend>
             <label className="block text-sm font-medium">
               Foreign work experience, in years
-              <input name="foreign" type="number" min={0} max={20} defaultValue="0" className="mt-1 block w-full rounded-xl border border-ink/15 px-3 py-2" />
+              <input name="foreign" type="number" min={0} max={20} defaultValue={one(query, "foreign") || "0"} className="mt-1 block w-full rounded-xl border border-ink/15 px-3 py-2" />
             </label>
             <label className="flex items-center gap-2 text-sm">
-              <input type="checkbox" name="trade" value="yes" />
+              <input type="checkbox" name="trade" value="yes" defaultChecked={one(query, "trade") === "yes"} />
               Certificate of qualification in a trade
             </label>
             <label className="flex items-center gap-2 text-sm">
-              <input type="checkbox" name="sibling" value="yes" />
+              <input type="checkbox" name="sibling" value="yes" defaultChecked={one(query, "sibling") === "yes"} />
               Sibling in Canada who is a citizen or permanent resident
             </label>
             <label className="block text-sm font-medium">
               Canadian study
-              <select name="study" defaultValue="none" className="mt-1 block w-full rounded-xl border border-ink/15 bg-white px-3 py-2">
+              <select name="study" defaultValue={one(query, "study") || "none"} className="mt-1 block w-full rounded-xl border border-ink/15 bg-white px-3 py-2">
                 <option value="none">None</option>
                 <option value="one_two">One or two year credential</option>
                 <option value="three_plus">Three years or longer</option>
@@ -204,14 +194,14 @@ export default async function CrsPage({
             </label>
             <label className="block text-sm font-medium text-ink/60">
               Job offer
-              <select name="job" defaultValue="none" className="mt-1 block w-full rounded-xl border border-ink/15 bg-ink/5 px-3 py-2">
+              <select name="job" defaultValue={one(query, "job") || "none"} className="mt-1 block w-full rounded-xl border border-ink/15 bg-ink/5 px-3 py-2">
                 <option value="none">No job offer</option>
                 <option value="other">Job offer, not currently awarded</option>
                 <option value="senior">Senior job offer, not currently awarded</option>
               </select>
             </label>
             <label className="flex items-center gap-2 text-sm">
-              <input type="checkbox" name="pnp" value="yes" />
+              <input type="checkbox" name="pnp" value="yes" defaultChecked={one(query, "pnp") === "yes"} />
               Provincial nomination
             </label>
           </fieldset>

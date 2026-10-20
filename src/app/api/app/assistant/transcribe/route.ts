@@ -9,7 +9,7 @@ export const runtime = "nodejs";
 const limiter = createRateLimiter(() => Date.now());
 
 export async function POST(request: Request) {
-  const auth = await requireAppUser(request);
+  const auth = await requireAppUser(request, { allowUnconfirmed: true });
   if (!auth.ok) return auth.response;
 
   const settings = defaultSettings();

@@ -8,7 +8,10 @@ export type AppUser = {
   emailConfirmed: boolean;
 };
 
-export async function requireAppUser(request: Request): Promise<
+export async function requireAppUser(
+  request: Request,
+  options?: { allowUnconfirmed?: boolean },
+): Promise<
   | { ok: true; user: AppUser }
   | { ok: false; response: NextResponse }
 > {
@@ -37,7 +40,8 @@ export async function requireAppUser(request: Request): Promise<
     };
   }
 
-  if (!user.email_confirmed_at) {
+  const emailConfirmed = Boolean(user.email_confirmed_at);
+  if (!emailConfirmed && !options?.allowUnconfirmed) {
     return {
       ok: false,
       response: NextResponse.json(
@@ -52,7 +56,7 @@ export async function requireAppUser(request: Request): Promise<
     user: {
       id: user.id,
       email: user.email ?? null,
-      emailConfirmed: true,
+      emailConfirmed,
     },
   };
 }
