@@ -42,7 +42,7 @@ export default async function ForgotPasswordPage({
         <div className="mt-8 rounded-3xl bg-white p-6 shadow-sm ring-1 ring-ink/5 sm:p-8">
           {expired ? (
             <p role="alert" className="mb-5 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
-              That reset link is invalid or has expired. Request a new one below.
+              That reset link is invalid or has already been used. Request a new one below and open the newest email.
             </p>
           ) : null}
           <ForgotPasswordForm />

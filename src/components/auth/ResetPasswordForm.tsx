@@ -1,33 +1,60 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, useSyncExternalStore, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
-// Sets a new password for the recovery session created by the email link.
+type Arrival = "pending" | "yes" | "no";
+
+function subscribeArrival() {
+  return () => undefined;
+}
+
+function readArrival(): Arrival {
+  const hash = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+  const search = new URLSearchParams(window.location.search);
+  const arriving =
+    hash.get("type") === "recovery" ||
+    hash.has("access_token") ||
+    search.has("code") ||
+    search.get("type") === "recovery";
+  return arriving ? "yes" : "no";
+}
+
+// Sets a new password after the email link has created a recovery session.
 export function ResetPasswordForm({ ready }: { ready: boolean }) {
   const router = useRouter();
+  const arrival = useSyncExternalStore(subscribeArrival, readArrival, () => "pending" as Arrival);
+  const [sessionReady, setSessionReady] = useState(false);
+  const [gaveUp, setGaveUp] = useState(false);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  if (!ready) {
-    return (
-      <div role="alert" className="space-y-4 text-center">
-        <p className="text-sm leading-6 text-ink/70">
-          This reset link is invalid or has expired. Request a new one and open it on this device.
-        </p>
-        <Link
-          href="/forgot-password"
-          className="inline-flex h-12 w-full items-center justify-center rounded-full bg-brand px-6 text-base font-semibold text-white"
-        >
-          Request a new link
-        </Link>
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (arrival !== "yes") return;
+    const supabase = createSupabaseBrowserClient();
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (
+        session &&
+        (event === "PASSWORD_RECOVERY" || event === "SIGNED_IN" || event === "INITIAL_SESSION")
+      ) {
+        setSessionReady(true);
+      }
+    });
+    const timer = window.setTimeout(() => setGaveUp(true), 4000);
+    return () => {
+      window.clearTimeout(timer);
+      subscription.unsubscribe();
+    };
+  }, [arrival]);
+
+  const showForm = ready || sessionReady;
+  const showChecking = !showForm && !gaveUp && arrival !== "no";
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -54,6 +81,26 @@ export function ResetPasswordForm({ ready }: { ready: boolean }) {
 
     router.push("/dashboard");
     router.refresh();
+  }
+
+  if (showChecking) {
+    return <p className="text-sm text-ink/70">Opening your reset link...</p>;
+  }
+
+  if (!showForm) {
+    return (
+      <div role="alert" className="space-y-4 text-center">
+        <p className="text-sm leading-6 text-ink/70">
+          This reset link is invalid or has expired. Request a new one. Each link works only once.
+        </p>
+        <Link
+          href="/forgot-password"
+          className="inline-flex h-12 w-full items-center justify-center rounded-full bg-brand px-6 text-base font-semibold text-white"
+        >
+          Request a new link
+        </Link>
+      </div>
+    );
   }
 
   return (

@@ -39,6 +39,10 @@ export async function GET(request: Request) {
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) return NextResponse.redirect(`${origin}${next}`);
+    console.error("Auth code exchange failed:", error.message);
+    if (error.message.toLowerCase().includes("code verifier")) {
+      return NextResponse.redirect(`${origin}/forgot-password?error=expired`);
+    }
   } else if (tokenHash && isOtpType(type)) {
     const { error } = await supabase.auth.verifyOtp({ type, token_hash: tokenHash });
     if (!error) return NextResponse.redirect(`${origin}${next}`);

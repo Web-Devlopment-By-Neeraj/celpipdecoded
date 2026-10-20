@@ -16,9 +16,11 @@ export const metadata: Metadata = {
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ next?: string }>;
+  searchParams: Promise<{ next?: string; error?: string }>;
 }) {
-  const nextPath = safeInternalPath((await searchParams).next) ?? "/dashboard";
+  const params = await searchParams;
+  const nextPath = safeInternalPath(params.next) ?? "/dashboard";
+  const linkFailed = params.error === "confirmation_failed";
   // Already signed in users go straight to the dashboard.
   const supabase = await createSupabaseServerClient();
   const {
@@ -46,6 +48,11 @@ export default async function LoginPage({
         </div>
 
         <div className="mt-8 rounded-3xl bg-white p-6 shadow-sm ring-1 ring-ink/5 sm:p-8">
+          {linkFailed ? (
+            <p role="alert" className="mb-5 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
+              That email link is invalid or has expired. Request a new one from Forgot password.
+            </p>
+          ) : null}
           <LoginForm nextPath={nextPath} />
         </div>
 

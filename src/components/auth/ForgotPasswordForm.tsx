@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 // Asks Supabase to email a reset link. The same message is shown whether or
 // not the address has an account, so the form does not reveal who signed up.
@@ -16,14 +15,10 @@ export function ForgotPasswordForm() {
     setErrorMessage(null);
     setIsSubmitting(true);
 
-    const redirectTo = `${window.location.origin}/auth/callback`;
-    const supabase = createSupabaseBrowserClient();
-    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-      redirectTo,
-    });
-
-    if (error) {
-      setErrorMessage(error.message);
+    const redirectTo = window.location.origin;
+    const sent = await requestPasswordReset(email.trim(), redirectTo);
+    if (!sent.ok) {
+      setErrorMessage(sent.error);
       setIsSubmitting(false);
       return;
     }
@@ -38,7 +33,7 @@ export function ForgotPasswordForm() {
         <h2 className="text-lg font-semibold text-ink">Check your email</h2>
         <p className="mt-2 text-sm leading-6 text-ink/70">
           If an account exists for {email.trim()}, a reset link is on its way.
-          Open that link on this device and choose a new password.
+          Open the newest email and choose a new password. Each link works once.
         </p>
       </div>
     );
@@ -78,4 +73,39 @@ export function ForgotPasswordForm() {
       </button>
     </form>
   );
+}
+
+// Asks Supabase to email a reset link without a browser code. The link can
+// then be opened from the inbox and still land on the new-password page.
+async function requestPasswordReset(
+  email: string,
+  redirectTo: string,
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!supabaseUrl || !anonKey) {
+    return { ok: false, error: "Password reset is not configured yet." };
+  }
+
+  try {
+    const response = await fetch(
+      `${supabaseUrl}/auth/v1/recover?redirect_to=${encodeURIComponent(redirectTo)}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: anonKey,
+          Authorization: `Bearer ${anonKey}`,
+        },
+        body: JSON.stringify({ email }),
+      },
+    );
+    if (response.ok) return { ok: true };
+    if (response.status === 429) {
+      return { ok: false, error: "Too many reset emails. Wait a minute and try again." };
+    }
+    return { ok: false, error: "The reset email could not be sent. Try again." };
+  } catch {
+    return { ok: false, error: "The reset email could not be sent. Try again." };
+  }
 }
