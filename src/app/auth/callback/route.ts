@@ -1,5 +1,7 @@
+import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import type { EmailOtpType } from "@supabase/supabase-js";
+import { isRecoveryVerifierCookie } from "@/features/platform/auth-redirect";
 import { safeInternalPath } from "@/features/platform/security";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -24,10 +26,13 @@ export async function GET(request: Request) {
   const code = searchParams.get("code");
   const tokenHash = searchParams.get("token_hash");
   const type = searchParams.get("type");
-  const next =
-    type === "recovery"
-      ? "/reset-password"
-      : (safeInternalPath(searchParams.get("next")) ?? "/dashboard");
+  const jar = await cookies();
+  const recovery =
+    type === "recovery" ||
+    jar.getAll().some((cookie) => isRecoveryVerifierCookie(cookie.name, cookie.value));
+  const next = recovery
+    ? "/reset-password"
+    : (safeInternalPath(searchParams.get("next")) ?? "/dashboard");
 
   const supabase = await createSupabaseServerClient();
 
