@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
@@ -60,12 +61,20 @@ export function LoginForm({ nextPath = "/dashboard" }: { nextPath?: string }) {
       </div>
 
       <div>
-        <label
-          htmlFor="login-password"
-          className="block text-sm font-medium text-ink"
-        >
-          Password
-        </label>
+        <div className="flex items-center justify-between gap-3">
+          <label
+            htmlFor="login-password"
+            className="block text-sm font-medium text-ink"
+          >
+            Password
+          </label>
+          <Link
+            href="/forgot-password"
+            className="text-sm font-semibold text-brand transition-colors hover:text-brand-dark"
+          >
+            Forgot password?
+          </Link>
+        </div>
         <input
           id="login-password"
           name="password"
