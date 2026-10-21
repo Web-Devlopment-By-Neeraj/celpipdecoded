@@ -8,6 +8,7 @@ import { brandCopy } from "@/features/brand/brand-copy";
 import { cx, focus, text } from "@/features/design/design-tokens";
 import { requestProductTour } from "@/features/navigation/product-tour";
 import { AppMobileNav } from "./AppMobileNav";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { AppUserMenu } from "./AppUserMenu";
 
 // Top bar for every signed in screen.
@@ -80,6 +81,7 @@ export function AppTopNav({ userEmail }: { userEmail: string }) {
         </p>
 
         <div className="flex shrink-0 items-center gap-2">
+          <ThemeToggle className="inline-flex h-11 items-center justify-center rounded-full border border-academy-line bg-academy-paper px-3 text-sm font-semibold text-academy-navy" />
           <button
             type="button"
             data-tour="tour-button"

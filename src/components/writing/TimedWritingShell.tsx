@@ -25,6 +25,7 @@ import { WritingPromptCard } from "./WritingPromptCard";
 import { WritingSavedCard } from "./WritingSavedCard";
 import { WritingStartCard } from "./WritingStartCard";
 import { WritingSubmitButton } from "./WritingSubmitButton";
+import { armTimeUpSound, TimeUpDialog } from "@/components/practice/TimeUpDialog";
 import { WritingTimer } from "./WritingTimer";
 
 type WritingPhase = "intro" | "writing" | "evaluating" | "saved";
@@ -48,6 +49,8 @@ export function TimedWritingShell({ task }: { task: WritingPracticeTask }) {
   // response is still saved, so the access message replaces the retry
   // action rather than the whole saved state being treated as a failure.
   const [evaluationBlocked, setEvaluationBlocked] = useState(false);
+  const [timeUpOpen, setTimeUpOpen] = useState(false);
+  const timeUpShown = useRef(false);
 
   // Wall clock start of the session, used to report time spent on
   // submit even after the countdown has reached zero.
@@ -58,6 +61,8 @@ export function TimedWritingShell({ task }: { task: WritingPracticeTask }) {
   const attemptIdRef = useRef<string | null>(null);
 
   const startWriting = () => {
+    armTimeUpSound();
+    timeUpShown.current = false;
     startedAtRef.current = Date.now();
     setRemaining(task.timeSeconds);
     setPhase("writing");
@@ -79,6 +84,10 @@ export function TimedWritingShell({ task }: { task: WritingPracticeTask }) {
       if (left <= 0) {
         // Time is up: stop ticking, keep the editor open, and let the
         // student submit manually. Nothing is auto-submitted.
+        if (!timeUpShown.current) {
+          timeUpShown.current = true;
+          setTimeUpOpen(true);
+        }
         window.clearInterval(id);
       }
     }, 250);
@@ -156,6 +165,7 @@ export function TimedWritingShell({ task }: { task: WritingPracticeTask }) {
 
   return (
     <div className="mx-auto w-full max-w-2xl">
+      <TimeUpDialog open={timeUpOpen} onClose={() => setTimeUpOpen(false)} />
       <nav
         aria-label="Writing practice navigation"
         className="flex flex-wrap items-center gap-x-5 gap-y-2"

@@ -106,10 +106,11 @@ export function getEvaluationFocus(task: WritingTask): string[] {
   return [...DEFAULT_EVALUATION_FOCUS];
 }
 
-// Display number for a task, preferring the stored task_number and
-// falling back to the sort order.
+// Card and detail label. writing_task_details.task_number is the CELPIP
+// task type (1 for every email, 2 for every survey), so using it made
+// every email card say "Task 1". sort_order is the library sequence.
 export function getTaskNumber(task: WritingTask): number {
-  return task.details?.task_number ?? task.sort_order;
+  return task.sort_order || task.details?.task_number || 1;
 }
 
 // Groups tasks by task_type in a stable order so the library page can

@@ -236,6 +236,34 @@ body {
    utility such as bg-academy-navy-soft compiles to
    background-color: var(--academy-navy-soft) and picks up whatever the
    nearest ancestor has that variable set to. */
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --background: #0c2338;
+  --foreground: #f4f1ea;
+  --cream: #0c2338;
+  --cream-soft: #16324c;
+  --ink: #f4f1ea;
+  --ink-soft: #d5deea;
+  --academy-paper: #12314f;
+  --academy-paper-warm: #0c2338;
+  --academy-navy: #f4f1ea;
+  --academy-navy-dark: #ffffff;
+  --academy-navy-soft: #1c4060;
+  --academy-line: #2a4d6e;
+  --brand-offwhite: #0c2338;
+}
+
+html[data-theme="dark"] .bg-white {
+  background-color: #16324c;
+}
+
+html[data-theme="dark"] [data-mock-test-player] {
+  color-scheme: light;
+  --background: #f2f2f2;
+  --foreground: #1f2937;
+  --ink: #1f2937;
+}
+
 [data-mock-test-player] {
   --academy-navy: var(--player-ink);
   --academy-navy-dark: #111827;
