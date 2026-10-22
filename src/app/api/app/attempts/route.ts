@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { canStartMock } from "@/features/platform/entitlements";
+import { loadUserEntitlements } from "@/features/platform/fulfill-stripe-purchase";
 import { requireAppUser } from "@/features/platform/guards";
 import { buildScript, defaultPartTimings } from "@/features/platform/player";
 import { sectionNeedsNotice } from "@/features/platform/allowance";
@@ -35,7 +36,7 @@ export async function POST(request: Request) {
   const scope = body?.scope ?? "full";
   const mode = body?.mode ?? "practice";
 
-  if (!canStartMock(mockTestId, [], new Date())) {
+  if (!canStartMock(mockTestId, await loadUserEntitlements(auth.user.id), new Date())) {
     return NextResponse.json(
       { ok: false, error: "This practice test is locked." },
       { status: 403 },

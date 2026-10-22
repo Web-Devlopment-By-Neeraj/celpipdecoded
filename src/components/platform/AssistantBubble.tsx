@@ -108,6 +108,8 @@ export function AssistantBubble() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const recorderRef = useRef<MediaRecorder | null>(null);
   const recognitionRef = useRef<BrowserRecognition | null>(null);
+  const keepListeningRef = useRef(false);
+  const heardSpeechRef = useRef(false);
 
   useEffect(() => {
     threadRef.current?.scrollTo({ top: threadRef.current.scrollHeight });
@@ -126,6 +128,18 @@ export function AssistantBubble() {
 
   async function speak(text: string) {
     stopAudio();
+    window.speechSynthesis?.cancel();
+    const synth = window.speechSynthesis;
+    if (synth) {
+      setBusy("speaking");
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "en-CA";
+      utterance.rate = 1;
+      utterance.onend = () => setBusy("idle");
+      utterance.onerror = () => setBusy("idle");
+      synth.speak(utterance);
+      return;
+    }
     setBusy("speaking");
     try {
       const response = await fetch("/api/app/assistant/speech", {
@@ -211,11 +225,12 @@ export function AssistantBubble() {
   }
 
   function stopListening() {
+    keepListeningRef.current = false;
     const recognition = recognitionRef.current;
     const recorder = recorderRef.current;
     recognitionRef.current = null;
     recognition?.stop();
-    if (recorder) {
+    if (recorder && recorder.state !== "inactive") {
       recorder.stop();
       return;
     }
@@ -240,7 +255,9 @@ export function AssistantBubble() {
       for (let index = 0; index < event.results.length; index += 1) {
         spoken += ` ${event.results[index]?.[0]?.transcript ?? ""}`;
       }
-      setMessage(spoken.replace(/\s+/g, " ").trim());
+      const text = spoken.replace(/\s+/g, " ").trim();
+      if (text) heardSpeechRef.current = true;
+      setMessage(text);
     };
     recognition.onerror = (event) => {
       if (event.error === "not-allowed" || event.error === "service-not-allowed") {
@@ -250,15 +267,26 @@ export function AssistantBubble() {
       }
       if (event.error === "no-speech" || event.error === "aborted") return;
       recognitionRef.current = null;
-      void startRecorder();
+      if (!recorderRef.current) void startRecorder();
     };
     recognition.onend = () => {
-      if (recognitionRef.current !== recognition) return;
-      recognitionRef.current = null;
-      setBusy("idle");
+      if (!keepListeningRef.current || recognitionRef.current !== recognition) return;
+      window.setTimeout(() => {
+        if (!keepListeningRef.current || recognitionRef.current !== recognition) return;
+        try {
+          recognition.start();
+        } catch {
+          recognitionRef.current = null;
+        }
+      }, 200);
     };
     recognitionRef.current = recognition;
-    recognition.start();
+    try {
+      recognition.start();
+    } catch {
+      recognitionRef.current = null;
+      return false;
+    }
     setBusy("listening");
     return true;
   }
@@ -275,6 +303,10 @@ export function AssistantBubble() {
       recorder.onstop = () => {
         stream.getTracks().forEach((track) => track.stop());
         recorderRef.current = null;
+        if (heardSpeechRef.current && draftRef.current.trim()) {
+          setBusy("idle");
+          return;
+        }
         const type = recorder.mimeType || mimeType || "audio/webm";
         const blob = new Blob(chunks, { type });
         void transcribe(blob, type);
@@ -282,9 +314,9 @@ export function AssistantBubble() {
       recorderRef.current = recorder;
       recorder.start(250);
       setBusy("listening");
+      return true;
     } catch {
-      setNotice("Allow the microphone, then try again.");
-      setBusy("idle");
+      return false;
     }
   }
 
@@ -296,8 +328,16 @@ export function AssistantBubble() {
     if (busy === "thinking") return;
     setNotice(null);
     stopAudio();
-    if (startRecognition()) return;
-    await startRecorder();
+    window.speechSynthesis?.cancel();
+    heardSpeechRef.current = false;
+    keepListeningRef.current = true;
+    const recording = await startRecorder();
+    const recognizing = startRecognition();
+    if (!recording && !recognizing) {
+      keepListeningRef.current = false;
+      setNotice("Allow the microphone, then try again.");
+      setBusy("idle");
+    }
   }
 
   async function transcribe(blob: Blob, mimeType: string) {

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { PlanUpgradeButton } from "@/components/pricing/PlanUpgradeButton";
 
 export const metadata: Metadata = {
   title: "Book a session - CELPIP Decoded",
@@ -17,9 +17,16 @@ export default function BookPage() {
         <p className="mt-3 text-sm leading-6">
           Move or cancel a session from the admin calendar. Changing it only in Google Calendar or Zoom does not email the student.
         </p>
-        <Link href="/signup?next=/book" className="mt-6 inline-flex h-11 items-center rounded-full bg-brand px-5 text-sm font-semibold text-white">
-          Sign in to reserve
-        </Link>
+        <div className="mt-6 space-y-4">
+          <div>
+            <h2 className="text-lg font-semibold">Live batch</h2>
+            <PlanUpgradeButton productCode="batch" />
+          </div>
+          <div>
+            <h2 className="text-lg font-semibold">Private session</h2>
+            <PlanUpgradeButton productCode="private_1to1" />
+          </div>
+        </div>
       </div>
     </main>
   );

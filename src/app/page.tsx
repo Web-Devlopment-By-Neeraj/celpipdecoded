@@ -8,6 +8,7 @@ import { CollegeMomentsSection } from "@/components/landing/CollegeMomentsSectio
 import { ProgramOptionsSection } from "@/components/landing/ProgramOptionsSection";
 import { EarlyAccessForm } from "@/components/landing/EarlyAccessForm";
 import { Footer } from "@/components/landing/Footer";
+import { LeaveOfferDialog } from "@/components/landing/LeaveOfferDialog";
 
 export default async function Home() {
   const supabase = await createSupabaseServerClient();
@@ -29,6 +30,7 @@ export default async function Home() {
         <EarlyAccessForm />
       </main>
       <Footer />
+      <LeaveOfferDialog />
     </div>
   );
 }

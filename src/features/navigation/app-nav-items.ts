@@ -12,6 +12,7 @@ export type AppNavIconName =
   | "dashboard"
   | "speaking"
   | "writing"
+  | "courses"
   | "liveClasses";
 
 export type AppNavItem = {
@@ -50,6 +51,13 @@ export const APP_NAV_ITEMS: readonly AppNavItem[] = [
     tourId: "nav-writing",
   },
   {
+    label: "Courses",
+    href: "/dashboard/courses",
+    icon: "courses",
+    description: "Course lessons and the locked preview",
+    tourId: "nav-courses",
+  },
+  {
     label: "Live classes",
     href: "/#live-classes",
     icon: "liveClasses",
@@ -73,6 +81,7 @@ const SEGMENT_LABELS: Record<string, string> = {
   dashboard: "Dashboard",
   speaking: "Speaking practice",
   writing: "Writing practice",
+  courses: "Courses",
   attempts: "Attempt history",
   practice: "Practice",
   tasks: "Task",

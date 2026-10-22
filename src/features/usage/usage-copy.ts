@@ -12,10 +12,7 @@
 
 import type { UsageAccessSummary } from "./access-types";
 
-// Where "Request access" goes. The landing page inquiry form is the
-// existing way to reach the academy. There is no checkout yet, and this
-// ticket does not build one.
-export const REQUEST_ACCESS_HREF = "/#inquiry";
+export const REQUEST_ACCESS_HREF = "/pricing";
 
 export const DASHBOARD_HREF = "/dashboard";
 
@@ -46,8 +43,8 @@ export const usageAccessCopy = {
 export const scoredAttemptLimitCopy = {
   title: "You have used your free AI feedback report",
   message:
-    "You have used your free AI feedback report. To continue practising with AI feedback, please request access or choose a practice package.",
-  requestAccess: "Request access",
+    "You have used your free AI feedback report. To continue practising with AI feedback, choose a practice plan.",
+  requestAccess: "Choose a plan",
   backToDashboard: "Back to dashboard",
   viewPreviousFeedback: "View previous feedback",
 } as const;

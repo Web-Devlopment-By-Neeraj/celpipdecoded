@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 const FORBIDDEN = /your celpip score/i;
 
 const PAGES: Array<{ path: string; heading: string }> = [
-  { path: "/pricing", heading: "Plans" },
+  { path: "/pricing", heading: "Choose how you practice" },
   { path: "/diagnostic", heading: "What should you practice?" },
   { path: "/courses", heading: "Course" },
   { path: "/ask", heading: "Ask Amar" },

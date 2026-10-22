@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { brandCopy, BRAND_NAME } from "@/features/brand/brand-copy";
 import { AuthEmailRedirect } from "@/components/auth/AuthEmailRedirect";
+import { PwaRegister } from "@/components/pwa/PwaRegister";
 import { AssistantBubble } from "@/components/platform/AssistantBubble";
 
 // CELPIP Decoded typography (BRAND-01).
@@ -39,11 +40,19 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${brandSans.variable} ${brandMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col bg-cream text-foreground">
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{if(localStorage.getItem('celpip-theme')==='dark')document.documentElement.dataset.theme='dark'}catch(e){}",
+          }}
+        />
         {children}
         <AuthEmailRedirect />
         <AssistantBubble />
+        <PwaRegister />
       </body>
     </html>
   );

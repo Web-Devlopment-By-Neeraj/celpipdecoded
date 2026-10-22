@@ -1,10 +1,10 @@
 import { AppButtonLink } from "@/components/app/AppButtonLink";
 import { AppCard } from "@/components/app/AppCard";
+import { PlanUpgradeButton } from "@/components/pricing/PlanUpgradeButton";
 import { cx, text } from "@/features/design/design-tokens";
 import {
   DASHBOARD_HREF,
   PREVIOUS_FEEDBACK_HREF,
-  REQUEST_ACCESS_HREF,
   scoredAttemptLimitCopy,
 } from "@/features/usage/usage-copy";
 
@@ -12,8 +12,8 @@ import {
 // left, either after the API returns NO_SCORED_ATTEMPTS_REMAINING or
 // ahead of a submit that would be blocked.
 //
-// Presentation only, no checkout. "Request access" points at the academy
-// inquiry form; payment is a later ticket.
+// Presentation only. "Choose a plan" opens the plan upgrade dialog before
+// checkout.
 
 export function ScoredAttemptLimitMessage({
   previousFeedbackHref = PREVIOUS_FEEDBACK_HREF,
@@ -33,10 +33,13 @@ export function ScoredAttemptLimitMessage({
         {scoredAttemptLimitCopy.message}
       </p>
 
-      <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-        <AppButtonLink href={REQUEST_ACCESS_HREF} size="sm">
-          {scoredAttemptLimitCopy.requestAccess}
-        </AppButtonLink>
+      <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+        <PlanUpgradeButton
+          productCode="sprint"
+          label={scoredAttemptLimitCopy.requestAccess}
+          withTopMargin={false}
+          className="inline-flex h-10 items-center rounded-full bg-brand px-4 text-sm font-semibold text-white"
+        />
         <AppButtonLink href={DASHBOARD_HREF} variant="secondary" size="sm">
           {scoredAttemptLimitCopy.backToDashboard}
         </AppButtonLink>

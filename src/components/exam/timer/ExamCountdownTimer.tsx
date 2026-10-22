@@ -1,6 +1,7 @@
 "use client";
 
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
+import { armTimeUpSound, TimeUpDialog } from "@/components/practice/TimeUpDialog";
 import { ExamTimerDisplay } from "../ExamTimerDisplay";
 import { ExamTimerStatusText } from "./ExamTimerStatusText";
 import { useExamCountdown } from "./useExamCountdown";
@@ -83,6 +84,8 @@ function ExamCountdownTimerWindow({
   onExpire,
   className,
 }: ExamCountdownTimerProps) {
+  const [timeUpOpen, setTimeUpOpen] = useState(false);
+
   const countdown = useExamCountdown(
     {
       screenKey,
@@ -92,11 +95,19 @@ function ExamCountdownTimerWindow({
       autoStart,
       label,
     },
-    onExpire,
+    () => {
+      onExpire?.();
+      setTimeUpOpen(true);
+    },
   );
+
+  useEffect(() => {
+    armTimeUpSound();
+  }, []);
 
   return (
     <Fragment>
+      <TimeUpDialog open={timeUpOpen} onClose={() => setTimeUpOpen(false)} />
       <ExamTimerDisplay
         label={countdown.isExpired ? undefined : label}
         value={
