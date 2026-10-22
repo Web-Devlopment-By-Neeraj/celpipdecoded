@@ -18,7 +18,6 @@ Sahil (and team) use this file while testing **staging** and local dev. Tick a l
 
 ## Bugs
 
-
 - [x] *Ai assist not Listining — NOt lisiting and there is speaking delay:* Mic stays on, and replies speak in the browser without waiting on the speech API (`P1`) · branch: `sahil/qa-tracker-fixes`
 
 - [x] *All the task card has number one  "1" — Task numbers should be in numberic order:* Writing cards use sort order (`P1`) · branch: `sahil/qa-tracker-fixes`
@@ -33,6 +32,10 @@ Things that work but feel incomplete, confusing, or missing copy/empty states.
 
 - [x] *When timer stops there should be a PopUp warning  — with sound and close button :* Writing practice and exam countdown (`P2`) · branch: `sahil/qa-tracker-fixes`
 
+- [x] *When ever some one click on something pro there should be popup for that with the feature custormer is getting with that money  — when some one unlock a feature with money :* Plan upgrade dialog before checkout (price, benefits, Pay with card, Maybe later → 15% off) on course lock, pricing, book, usage card, and AI limit states (`P1`) · branch: `sahil/qa-tracker-fixes`
+
+- [x] *Pricing page UI — plan list looked plain:* `/pricing` uses a card grid (price, period, benefits, featured Decoded Course, full-width CTAs) with header and discount banner (`P2`) · branch: `sahil/qa-tracker-fixes`
+
 ---
 
 
@@ -41,17 +44,13 @@ Things that work but feel incomplete, confusing, or missing copy/empty states.
 
 Not built yet or explicitly out of scope until a ticket is done.
 
-- [x] *Add Stripe  — Add stripe keyys are pending - :* Test key checked (HTTP 200, test mode). Checkout opens a Stripe session. Secret stays in local env, not in git. Webhook secret is still needed before a payment unlocks access (`P0`) · branch: `sahil/qa-tracker-fixes`
+- [x] *Add Stripe  — Add stripe keyys are pending - :* Test key checked (HTTP 200, test mode). Checkout opens a Stripe session. Secret stays in local env, not in git. Renewals and refunds still need STRIPE_WEBHOOK_SECRET in .env.local. The first payment works without it because the success page confirms the Checkout session. (`P0`) · branch: `sahil/qa-tracker-fixes`
 
 - [x] *Discount-Dialog-box — when user scrool full home page then at the end when he is about to leave the app then we show a discount price popoup:* 15% leave offer (`P2`) · branch: `sahil/qa-tracker-fixes`
 
 - [x] *Add PWA and dark mode  — :* Manifest, icons, service worker, and a Dark/Light control (`P1`) · branch: `sahil/qa-tracker-fixes`
 
-
-
 ---
-
-
 
 
 

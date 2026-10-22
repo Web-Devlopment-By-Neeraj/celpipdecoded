@@ -24,7 +24,7 @@ const options = [
       "Morning and evening availability",
       "Schedule confirmation required",
     ],
-    cta: { label: "Request class schedule", href: "#inquiry" },
+    cta: { label: "See class pricing", href: "/pricing" },
     featured: true,
   },
   {
@@ -36,7 +36,7 @@ const options = [
       "Practice pack: $10 for 12 scored attempts",
       "Monthly practice plan: $20/month for up to 40 scored attempts",
     ],
-    cta: { label: "Start speaking practice", href: "/signup" },
+    cta: { label: "Buy a practice plan", href: "/pricing" },
     featured: false,
   },
 ];

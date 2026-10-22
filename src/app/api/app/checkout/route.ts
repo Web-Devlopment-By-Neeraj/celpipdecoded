@@ -72,12 +72,15 @@ export async function POST(request: Request) {
   params.set("client_reference_id", auth.user.id);
   params.set("metadata[user_id]", auth.user.id);
   params.set("metadata[product_code]", product.code);
+  if (auth.user.email) params.set("customer_email", auth.user.email);
   params.set("line_items[0][quantity]", "1");
   params.set("line_items[0][price_data][currency]", product.currency.toLowerCase());
   params.set("line_items[0][price_data][unit_amount]", String(product.priceCents));
   params.set("line_items[0][price_data][product_data][name]", product.name);
   if (mode === "subscription") {
     params.set("line_items[0][price_data][recurring][interval]", "month");
+    params.set("subscription_data[metadata][user_id]", auth.user.id);
+    params.set("subscription_data[metadata][product_code]", product.code);
   }
   if (offer) params.set("discounts[0][coupon]", offer);
 

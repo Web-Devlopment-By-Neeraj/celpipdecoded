@@ -7,6 +7,7 @@ import {
   usageAccessCopy,
 } from "@/features/usage/usage-copy";
 import { ScoredAttemptBalanceBadge } from "./ScoredAttemptBalanceBadge";
+import { UsageAccessUpgradeButton } from "./UsageAccessUpgradeButton";
 
 // The learner's AI feedback access, as a small card for the dashboard.
 //
@@ -102,6 +103,9 @@ export function UsageAccessCard({ summary }: { summary: UsageAccessSummary }) {
               ? usageAccessCopy.helperWithAccess
               : usageAccessCopy.helperWithoutAccess}
           </p>
+          {summary.totalAttemptsRemaining <= 0 ? (
+            <UsageAccessUpgradeButton />
+          ) : null}
         </>
       )}
     </AppCard>

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAppUser } from "@/features/platform/guards";
 import { can } from "@/features/platform/entitlements";
+import { loadUserEntitlements } from "@/features/platform/fulfill-stripe-purchase";
 import { authorizePlayback, DEFAULT_LANGUAGES } from "@/features/platform/video";
 import { defaultSettings } from "@/features/platform/settings";
 
@@ -18,7 +19,7 @@ export async function GET(request: Request, { params }: Params) {
   const settings = defaultSettings();
   const language = DEFAULT_LANGUAGES.find((item) => item.code === lang);
   const grant = authorizePlayback({
-    hasCourse: can([], "course_videos", new Date()),
+    hasCourse: can(await loadUserEntitlements(auth.user.id), "course_videos", new Date()),
     isFreeLesson: id.endsWith("-free"),
     language,
     video: language?.status === "live"

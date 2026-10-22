@@ -16,7 +16,7 @@ export const PRODUCT_TOUR_STEPS: readonly ProductTourStep[] = [
   {
     id: "app-menu",
     title: "The menu",
-    body: "On a phone, speaking, writing, live classes, and your account are in this menu.",
+    body: "On a phone, speaking, writing, courses, live classes, and your account are in this menu.",
   },
   {
     id: "nav-dashboard",

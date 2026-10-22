@@ -1,7 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import {
+  loginNextPathForCheckout,
+  startPlanCheckout,
+} from "@/features/pricing/start-plan-checkout";
 
+/** Starts checkout immediately. Prefer PlanUpgradeButton when the learner should see what the plan includes first. */
 export function PlanCheckoutButton({
   productCode,
   offer,
@@ -16,23 +21,17 @@ export function PlanCheckoutButton({
     setError(null);
     setPending(true);
     try {
-      const response = await fetch("/api/app/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productCode, offer }),
-      });
-      const payload = (await response.json()) as { url?: string; error?: string };
-      if (response.status === 401) {
-        const next = offer ? `/pricing?offer=${offer}` : "/pricing";
-        window.location.href = `/login?next=${encodeURIComponent(next)}`;
+      const result = await startPlanCheckout({ productCode, offer });
+      if (result.ok) {
+        window.location.href = result.url;
         return;
       }
-      if (!response.ok || !payload.url) {
-        setError(payload.error ?? "Checkout could not start.");
-        setPending(false);
+      if (result.needsLogin) {
+        window.location.href = loginNextPathForCheckout(productCode, offer);
         return;
       }
-      window.location.href = payload.url;
+      setError(result.error);
+      setPending(false);
     } catch {
       setError("Checkout could not start. Check your connection and try again.");
       setPending(false);
