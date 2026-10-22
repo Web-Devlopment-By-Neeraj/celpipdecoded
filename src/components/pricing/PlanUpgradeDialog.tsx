@@ -28,13 +28,6 @@ export function PlanUpgradeDialog({
 
   useEffect(() => {
     if (!open) return;
-    setStep("benefits");
-    setError(null);
-    setPending(false);
-  }, [open, productCode]);
-
-  useEffect(() => {
-    if (!open) return;
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") onClose();
     }

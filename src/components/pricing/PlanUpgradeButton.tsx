@@ -17,9 +17,17 @@ export function PlanUpgradeButton({
   withTopMargin?: boolean;
 }) {
   const [open, setOpen] = useState(false);
+  const [dialogKey, setDialogKey] = useState(0);
 
   const trigger = (
-    <button type="button" onClick={() => setOpen(true)} className={className}>
+    <button
+      type="button"
+      onClick={() => {
+        setDialogKey((value) => value + 1);
+        setOpen(true);
+      }}
+      className={className}
+    >
       {label}
     </button>
   );
@@ -28,6 +36,7 @@ export function PlanUpgradeButton({
     <>
       {withTopMargin ? <div className="mt-4">{trigger}</div> : trigger}
       <PlanUpgradeDialog
+        key={dialogKey}
         open={open}
         productCode={productCode}
         offer={offer}

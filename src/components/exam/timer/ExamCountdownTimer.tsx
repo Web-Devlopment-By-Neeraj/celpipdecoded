@@ -84,6 +84,8 @@ function ExamCountdownTimerWindow({
   onExpire,
   className,
 }: ExamCountdownTimerProps) {
+  const [timeUpOpen, setTimeUpOpen] = useState(false);
+
   const countdown = useExamCountdown(
     {
       screenKey,
@@ -93,17 +95,15 @@ function ExamCountdownTimerWindow({
       autoStart,
       label,
     },
-    onExpire,
+    () => {
+      onExpire?.();
+      setTimeUpOpen(true);
+    },
   );
-  const [timeUpOpen, setTimeUpOpen] = useState(false);
 
   useEffect(() => {
     armTimeUpSound();
   }, []);
-
-  useEffect(() => {
-    if (countdown.isExpired) setTimeUpOpen(true);
-  }, [countdown.isExpired]);
 
   return (
     <Fragment>
