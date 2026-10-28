@@ -1,3 +1,4 @@
+import { ExamButton } from "../ExamButton";
 import { ExamInstructionRow } from "../ExamInstructionRow";
 import { ExamShell } from "../ExamShell";
 import { ReadingReviewQuestionCard } from "./ReadingReviewQuestionCard";
@@ -62,6 +63,8 @@ export type ReadingSectionReviewScreenProps = {
   metaText?: string;
   onBack?: () => void;
   showBack?: boolean;
+  onFinishSection?: () => void;
+  finishSectionLabel?: string;
 };
 
 export function ReadingSectionReviewScreen({
@@ -71,6 +74,8 @@ export function ReadingSectionReviewScreen({
   metaText,
   onBack,
   showBack = true,
+  onFinishSection,
+  finishSectionLabel = "Move to next section",
 }: ReadingSectionReviewScreenProps) {
   const hasRows = parts.some((part) => part.rows.length > 0);
 
@@ -114,6 +119,14 @@ export function ReadingSectionReviewScreen({
         ) : (
           <p className={examText.muted}>{copy.reviewEmptyText}</p>
         )}
+
+        {onFinishSection ? (
+          <div className={examScreenBody.actions}>
+            <ExamButton variant="primary" size="md" onClick={onFinishSection}>
+              {finishSectionLabel}
+            </ExamButton>
+          </div>
+        ) : null}
 
         <p className={examScreenBody.notice}>{copy.reviewNotice}</p>
       </div>

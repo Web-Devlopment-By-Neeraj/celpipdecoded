@@ -34,6 +34,7 @@
 //
 // House style: normal hyphens only, no long hyphens or em dashes.
 
+import { getInstructionalVideoAsset } from "../../instructional-video-assets";
 import {
   readingCopy,
   readingReviewCopy,
@@ -73,6 +74,12 @@ export const mockTest1ReadingSection: ReadingSectionContent = {
     // introDetails is deliberately unset. The intro screen counts the
     // parts, the questions and the reading time off the content instead,
     // so the card cannot claim a total the section no longer has.
+  },
+
+  videoScreen: {
+    title: `${SECTION_TITLE}: Instructional video`,
+    video: getInstructionalVideoAsset("reading"),
+    description: getInstructionalVideoAsset("reading").description,
   },
 
   // The four parts, in test order.

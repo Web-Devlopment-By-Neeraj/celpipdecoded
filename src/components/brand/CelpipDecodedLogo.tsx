@@ -1,3 +1,4 @@
+import { BrandPromiseTagline } from "@/components/brand/BrandPromiseTagline";
 import { cx } from "@/features/design/design-tokens";
 import { BRAND_NAME } from "@/features/brand/brand-copy";
 
@@ -30,6 +31,8 @@ export type CelpipDecodedLogoProps = {
   size?: CelpipDecodedLogoSize;
   // Set false for a mark on its own, for example a compact mobile bar.
   showWordmark?: boolean;
+  // Small Decode · Practice · Succeed line under the wordmark only (hero, footer).
+  showPromiseBelow?: boolean;
   className?: string;
 };
 
@@ -71,68 +74,112 @@ const toneStyles: Record<
   },
 };
 
+function LogoMark({
+  size,
+  styles,
+  ariaHidden,
+}: {
+  size: CelpipDecodedLogoSize;
+  styles: (typeof toneStyles)[CelpipDecodedLogoTone];
+  ariaHidden?: boolean;
+}) {
+  return (
+    <span
+      aria-hidden={ariaHidden ? true : undefined}
+      className={cx(
+        "inline-flex shrink-0 items-center justify-center rounded-xl",
+        markSizes[size],
+        styles.frame,
+        styles.mark,
+      )}
+    >
+      <svg
+        viewBox="0 0 32 32"
+        fill="none"
+        className="h-[72%] w-[72%]"
+        aria-hidden="true"
+      >
+        <path
+          d="M11.5 5.5H7.5a2 2 0 0 0-2 2v6.2a2 2 0 0 1-2 2 2 2 0 0 1 2 2v6.8a2 2 0 0 0 2 2h4"
+          stroke="currentColor"
+          strokeWidth="2.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M20.5 5.5h4a2 2 0 0 1 2 2v6.2a2 2 0 0 0 2 2 2 2 0 0 0-2 2v6.8a2 2 0 0 1-2 2h-4"
+          stroke="currentColor"
+          strokeWidth="2.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <circle cx="16" cy="16" r="3.6" fill={styles.dot} />
+      </svg>
+    </span>
+  );
+}
+
+function LogoWordmark({
+  size,
+  styles,
+}: {
+  size: CelpipDecodedLogoSize;
+  styles: (typeof toneStyles)[CelpipDecodedLogoTone];
+}) {
+  return (
+    <span
+      className={cx(
+        "min-w-0 truncate font-semibold leading-tight tracking-tight",
+        wordSizes[size],
+        styles.word,
+      )}
+    >
+      CELPIP <span className={styles.accent}>Decoded</span>
+    </span>
+  );
+}
+
 export function CelpipDecodedLogo({
   tone = "light",
   size = "md",
   showWordmark = true,
+  showPromiseBelow = false,
   className,
 }: CelpipDecodedLogoProps) {
   const styles = toneStyles[tone];
+  const promiseTone = tone === "reversed" ? "onDark" : "onLight";
+  const lockupWithPromise = showWordmark && showPromiseBelow;
+
+  if (lockupWithPromise) {
+    return (
+      <span
+        className={cx(
+          "inline-grid grid-cols-[auto_minmax(0,1fr)] grid-rows-[auto_auto] gap-x-2.5 gap-y-0.5 sm:gap-x-3",
+          className,
+        )}
+      >
+        <span className="row-span-2 self-center">
+          <LogoMark size={size} styles={styles} ariaHidden />
+        </span>
+        <span className="col-start-2 row-start-1 self-end">
+          <LogoWordmark size={size} styles={styles} />
+        </span>
+        <BrandPromiseTagline
+          tone={promiseTone}
+          className="col-start-2 row-start-2 self-start"
+        />
+      </span>
+    );
+  }
 
   return (
     <span
       className={cx("inline-flex items-center", gapSizes[size], className)}
-      // The wordmark is real text when it is shown, so the label is only
-      // needed for the mark on its own.
       aria-label={showWordmark ? undefined : BRAND_NAME}
       role={showWordmark ? undefined : "img"}
     >
-      <span
-        aria-hidden={showWordmark ? true : undefined}
-        className={cx(
-          "inline-flex shrink-0 items-center justify-center rounded-xl",
-          markSizes[size],
-          styles.frame,
-          styles.mark,
-        )}
-      >
-        <svg
-          viewBox="0 0 32 32"
-          fill="none"
-          className="h-[72%] w-[72%]"
-          aria-hidden="true"
-        >
-          {/* Left and right code brackets. */}
-          <path
-            d="M11.5 5.5H7.5a2 2 0 0 0-2 2v6.2a2 2 0 0 1-2 2 2 2 0 0 1 2 2v6.8a2 2 0 0 0 2 2h4"
-            stroke="currentColor"
-            strokeWidth="2.6"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M20.5 5.5h4a2 2 0 0 1 2 2v6.2a2 2 0 0 0 2 2 2 2 0 0 0-2 2v6.8a2 2 0 0 1-2 2h-4"
-            stroke="currentColor"
-            strokeWidth="2.6"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          {/* The solved centre dot. */}
-          <circle cx="16" cy="16" r="3.6" fill={styles.dot} />
-        </svg>
-      </span>
-
-      {showWordmark ? (
-        <span
-          className={cx(
-            "min-w-0 truncate font-semibold leading-tight tracking-tight",
-            wordSizes[size],
-            styles.word,
-          )}
-        >
-          CELPIP <span className={styles.accent}>Decoded</span>
-        </span>
-      ) : null}
+      <LogoMark size={size} styles={styles} ariaHidden={showWordmark} />
+      {showWordmark ? <LogoWordmark size={size} styles={styles} /> : null}
     </span>
   );
 }

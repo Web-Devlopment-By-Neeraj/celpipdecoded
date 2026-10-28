@@ -57,6 +57,7 @@
 //
 // House style: normal hyphens only, no long hyphens or em dashes.
 
+import { getInstructionalVideoAsset } from "../../instructional-video-assets";
 import { writingMockCopy } from "../../writing-mock-copy";
 import type { WritingSectionContent } from "../../writing-mock-types";
 
@@ -116,6 +117,12 @@ export const mockTest1WritingSection: WritingSectionContent = {
     // introDetails is deliberately unset. The intro screen counts the
     // tasks and the writing time off the content instead, so the card
     // cannot claim a total the section no longer has.
+  },
+
+  videoScreen: {
+    title: `${SECTION_TITLE}: Instructional video`,
+    video: getInstructionalVideoAsset("writing"),
+    description: getInstructionalVideoAsset("writing").description,
   },
 
   tasks: [

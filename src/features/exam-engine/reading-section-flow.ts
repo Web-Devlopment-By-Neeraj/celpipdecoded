@@ -119,6 +119,10 @@ export function buildReadingSectionFlow(
     { kind: "section-intro", id: `${content.sectionId}-intro` },
   ];
 
+  if (content.videoScreen) {
+    screens.push({ kind: "section-video", id: `${content.sectionId}-video` });
+  }
+
   content.parts.forEach((part, partIndex) => {
     if (partIndex > 0) {
       screens.push({

@@ -25,9 +25,14 @@ type AccessLine = {
 function buildLines(summary: UsageAccessSummary): AccessLine[] {
   const lines: AccessLine[] = [
     {
-      label: usageAccessCopy.freeLabel,
-      remaining: summary.freeAttemptsRemaining,
-      note: `${summary.freeAttemptsUsed} of ${formatAttemptCount(summary.freeAttemptsTotal)} used`,
+      label: usageAccessCopy.freeSpeakingLabel,
+      remaining: summary.freeSpeakingRemaining,
+      note: `${summary.freeSpeakingUsed} of ${formatAttemptCount(summary.freeSpeakingTotal)} used`,
+    },
+    {
+      label: usageAccessCopy.freeWritingLabel,
+      remaining: summary.freeWritingRemaining,
+      note: `${summary.freeWritingUsed} of ${formatAttemptCount(summary.freeWritingTotal)} used`,
     },
   ];
 

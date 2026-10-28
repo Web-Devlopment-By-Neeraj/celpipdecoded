@@ -13,9 +13,9 @@ import {
 
 // Welcome hero at the top of the learner dashboard.
 //
-// Presentation only. The greeting name is derived from the signed in
-// email by the copy helper, which returns an empty string for anything
-// that is not plainly a name, so a role address is never shown back.
+// Presentation only. The greeting uses the name saved at signup. The
+// email is only a fallback, and the helper returns an empty string for
+// anything that is not plainly a name, so a role address is never shown.
 //
 // The primary action points at the recommended module rather than a
 // fixed route, so the first thing a learner can click is the same thing
@@ -23,6 +23,8 @@ import {
 
 export type DashboardHeroProps = {
   userEmail: string | null;
+  // Name entered at signup. Preferred over the email for the greeting.
+  fullName?: string | null;
   // True once the learner has any saved practice, which switches the
   // greeting and the supporting message.
   hasPractice: boolean;
@@ -32,11 +34,12 @@ export type DashboardHeroProps = {
 
 export function DashboardHero({
   userEmail,
+  fullName,
   hasPractice,
   continueHref,
   continueLabel,
 }: DashboardHeroProps) {
-  const name = getGreetingName(userEmail);
+  const name = getGreetingName(userEmail, fullName);
   const greeting = hasPractice
     ? dashboardCopy.heroGreetingReturning
     : dashboardCopy.heroGreetingNew;

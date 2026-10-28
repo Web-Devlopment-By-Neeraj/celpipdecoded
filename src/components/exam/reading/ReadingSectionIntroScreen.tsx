@@ -52,6 +52,8 @@ export type ReadingSectionIntroScreenProps = {
   onNext?: () => void;
   onBack?: () => void;
   showBack?: boolean;
+  backHref?: string;
+  backLabel?: string;
 };
 
 export function ReadingSectionIntroScreen({
@@ -61,6 +63,8 @@ export function ReadingSectionIntroScreen({
   onNext,
   onBack,
   showBack = true,
+  backHref,
+  backLabel,
 }: ReadingSectionIntroScreenProps) {
   const screen = content.instructionScreen;
 
@@ -86,6 +90,8 @@ export function ReadingSectionIntroScreen({
       onNext={onNext}
       onBack={onBack}
       showBack={showBack}
+      backHref={backHref}
+      backLabel={backLabel}
       intro={
         <ExamSectionIntroCard
           label={examCopy.practiceLabel}

@@ -40,6 +40,13 @@ import type {
   WritingResponseMap,
   WritingSectionContent,
 } from "@/features/exam-engine/writing-mock-types";
+import { SectionInstructionVideoScreen } from "../SectionInstructionVideoScreen";
+import { MockTestSectionPrepScreen } from "@/components/mock-tests/MockTestSectionPrepScreen";
+import {
+  appendMockTestFullSectionResult,
+  type MockTestPlayerContext,
+} from "@/features/mock-tests/mock-test-flow";
+import { mockTestExitBackProps } from "@/features/mock-tests/mock-test-player-ui";
 
 // Mock Test 1 Writing section (EXAM-25, extended by EXAM-26).
 //
@@ -162,6 +169,7 @@ export type WritingSectionPrototypeProps = {
   // Where Return to dashboard goes from the completion and result
   // screens.
   dashboardHref?: string;
+  mockTestContext?: MockTestPlayerContext;
 };
 
 export function WritingSectionPrototype({
@@ -169,6 +177,7 @@ export function WritingSectionPrototype({
   evaluateResponses,
   copy = writingMockCopy,
   dashboardHref,
+  mockTestContext,
 }: WritingSectionPrototypeProps) {
   const screens = useMemo(() => buildWritingSectionFlow(content), [content]);
 
@@ -176,6 +185,7 @@ export function WritingSectionPrototype({
   const [responses, setResponses] = useState<WritingResponseMap>({});
   const [choices, setChoices] = useState<WritingChoiceMap>({});
   const [review, setReview] = useState<ReviewState>({ status: "idle" });
+  const [sectionBridgeOpen, setSectionBridgeOpen] = useState(false);
 
   // The one time up message for the whole section (TIMER-01). See
   // MockTestTimeUpToast for why it belongs here rather than to a screen.
@@ -198,10 +208,27 @@ export function WritingSectionPrototype({
   const totalTasks = content.tasks.length;
 
   const goNext = () => {
-    // A time up message belongs to the screen it was raised on, so moving
-    // takes it away rather than carrying it onto the next one (TIMER-01).
+    const nextIndex = Math.min(screenIndex + 1, totalScreens - 1);
+
+    if (
+      mockTestContext?.flow === "full" &&
+      mockTestContext.nextSection &&
+      screens[nextIndex]?.kind === "section-complete"
+    ) {
+      const summary = summarizeWritingSection(content, responses, choices);
+      appendMockTestFullSectionResult({
+        label: "Writing",
+        detail: summary
+          .map((task) => `${task.taskLabel}: ${task.wordCount} words`)
+          .join(" · "),
+      });
+      dismissTimeUp();
+      setSectionBridgeOpen(true);
+      return;
+    }
+
     dismissTimeUp();
-    setScreenIndex((current) => Math.min(current + 1, totalScreens - 1));
+    setScreenIndex(nextIndex);
   };
 
   const goBack = () => {
@@ -297,6 +324,21 @@ export function WritingSectionPrototype({
   // behind it inside the section.
   const showBack = screenIndex > 0;
 
+  const exitBack = mockTestExitBackProps(
+    mockTestContext,
+    screenIndex === 0 &&
+      (screen?.kind === "section-intro" || screen?.kind === "section-video"),
+  );
+
+  const openFullMockBridge = () => {
+    const summary = summarizeWritingSection(content, responses, choices);
+    appendMockTestFullSectionResult({
+      label: "Writing",
+      detail: summary.map((task) => `${task.taskLabel}: ${task.wordCount} words`).join(" · "),
+    });
+    setSectionBridgeOpen(true);
+  };
+
   if (!screen) {
     return null;
   }
@@ -305,6 +347,22 @@ export function WritingSectionPrototype({
   //
   // Wrapped in a function so the whole flow can be given one key below.
   const renderCurrentScreen = () => {
+    if (
+      sectionBridgeOpen &&
+      mockTestContext?.flow === "full" &&
+      mockTestContext.nextSection
+    ) {
+      return (
+        <MockTestSectionPrepScreen
+          title={content.title}
+          completedSectionLabel="Writing"
+          nextSectionLabel={mockTestContext.nextSection.label}
+          nextHref={mockTestContext.nextSection.href}
+          exitHref={mockTestContext.exitHref}
+        />
+      );
+    }
+
     if (screen.kind === "task-choice") {
       const task = content.tasks[screen.taskIndex];
 
@@ -413,7 +471,26 @@ export function WritingSectionPrototype({
           metaText={metaText}
           onNext={goNext}
           onBack={goBack}
-          showBack={showBack}
+          showBack={exitBack.showBack || showBack}
+          backHref={exitBack.backHref}
+          backLabel={exitBack.backLabel}
+        />
+      );
+    }
+
+    if (screen.kind === "section-video" && content.videoScreen) {
+      return (
+        <SectionInstructionVideoScreen
+          title={content.videoScreen.title}
+          video={content.videoScreen.video}
+          description={content.videoScreen.description}
+          helperText={content.videoScreen.helperText}
+          metaText={metaText}
+          onNext={goNext}
+          onSkip={goNext}
+          showBack={exitBack.showBack || showBack}
+          backHref={exitBack.backHref}
+          backLabel={exitBack.backLabel}
         />
       );
     }
@@ -502,6 +579,11 @@ export function WritingSectionPrototype({
         // work.
         onRequestReview={
           evaluateResponses ? () => void requestReview() : undefined
+        }
+        onFinishSection={
+          mockTestContext?.flow === "full" && mockTestContext.nextSection
+            ? openFullMockBridge
+            : undefined
         }
         copy={copy}
         metaText={metaText}

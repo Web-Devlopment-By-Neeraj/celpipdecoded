@@ -24,6 +24,8 @@ export const usageAccessCopy = {
   cardTitle: "AI feedback access",
   cardEyebrow: "Your access",
   badgeLabel: "AI feedback",
+  freeSpeakingLabel: "Free Speaking AI",
+  freeWritingLabel: "Free Writing AI",
   freeLabel: "Free preview",
   monthlyLabel: "Monthly plan",
   paidLabel: "Practice package",
@@ -32,7 +34,7 @@ export const usageAccessCopy = {
   suspendedText:
     "Your account is not able to request AI feedback right now. Please contact the academy so we can help.",
   helperWithAccess:
-    "One scored attempt is used each time an AI feedback report is saved. Practising without AI feedback is always free.",
+    "You get one free AI feedback report for Speaking and one for Writing. Each saved report uses the matching free line (or your plan balance). Practising without AI feedback is always free.",
   helperWithoutAccess:
     "Recording, writing, and timed practice stay available. AI feedback reports need available access.",
   loadFailed:
@@ -41,9 +43,9 @@ export const usageAccessCopy = {
 
 // The blocked state, shown when a learner has no scored attempts left.
 export const scoredAttemptLimitCopy = {
-  title: "You have used your free AI feedback report",
+  title: "No free AI feedback left for this section",
   message:
-    "You have used your free AI feedback report. To continue practising with AI feedback, choose a practice plan.",
+    "You have used your free AI feedback for this section. To continue with AI feedback here, choose a practice plan.",
   requestAccess: "Choose a plan",
   backToDashboard: "Back to dashboard",
   viewPreviousFeedback: "View previous feedback",

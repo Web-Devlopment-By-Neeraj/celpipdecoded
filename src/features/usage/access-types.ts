@@ -33,6 +33,8 @@ export type AccessStatus = (typeof ACCESS_STATUSES)[number];
 export type UsageAccessSummary = {
   accessStatus: AccessStatus;
   freeAttemptsRemaining: number;
+  freeSpeakingRemaining: number;
+  freeWritingRemaining: number;
   monthlyAttemptsRemaining: number;
   paidAttemptsRemaining: number;
   totalAttemptsRemaining: number;
@@ -40,6 +42,10 @@ export type UsageAccessSummary = {
   // second request.
   freeAttemptsTotal: number;
   freeAttemptsUsed: number;
+  freeSpeakingTotal: number;
+  freeSpeakingUsed: number;
+  freeWritingTotal: number;
+  freeWritingUsed: number;
   // Null until a monthly plan is granted. No plan is sold yet.
   planCode: string | null;
   monthlyAttemptLimit: number | null;
@@ -106,11 +112,17 @@ export function noScoredAttemptsResponseBody(): {
 export const EMPTY_USAGE_ACCESS_SUMMARY: UsageAccessSummary = {
   accessStatus: "active",
   freeAttemptsRemaining: 0,
+  freeSpeakingRemaining: 0,
+  freeWritingRemaining: 0,
   monthlyAttemptsRemaining: 0,
   paidAttemptsRemaining: 0,
   totalAttemptsRemaining: 0,
-  freeAttemptsTotal: 1,
-  freeAttemptsUsed: 1,
+  freeAttemptsTotal: 2,
+  freeAttemptsUsed: 2,
+  freeSpeakingTotal: 1,
+  freeSpeakingUsed: 1,
+  freeWritingTotal: 1,
+  freeWritingUsed: 1,
   planCode: null,
   monthlyAttemptLimit: null,
   monthlyPeriodStart: null,

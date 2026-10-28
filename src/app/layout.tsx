@@ -43,10 +43,18 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col bg-cream text-foreground">
+        {/* Task 4: dark mode off — restore apply script when Task 3a ships.
         <script
           dangerouslySetInnerHTML={{
             __html:
               "try{if(localStorage.getItem('celpip-theme')==='dark')document.documentElement.dataset.theme='dark'}catch(e){}",
+          }}
+        />
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{delete document.documentElement.dataset.theme;localStorage.setItem('celpip-theme','light')}catch(e){}",
           }}
         />
         {children}

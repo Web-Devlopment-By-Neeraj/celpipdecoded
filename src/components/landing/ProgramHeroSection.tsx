@@ -1,7 +1,9 @@
 import Link from "next/link";
+import { BrandPromiseTagline } from "@/components/brand/BrandPromiseTagline";
 import { CelpipDecodedLogo } from "@/components/brand/CelpipDecodedLogo";
 import { brandCopy } from "@/features/brand/brand-copy";
-import { Container, Eyebrow } from "./primitives";
+import { MOCK_TEST_1_HUB_PATH } from "@/features/mock-tests/mock-test-1-routes";
+import { Container } from "./primitives";
 
 // Public hero (BRAND-01).
 //
@@ -40,17 +42,21 @@ export function ProgramHeroSection({ signedIn = false }: { signedIn?: boolean })
 
       <Container className="grid gap-14 py-16 sm:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-16 lg:py-28">
         <div>
-          <Eyebrow className="text-brand-teal">{brandCopy.name}</Eyebrow>
+          <BrandPromiseTagline tone="onDark" className="mb-4 sm:mb-5" />
 
-          <h1 className="mt-6 font-serif text-4xl font-semibold leading-[1.05] tracking-tight text-cream sm:text-5xl lg:text-6xl">
+          <h1 className="font-serif text-4xl font-semibold leading-[1.05] tracking-tight text-cream sm:text-5xl lg:text-6xl">
             {brandCopy.heroHeadline}
           </h1>
 
-          <p className="mt-6 max-w-xl text-lg leading-8 text-cream/80">
+          <p className="mt-6 max-w-2xl text-xl leading-9 text-cream/85 sm:text-2xl sm:leading-10">
             {brandCopy.heroSupport}
           </p>
 
-          <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+          <p className="mt-6 max-w-2xl text-lg font-medium leading-8 text-cream/75 sm:text-xl">
+            {brandCopy.instructorLine}
+          </p>
+
+          <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
             <Link
               href={signedIn ? "/dashboard" : "/signup"}
               className="inline-flex h-13 items-center justify-center rounded-full bg-brand px-7 text-base font-semibold text-white shadow-lg shadow-brand/20 transition-colors hover:bg-brand-dark"
@@ -58,22 +64,18 @@ export function ProgramHeroSection({ signedIn = false }: { signedIn?: boolean })
               {signedIn ? "Go to dashboard" : "Start free trial"}
             </Link>
             <Link
-              href="/dashboard"
+              href={signedIn ? MOCK_TEST_1_HUB_PATH : `/signup?next=${encodeURIComponent(MOCK_TEST_1_HUB_PATH)}`}
               className="inline-flex h-13 items-center justify-center rounded-full px-7 text-base font-semibold text-cream ring-1 ring-cream/30 transition-colors hover:bg-cream/10"
             >
               Start mock test
             </Link>
           </div>
-
-          <p className="mt-8 max-w-md text-sm leading-6 text-cream/60">
-            {brandCopy.instructorLine}
-          </p>
         </div>
 
         {/* Brand panel. No photography, no other brand's marks. */}
         <div className="relative mx-auto w-full max-w-md lg:max-w-none">
           <div className="rounded-3xl bg-cream/5 p-8 ring-1 ring-cream/15 backdrop-blur-sm sm:p-10">
-            <CelpipDecodedLogo tone="reversed" size="lg" />
+            <CelpipDecodedLogo tone="reversed" size="lg" showPromiseBelow />
 
             <p className="mt-6 text-sm font-semibold uppercase tracking-[0.2em] text-brand-teal">
               {brandCopy.instructorLabel}

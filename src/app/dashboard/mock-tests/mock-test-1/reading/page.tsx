@@ -7,6 +7,10 @@ import { readingSectionCopy } from "@/features/exam-engine/reading-copy";
 import { withoutReadingSectionAnswerKeys } from "@/features/exam-engine/reading-section-flow";
 import { mockTest1ReadingSection } from "@/features/exam-engine/mock-tests/mock-test-1/reading-section";
 import { markReadingSection } from "./actions";
+import {
+  buildMockTestPlayerContext,
+  parseMockTestFlowMode,
+} from "@/features/mock-tests/mock-test-flow";
 
 export const metadata: Metadata = {
   title: readingSectionCopy.pageTitle,
@@ -74,7 +78,16 @@ export const metadata: Metadata = {
 // direction: not down with the content, and not back up inside a result.
 // Nothing is saved, there is no attempt row and there is no migration.
 
-export default async function MockTest1ReadingSectionPage() {
+export default async function MockTest1ReadingSectionPage({
+  searchParams,
+}: {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const params = searchParams ? await searchParams : {};
+  const mockTestContext = buildMockTestPlayerContext(
+    "reading",
+    parseMockTestFlowMode(params),
+  );
   const supabase = await createSupabaseServerClient();
 
   // The dashboard layout already checks the session, but layouts do not
@@ -96,6 +109,7 @@ export default async function MockTest1ReadingSectionPage() {
       <ReadingSectionPrototype
         content={learnerContent}
         markAnswers={markReadingSection}
+        mockTestContext={mockTestContext}
       />
     </ExamModeViewport>
   );

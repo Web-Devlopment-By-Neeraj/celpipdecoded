@@ -217,10 +217,31 @@ const ROLE_MAILBOX_NAMES = new Set([
   "test",
 ]);
 
-// First name for the greeting, taken from the signed in email local
-// part. Falls back to a plain greeting when nothing usable is there, so
-// the hero never renders an address or an empty name.
-export function getGreetingName(email: string | null | undefined): string {
+// First word of the name the learner entered at signup. Keeps the
+// spelling they typed after the first letter, so "McDonald" stays
+// "McDonald". Empty when the stored value is missing or not a name.
+function firstNameFromSavedName(fullName: string | null | undefined): string {
+  const first = (fullName ?? "").trim().split(/\s+/)[0] ?? "";
+
+  if (!/^[A-Za-z][A-Za-z'’-]{1,39}$/.test(first)) {
+    return "";
+  }
+
+  return first.charAt(0).toUpperCase() + first.slice(1);
+}
+
+// First name for the greeting. The name saved at signup wins. The email
+// local part is only a fallback when no saved name is usable, so a
+// mailbox like sahildangibusiness@ is never shown in place of a real name.
+// Falls back to a plain greeting when nothing usable is there, so the
+// hero never renders an address or an empty name.
+export function getGreetingName(
+  email: string | null | undefined,
+  fullName?: string | null,
+): string {
+  const saved = firstNameFromSavedName(fullName);
+  if (saved) return saved;
+
   if (!email) return "";
 
   const localPart = email.split("@")[0] ?? "";

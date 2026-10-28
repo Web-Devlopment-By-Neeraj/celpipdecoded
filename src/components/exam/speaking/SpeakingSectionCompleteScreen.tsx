@@ -81,6 +81,8 @@ export type SpeakingSectionCompleteScreenProps = {
   metaText?: string;
   onBack?: () => void;
   showBack?: boolean;
+  onFinishSection?: () => void;
+  finishSectionLabel?: string;
 };
 
 export function SpeakingSectionCompleteScreen({
@@ -94,6 +96,8 @@ export function SpeakingSectionCompleteScreen({
   metaText,
   onBack,
   showBack = true,
+  onFinishSection,
+  finishSectionLabel = "Finish full mock test",
 }: SpeakingSectionCompleteScreenProps) {
   const recordedCount = tasks.filter((task) => task.recorded).length;
   const missingCount = tasks.length - recordedCount;
@@ -207,6 +211,14 @@ export function SpeakingSectionCompleteScreen({
               />
             ) : null}
           </section>
+
+          {onFinishSection ? (
+            <div className={examScreenBody.actions}>
+              <ExamButton variant="primary" size="md" onClick={onFinishSection}>
+                {finishSectionLabel}
+              </ExamButton>
+            </div>
+          ) : null}
 
           <div className={examScreenBody.actions}>
             <ExamButton

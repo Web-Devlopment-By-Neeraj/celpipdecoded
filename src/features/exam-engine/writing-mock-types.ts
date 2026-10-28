@@ -28,6 +28,7 @@
 
 import type {
   ExamInstruction,
+  ExamSectionInstructionVideoContent,
   ExamSectionIntroDetail,
 } from "./instruction-screen-types";
 
@@ -195,6 +196,7 @@ export type WritingSectionContent = {
   // keeps its own content.title.
   title: string;
   instructionScreen: WritingSectionInstructionContent;
+  videoScreen?: ExamSectionInstructionVideoContent;
   tasks: WritingTaskContent[];
 };
 
@@ -229,6 +231,7 @@ export type WritingChoiceMap = Readonly<Record<string, string>>;
 export type WritingSectionScreen =
   // 1. Writing section intro.
   | { kind: "section-intro"; id: string }
+  | { kind: "section-video"; id: string }
   // 2 and 5. The tasks, in order, one working screen each.
   | { kind: "task"; id: string; taskIndex: number }
   // 3. Shown before a task that is not the first one. It carries no

@@ -132,9 +132,14 @@ export default async function DashboardPage() {
     data: UserBadgeRow[] | null;
     error: { message: string } | null;
   } = { data: [], error: null };
+  let savedFullName =
+    typeof user.user_metadata?.full_name === "string"
+      ? user.user_metadata.full_name
+      : null;
 
   try {
-    const [modulesQuery, attemptsQuery, badgesQuery] = await Promise.all([
+    const [modulesQuery, attemptsQuery, badgesQuery, profileQuery] =
+      await Promise.all([
       supabase
         .from("modules")
         .select("id, slug, title, description, status, sort_order")
@@ -153,6 +158,11 @@ export default async function DashboardPage() {
         .eq("user_id", user.id)
         .order("earned_at", { ascending: false })
         .limit(BADGE_PREVIEW_LIMIT),
+      supabase
+        .from("profiles")
+        .select("full_name")
+        .eq("id", user.id)
+        .maybeSingle<{ full_name: string | null }>(),
     ]);
 
     modulesResult = {
@@ -167,6 +177,9 @@ export default async function DashboardPage() {
       data: (badgesQuery.data ?? []) as unknown as UserBadgeRow[],
       error: badgesQuery.error,
     };
+    if (profileQuery.data?.full_name) {
+      savedFullName = profileQuery.data.full_name;
+    }
   } catch (err) {
     console.error("Dashboard data request failed:", err);
     modulesResult = { data: [], error: { message: "request failed" } };
@@ -238,6 +251,7 @@ export default async function DashboardPage() {
 
       <DashboardHero
         userEmail={user.email ?? null}
+        fullName={savedFullName}
         hasPractice={summary.hasAnyPractice}
         continueHref={recommendation.href}
         continueLabel={recommendation.ctaLabel}

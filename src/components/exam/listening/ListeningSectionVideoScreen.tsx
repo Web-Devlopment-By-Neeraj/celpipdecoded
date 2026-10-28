@@ -1,4 +1,5 @@
 import { ExamVideoScreen } from "../ExamVideoScreen";
+import { INSTRUCTIONAL_VIDEO_PRELOAD } from "@/features/media/cloudinary-video";
 import { ListeningSectionProgressBar } from "./ListeningSectionProgressBar";
 import { listeningSectionCopy } from "@/features/exam-engine/listening-section-copy";
 import type { ListeningSectionCopy } from "@/features/exam-engine/listening-section-copy";
@@ -43,6 +44,8 @@ export type ListeningSectionVideoScreenProps = {
   onSkip?: () => void;
   onBack?: () => void;
   showBack?: boolean;
+  backHref?: string;
+  backLabel?: string;
 };
 
 export function ListeningSectionVideoScreen({
@@ -56,6 +59,8 @@ export function ListeningSectionVideoScreen({
   onSkip,
   onBack,
   showBack = true,
+  backHref,
+  backLabel,
 }: ListeningSectionVideoScreenProps) {
   return (
     <ExamVideoScreen
@@ -65,6 +70,7 @@ export function ListeningSectionVideoScreen({
       posterSrc={content.video.poster}
       durationLabel={content.video.durationLabel}
       autoPlayVideo
+      preload={INSTRUCTIONAL_VIDEO_PRELOAD}
       description={content.description}
       helperText={content.helperText}
       metaText={metaText}
@@ -72,6 +78,8 @@ export function ListeningSectionVideoScreen({
       onSkip={onSkip}
       onBack={onBack}
       showBack={showBack}
+      backHref={backHref}
+      backLabel={backLabel}
     >
       <ListeningSectionProgressBar
         currentPart={0}

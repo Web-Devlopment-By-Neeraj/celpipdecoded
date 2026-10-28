@@ -63,7 +63,7 @@ export function SignupForm({ nextPath }: { nextPath?: string | null }) {
       return;
     }
 
-    router.push(nextPath || "/dashboard");
+    router.push(nextPath || "/onboarding");
     router.refresh();
   }
 

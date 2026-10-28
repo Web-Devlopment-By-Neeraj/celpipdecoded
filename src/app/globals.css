@@ -236,9 +236,10 @@ body {
    utility such as bg-academy-navy-soft compiles to
    background-color: var(--academy-navy-soft) and picks up whatever the
    nearest ancestor has that variable set to. */
-/* Dark mode keeps the navy brand bars (bg-ink, text-cream) as they are.
+/* Task 4: dark mode CSS disabled — uncomment block for Task 3a.
+   Dark mode keeps the navy brand bars (bg-ink, text-cream) as they are.
    Only the reading surfaces and the text on them change, so a header,
-   hero, or timer does not flip into pale text on a pale background. */
+   hero, or timer does not flip into pale text on a pale background.
 html[data-theme="dark"] {
   color-scheme: dark;
   --background: #0c1b2a;
@@ -270,7 +271,7 @@ html[data-theme="dark"] .bg-academy-paper {
   box-shadow: inset 0 0 0 1px rgb(244 241 234 / 0.08);
 }
 
-/* Navy pills (active nav, avatars) need a light fill once the page is dark. */
+   Navy pills (active nav, avatars) need a light fill once the page is dark.
 html[data-theme="dark"] .bg-academy-navy.text-white {
   background-color: #f4f1ea;
   color: #102433;
@@ -280,7 +281,7 @@ html[data-theme="dark"] .bg-academy-navy.text-white [class*="text-white"] {
   color: rgb(16 36 51 / 0.72);
 }
 
-/* The dashboard wordmark is ink-on-cream. On a dark sidebar that ink disappears. */
+   Dashboard wordmark is ink-on-cream; on a dark sidebar that ink disappears.
 html[data-theme="dark"] .text-brand-ink {
   color: #f4f1ea;
 }
@@ -364,6 +365,7 @@ html[data-theme="dark"] [data-mock-test-player] [class*="text-ink/"],
 html[data-theme="dark"] [data-mock-test-player] [class*="text-academy-navy/"] {
   color: #1f2937;
 }
+*/
 
 [data-mock-test-player] {
   --academy-navy: var(--player-ink);

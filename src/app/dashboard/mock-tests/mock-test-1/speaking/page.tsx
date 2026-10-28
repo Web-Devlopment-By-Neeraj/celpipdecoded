@@ -5,6 +5,10 @@ import { ExamModeViewport } from "@/components/exam/ExamModeViewport";
 import { SpeakingSectionPrototype } from "@/components/exam/speaking/SpeakingSectionPrototype";
 import { speakingMockCopy } from "@/features/exam-engine/speaking-mock-copy";
 import { mockTest1SpeakingSection } from "@/features/exam-engine/mock-tests/mock-test-1/speaking-section";
+import {
+  buildMockTestPlayerContext,
+  parseMockTestFlowMode,
+} from "@/features/mock-tests/mock-test-flow";
 
 export const metadata: Metadata = {
   title: speakingMockCopy.pageTitle,
@@ -82,7 +86,16 @@ export const metadata: Metadata = {
 // request could spend a transcription call. No service role, and no
 // write. The page carries robots noindex.
 
-export default async function MockTest1SpeakingSectionPage() {
+export default async function MockTest1SpeakingSectionPage({
+  searchParams,
+}: {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const params = searchParams ? await searchParams : {};
+  const mockTestContext = buildMockTestPlayerContext(
+    "speaking",
+    parseMockTestFlowMode(params),
+  );
   const supabase = await createSupabaseServerClient();
 
   // The dashboard layout already checks the session, but layouts do not
@@ -101,7 +114,10 @@ export default async function MockTest1SpeakingSectionPage() {
   // could be given an unfair advantage by reading.
   return (
     <ExamModeViewport label={speakingMockCopy.examRegionLabel}>
-      <SpeakingSectionPrototype content={mockTest1SpeakingSection} />
+      <SpeakingSectionPrototype
+        content={mockTest1SpeakingSection}
+        mockTestContext={mockTestContext}
+      />
     </ExamModeViewport>
   );
 }

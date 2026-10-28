@@ -6,6 +6,10 @@ import { WritingSectionPrototype } from "@/components/exam/writing/WritingSectio
 import { writingMockCopy } from "@/features/exam-engine/writing-mock-copy";
 import { mockTest1WritingSection } from "@/features/exam-engine/mock-tests/mock-test-1/writing-section";
 import { evaluateWritingMockTest } from "./actions";
+import {
+  buildMockTestPlayerContext,
+  parseMockTestFlowMode,
+} from "@/features/mock-tests/mock-test-flow";
 
 export const metadata: Metadata = {
   title: writingMockCopy.pageTitle,
@@ -66,7 +70,16 @@ export const metadata: Metadata = {
 // an action and an action is reachable by direct POST. No API route, no
 // service role, and no write. The page carries robots noindex.
 
-export default async function MockTest1WritingSectionPage() {
+export default async function MockTest1WritingSectionPage({
+  searchParams,
+}: {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const params = searchParams ? await searchParams : {};
+  const mockTestContext = buildMockTestPlayerContext(
+    "writing",
+    parseMockTestFlowMode(params),
+  );
   const supabase = await createSupabaseServerClient();
 
   // The dashboard layout already checks the session, but layouts do not
@@ -92,6 +105,7 @@ export default async function MockTest1WritingSectionPage() {
         // importing it inside the component keeps the component
         // renderable without a server behind it.
         evaluateResponses={evaluateWritingMockTest}
+        mockTestContext={mockTestContext}
       />
     </ExamModeViewport>
   );

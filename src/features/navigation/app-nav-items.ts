@@ -10,6 +10,7 @@
 
 export type AppNavIconName =
   | "dashboard"
+  | "mockTests"
   | "speaking"
   | "writing"
   | "courses"
@@ -35,6 +36,13 @@ export const APP_NAV_ITEMS: readonly AppNavItem[] = [
     icon: "dashboard",
     description: "Your practice modules and progress",
     tourId: "nav-dashboard",
+  },
+  {
+    label: "Mock tests",
+    href: "/dashboard/mock-tests",
+    icon: "mockTests",
+    description: "Full mocks and section practice",
+    tourId: "nav-mock-tests",
   },
   {
     label: "Speaking practice",
@@ -79,6 +87,7 @@ export function isNavItemActive(item: AppNavItem, pathname: string): boolean {
 // Labels for path segments, used by the breadcrumb trail.
 const SEGMENT_LABELS: Record<string, string> = {
   dashboard: "Dashboard",
+  "mock-tests": "Mock tests",
   speaking: "Speaking practice",
   writing: "Writing practice",
   courses: "Courses",

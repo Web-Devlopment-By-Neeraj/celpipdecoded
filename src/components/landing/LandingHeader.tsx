@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useState } from "react";
 import { CelpipDecodedLogo } from "@/components/brand/CelpipDecodedLogo";
-import { ThemeToggle } from "@/components/theme/ThemeToggle";
+// Task 4: dark mode off — restore ThemeToggle in Task 3a
+// import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 const navLinks = [
   { label: "The method", href: "#program" },
@@ -45,7 +46,8 @@ export function LandingHeader({ signedIn = false }: { signedIn?: boolean }) {
         </nav>
 
         <div className="flex items-center gap-2 sm:gap-3">
-          <ThemeToggle className="inline-flex h-10 items-center justify-center rounded-full px-3 text-sm font-semibold text-cream/80 hover:text-cream" />
+          {/* Task 3a: restore dark/light control */}
+          {/* <ThemeToggle className="inline-flex h-10 items-center justify-center rounded-full px-3 text-sm font-semibold text-cream/80 hover:text-cream" /> */}
           {signedIn ? (
             <Link
               href="/dashboard"

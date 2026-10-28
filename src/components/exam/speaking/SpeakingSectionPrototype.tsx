@@ -46,6 +46,13 @@ import type {
   SpeakingSectionContent,
   SpeakingTaskContent,
 } from "@/features/exam-engine/speaking-mock-types";
+import { SectionInstructionVideoScreen } from "../SectionInstructionVideoScreen";
+import { MockTestFullCompleteScreen } from "@/components/mock-tests/MockTestFullCompleteScreen";
+import {
+  appendMockTestFullSectionResult,
+  type MockTestPlayerContext,
+} from "@/features/mock-tests/mock-test-flow";
+import { mockTestExitBackProps } from "@/features/mock-tests/mock-test-player-ui";
 
 // Mock Test 1 Speaking section (EXAM-27, extended by EXAM-28).
 //
@@ -213,6 +220,7 @@ export type SpeakingSectionPrototypeProps = {
   // completion screen without the Submit for AI Review control. Used
   // where the flow is being walked through without a server behind it.
   enableReview?: boolean;
+  mockTestContext?: MockTestPlayerContext;
 };
 
 export function SpeakingSectionPrototype({
@@ -220,6 +228,7 @@ export function SpeakingSectionPrototype({
   copy = speakingMockCopy,
   dashboardHref,
   enableReview = true,
+  mockTestContext,
 }: SpeakingSectionPrototypeProps) {
   const screens = useMemo(() => buildSpeakingSectionFlow(content), [content]);
 
@@ -229,6 +238,7 @@ export function SpeakingSectionPrototype({
   // ever offered one (SPEAKING-05A).
   const [choices, setChoices] = useState<SpeakingChoiceMap>({});
   const [review, setReview] = useState<ReviewState>({ status: "idle" });
+  const [showFullMockComplete, setShowFullMockComplete] = useState(false);
 
   // The one time up message for the whole section (TIMER-01). See
   // MockTestTimeUpToast for why it belongs here rather than to a screen.
@@ -251,10 +261,25 @@ export function SpeakingSectionPrototype({
   const totalTasks = content.tasks.length;
 
   const goNext = () => {
-    // A time up message belongs to the screen it was raised on, so moving
-    // takes it away rather than carrying it onto the next one (TIMER-01).
+    const nextIndex = Math.min(screenIndex + 1, totalScreens - 1);
+
+    if (
+      mockTestContext?.flow === "full" &&
+      mockTestContext.isLastSectionInFullMock &&
+      screens[nextIndex]?.kind === "section-complete"
+    ) {
+      const tasks = summarizeSpeakingSection(content, responses);
+      appendMockTestFullSectionResult({
+        label: "Speaking",
+        detail: `${tasks.filter((task) => task.recorded).length}/${tasks.length} tasks recorded`,
+      });
+      dismissTimeUp();
+      setShowFullMockComplete(true);
+      return;
+    }
+
     dismissTimeUp();
-    setScreenIndex((current) => Math.min(current + 1, totalScreens - 1));
+    setScreenIndex(nextIndex);
   };
 
   const goBack = () => {
@@ -429,6 +454,21 @@ export function SpeakingSectionPrototype({
   // behind it inside the section.
   const showBack = screenIndex > 0;
 
+  const exitBack = mockTestExitBackProps(
+    mockTestContext,
+    screenIndex === 0 &&
+      (screen?.kind === "section-intro" || screen?.kind === "section-video"),
+  );
+
+  const finishFullMockTest = () => {
+    const tasks = summarizeSpeakingSection(content, responses);
+    appendMockTestFullSectionResult({
+      label: "Speaking",
+      detail: `${tasks.filter((task) => task.recorded).length}/${tasks.length} tasks recorded`,
+    });
+    setShowFullMockComplete(true);
+  };
+
   if (!screen) {
     return null;
   }
@@ -437,6 +477,15 @@ export function SpeakingSectionPrototype({
   //
   // Wrapped in a function so the whole flow can be given one key below.
   const renderCurrentScreen = () => {
+    if (showFullMockComplete) {
+      return (
+        <MockTestFullCompleteScreen
+          title={content.title}
+          exitHref={mockTestContext?.exitHref}
+        />
+      );
+    }
+
     // The three screens a task with a choiceStep gets before its
     // recording screen (SPEAKING-05A). Mock Test 1 produces one of each,
     // all for Task 5.
@@ -480,13 +529,13 @@ export function SpeakingSectionPrototype({
             // The flow screen id, so the choice window belongs to the
             // screen and picking a card does not restart it.
             timerScreenKey={screen.id}
-            // The window closing raises the time up message and does
-            // nothing else (TIMER-01). It selects nothing.
-            onTimeExpire={showTimeUp}
+            // When the window closes with no card selected, the computer
+            // chooses one and the section moves on.
+            onTimeExpire={() => chooseAndAdvance(task)}
             copy={copy}
             metaText={taskMetaText}
             // Next chooses for the learner where they did not choose, and
-            // then moves. It never holds the screen.
+            // then moves. The timer does the same when it reaches zero.
             onNext={() => chooseAndAdvance(task)}
             onBack={goBack}
             showBack={showBack}
@@ -588,7 +637,26 @@ export function SpeakingSectionPrototype({
           metaText={metaText}
           onNext={goNext}
           onBack={goBack}
-          showBack={showBack}
+          showBack={exitBack.showBack || showBack}
+          backHref={exitBack.backHref}
+          backLabel={exitBack.backLabel}
+        />
+      );
+    }
+
+    if (screen.kind === "section-video" && content.videoScreen) {
+      return (
+        <SectionInstructionVideoScreen
+          title={content.videoScreen.title}
+          video={content.videoScreen.video}
+          description={content.videoScreen.description}
+          helperText={content.videoScreen.helperText}
+          metaText={metaText}
+          onNext={goNext}
+          onSkip={goNext}
+          showBack={exitBack.showBack || showBack}
+          backHref={exitBack.backHref}
+          backLabel={exitBack.backLabel}
         />
       );
     }
@@ -683,6 +751,12 @@ export function SpeakingSectionPrototype({
         // a run with no server behind it shows no control that cannot
         // work.
         onRequestReview={enableReview ? () => void requestReview() : undefined}
+        onFinishSection={
+          mockTestContext?.flow === "full" &&
+          mockTestContext.isLastSectionInFullMock
+            ? finishFullMockTest
+            : undefined
+        }
         copy={copy}
         metaText={metaText}
         onBack={goBack}
