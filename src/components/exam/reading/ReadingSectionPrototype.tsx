@@ -1,6 +1,13 @@
 "use client";
 
-import { Fragment, useMemo, useRef, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
+import { SectionInstructionVideoScreen } from "../SectionInstructionVideoScreen";
+import { MockTestSectionPrepScreen } from "@/components/mock-tests/MockTestSectionPrepScreen";
+import {
+  appendMockTestFullSectionResult,
+  type MockTestPlayerContext,
+} from "@/features/mock-tests/mock-test-flow";
+import { mockTestExitBackProps } from "@/features/mock-tests/mock-test-player-ui";
 import { ExamButton } from "../ExamButton";
 import { ExamInstructionRow } from "../ExamInstructionRow";
 import { ExamShell } from "../ExamShell";
@@ -146,6 +153,7 @@ export type ReadingSectionPrototypeProps = {
   copy?: ReadingSectionCopy;
   // Where Return to dashboard goes from the score screen.
   dashboardHref?: string;
+  mockTestContext?: MockTestPlayerContext;
 };
 
 export function ReadingSectionPrototype({
@@ -153,12 +161,14 @@ export function ReadingSectionPrototype({
   markAnswers,
   copy = readingSectionCopy,
   dashboardHref,
+  mockTestContext,
 }: ReadingSectionPrototypeProps) {
   const screens = useMemo(() => buildReadingSectionFlow(content), [content]);
 
   const [screenIndex, setScreenIndex] = useState(0);
   const [answers, setAnswers] = useState<ReadingSectionAnswerMap>({});
   const [marking, setMarking] = useState<MarkingState>({ status: "idle" });
+  const [sectionBridgeOpen, setSectionBridgeOpen] = useState(false);
 
   // The one time up message for the whole run (TIMER-01). See
   // MockTestTimeUpToast for why it belongs to the section rather than to a
@@ -175,6 +185,7 @@ export function ReadingSectionPrototype({
   // bumping it must take effect immediately rather than at the next
   // render.
   const markingRequestId = useRef(0);
+  const savedFullMockReadingResult = useRef(false);
 
   const screen = screens[screenIndex];
   const totalScreens = screens.length;
@@ -207,8 +218,39 @@ export function ReadingSectionPrototype({
   // here rather than in an effect keeps the request tied to the click
   // that caused it, and re-marks if the learner goes back into a part,
   // changes an answer and finishes again.
+  useEffect(() => {
+    if (
+      !sectionBridgeOpen ||
+      marking.status !== "ready" ||
+      savedFullMockReadingResult.current
+    ) {
+      return;
+    }
+
+    savedFullMockReadingResult.current = true;
+    appendMockTestFullSectionResult({
+      label: "Reading",
+      detail: `${marking.marked.summary.correctCount}/${marking.marked.summary.totalQuestions} correct${
+        marking.marked.estimatedBand
+          ? ` · ${marking.marked.estimatedBand.label}`
+          : ""
+      }`,
+    });
+  }, [sectionBridgeOpen, marking]);
+
   const goNext = () => {
     const nextIndex = Math.min(screenIndex + 1, totalScreens - 1);
+
+    if (
+      mockTestContext?.flow === "full" &&
+      mockTestContext.nextSection &&
+      screens[nextIndex]?.kind === "section-score"
+    ) {
+      void requestMarking(answers);
+      dismissTimeUp();
+      setSectionBridgeOpen(true);
+      return;
+    }
 
     if (screens[nextIndex]?.kind === "section-score") {
       void requestMarking(answers);
@@ -378,7 +420,33 @@ export function ReadingSectionPrototype({
   // Wrapped in a function so the whole flow can be given one key below.
   // Everything after the part branch belongs to the section rather than
   // to a part, so it carries the section title and the section meta line.
+  const exitBack = mockTestExitBackProps(
+    mockTestContext,
+    screenIndex === 0 &&
+      (screen?.kind === "section-intro" || screen?.kind === "section-video"),
+  );
+
+  const openFullMockBridge = () => {
+    setSectionBridgeOpen(true);
+  };
+
   const renderCurrentScreen = () => {
+    if (
+      sectionBridgeOpen &&
+      mockTestContext?.flow === "full" &&
+      mockTestContext.nextSection
+    ) {
+      return (
+        <MockTestSectionPrepScreen
+          title={content.title}
+          completedSectionLabel="Reading"
+          nextSectionLabel={mockTestContext.nextSection.label}
+          nextHref={mockTestContext.nextSection.href}
+          exitHref={mockTestContext.exitHref}
+        />
+      );
+    }
+
     if (screen.kind === "part") {
       return renderPartScreen(screen);
     }
@@ -393,7 +461,26 @@ export function ReadingSectionPrototype({
           metaText={metaText}
           onNext={goNext}
           onBack={goBack}
-          showBack={showBack}
+          showBack={exitBack.showBack || showBack}
+          backHref={exitBack.backHref}
+          backLabel={exitBack.backLabel}
+        />
+      );
+    }
+
+    if (screen.kind === "section-video" && content.videoScreen) {
+      return (
+        <SectionInstructionVideoScreen
+          title={content.videoScreen.title}
+          video={content.videoScreen.video}
+          description={content.videoScreen.description}
+          helperText={content.videoScreen.helperText}
+          metaText={metaText}
+          onNext={goNext}
+          onSkip={goNext}
+          showBack={exitBack.showBack || showBack}
+          backHref={exitBack.backHref}
+          backLabel={exitBack.backLabel}
         />
       );
     }
@@ -458,6 +545,11 @@ export function ReadingSectionPrototype({
         metaText={metaText}
         onBack={goBack}
         showBack={showBack}
+        onFinishSection={
+          mockTestContext?.flow === "full" && mockTestContext.nextSection
+            ? openFullMockBridge
+            : undefined
+        }
       />
     );
   };

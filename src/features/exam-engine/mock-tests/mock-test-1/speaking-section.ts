@@ -94,6 +94,7 @@
 //
 // House style: normal hyphens only, no long hyphens or em dashes.
 
+import { getInstructionalVideoAsset } from "../../instructional-video-assets";
 import { speakingMockCopy } from "../../speaking-mock-copy";
 import {
   speakingPrepTimer,
@@ -246,6 +247,12 @@ export const mockTest1SpeakingSection: SpeakingSectionContent = {
     // introDetails is deliberately unset. The intro screen counts the
     // tasks and sums the windows off the content instead, so the card
     // cannot claim a total the section no longer has.
+  },
+
+  videoScreen: {
+    title: `${SECTION_TITLE}: Instructional video`,
+    video: getInstructionalVideoAsset("speaking"),
+    description: getInstructionalVideoAsset("speaking").description,
   },
 
   tasks: [

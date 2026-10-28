@@ -116,6 +116,10 @@ export function buildSpeakingSectionFlow(
     { kind: "section-intro", id: `${content.sectionId}-intro` },
   ];
 
+  if (content.videoScreen) {
+    screens.push({ kind: "section-video", id: `${content.sectionId}-video` });
+  }
+
   content.tasks.forEach((task, taskIndex) => {
     if (taskIndex > 0) {
       screens.push({

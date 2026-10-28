@@ -142,6 +142,7 @@ export async function transcribeAttempt(
   const access = await checkScoredAttemptAccess({
     attemptId: attempt.id,
     userId: input.userId,
+    moduleSlug: SPEAKING_MODULE_SLUG,
   });
 
   if (!access.allowed) {

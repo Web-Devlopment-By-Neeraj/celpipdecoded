@@ -50,6 +50,8 @@ export type SpeakingSectionIntroScreenProps = {
   onNext?: () => void;
   onBack?: () => void;
   showBack?: boolean;
+  backHref?: string;
+  backLabel?: string;
 };
 
 export function SpeakingSectionIntroScreen({
@@ -59,6 +61,8 @@ export function SpeakingSectionIntroScreen({
   onNext,
   onBack,
   showBack = true,
+  backHref,
+  backLabel,
 }: SpeakingSectionIntroScreenProps) {
   const screen = content.instructionScreen;
 
@@ -84,6 +88,8 @@ export function SpeakingSectionIntroScreen({
       onNext={onNext}
       onBack={onBack}
       showBack={showBack}
+      backHref={backHref}
+      backLabel={backLabel}
       intro={
         // No practice eyebrow above the section name. The window this
         // screen sits in is the practice test, and a screen inside it

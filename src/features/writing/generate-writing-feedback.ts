@@ -268,6 +268,7 @@ export async function generateWritingFeedback(
   const access = await checkScoredAttemptAccess({
     attemptId: attempt.id,
     userId: input.userId,
+    moduleSlug: WRITING_MODULE_SLUG,
   });
 
   if (!access.allowed) {

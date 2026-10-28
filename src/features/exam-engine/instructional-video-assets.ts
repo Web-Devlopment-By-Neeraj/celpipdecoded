@@ -1,34 +1,42 @@
 // Registry of the instructional videos the practice test engine plays
 // (EXAM-02).
 //
-// The clips are objects in the public Supabase bucket
-// instructional-videos. They are not stored in git. Upload them with
-// scripts/upload-instructional-videos.mjs after the bucket migration.
+// Clips are hosted on Cloudinary (fast CDN, f_auto/q_auto). They are not
+// stored in git. Override any URL with NEXT_PUBLIC_* env vars if needed.
 //
 // Strings and pure helpers only, no side effects, so this file is safe to
 // import from a client component.
 //
 // House style: normal hyphens only, no long hyphens or em dashes.
 
+import { cloudinaryVideoDeliveryUrl } from "@/features/media/cloudinary-video";
 import type {
   ExamInstructionalVideoAsset,
   ExamSectionKey,
 } from "./instruction-screen-types";
 
-const INSTRUCTIONAL_VIDEO_BUCKET = "instructional-videos";
+const DEFAULT_PUBLIC_IDS: Record<ExamSectionKey, string> = {
+  overview: "v1784581003/1._Overview_Instructional_Video_vqrdts.mp4",
+  listening: "v1784580998/2._Listening_Instructional_Video_rhpfwo.mp4",
+  reading: "v1784581006/3._Reading_Instructional_Video_flj4qa.mp4",
+  writing: "v1784581004/4._Writing_Instructional_Video_o3xpew.mp4",
+  speaking: "v1784581017/5._Speaking_Instructional_Video_wictsq.mp4",
+};
 
-function instructionalVideoUrl(fileName: string): string {
-  const base = process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\/$/, "");
-  if (!base) return "";
-  return `${base}/storage/v1/object/public/${INSTRUCTIONAL_VIDEO_BUCKET}/${fileName}`;
+const ENV_SRC: Partial<Record<ExamSectionKey, string | undefined>> = {
+  overview: process.env.NEXT_PUBLIC_INSTRUCTIONAL_VIDEO_OVERVIEW_SRC,
+  listening: process.env.NEXT_PUBLIC_INSTRUCTIONAL_VIDEO_LISTENING_SRC,
+  reading: process.env.NEXT_PUBLIC_INSTRUCTIONAL_VIDEO_READING_SRC,
+  writing: process.env.NEXT_PUBLIC_INSTRUCTIONAL_VIDEO_WRITING_SRC,
+  speaking: process.env.NEXT_PUBLIC_INSTRUCTIONAL_VIDEO_SPEAKING_SRC,
+};
+
+function instructionalVideoSrc(section: ExamSectionKey): string {
+  const fromEnv = ENV_SRC[section]?.trim();
+  if (fromEnv) return fromEnv;
+  return cloudinaryVideoDeliveryUrl(DEFAULT_PUBLIC_IDS[section]);
 }
 
-// The five clips, keyed by section.
-//
-// poster and durationLabel are deliberately unset. There is no poster
-// image for any of these files, and the running times are not recorded
-// anywhere in the repository, so a value here would be a guess shown to a
-// learner. Fill them in when the real values are known.
 export const INSTRUCTIONAL_VIDEO_ASSETS: Record<
   ExamSectionKey,
   ExamInstructionalVideoAsset
@@ -36,42 +44,40 @@ export const INSTRUCTIONAL_VIDEO_ASSETS: Record<
   overview: {
     section: "overview",
     title: "Complete test overview video",
-    src: instructionalVideoUrl("overview.mp4"),
+    src: instructionalVideoSrc("overview"),
     description:
       "How a full CELPIP Decoded practice test runs from start to finish, and what to expect in each of the four sections.",
   },
   listening: {
     section: "listening",
     title: "Listening instructional video",
-    src: instructionalVideoUrl("listening.mp4"),
+    src: instructionalVideoSrc("listening"),
     description:
       "How the Listening section works in this practice test engine, including the audio screens and the answer windows.",
   },
   reading: {
     section: "reading",
     title: "Reading instructional video",
-    src: instructionalVideoUrl("reading.mp4"),
+    src: instructionalVideoSrc("reading"),
     description:
       "How the Reading section works in this practice test engine, including the split screen layout and the part timer.",
   },
   writing: {
     section: "writing",
     title: "Writing instructional video",
-    src: instructionalVideoUrl("writing.mp4"),
+    src: instructionalVideoSrc("writing"),
     description:
       "How the Writing section works in this practice test engine, including the editor, the word count, and the task timing.",
   },
   speaking: {
     section: "speaking",
     title: "Speaking instructional video",
-    src: instructionalVideoUrl("speaking.mp4"),
+    src: instructionalVideoSrc("speaking"),
     description:
       "How the Speaking section works in this practice test engine, including the preparation phase and the recording phase.",
   },
 };
 
-// Order the clips appear in a full practice test: the overview first,
-// then one per section in section order.
 export const INSTRUCTIONAL_VIDEO_ORDER: readonly ExamSectionKey[] = [
   "overview",
   "listening",
@@ -80,23 +86,16 @@ export const INSTRUCTIONAL_VIDEO_ORDER: readonly ExamSectionKey[] = [
   "speaking",
 ] as const;
 
-// Look up one clip. Typed on ExamSectionKey, so a missing section is a
-// build error rather than a blank screen.
 export function getInstructionalVideoAsset(
   section: ExamSectionKey,
 ): ExamInstructionalVideoAsset {
   return INSTRUCTIONAL_VIDEO_ASSETS[section];
 }
 
-// The clips in play order.
 export function listInstructionalVideoAssets(): ExamInstructionalVideoAsset[] {
   return INSTRUCTIONAL_VIDEO_ORDER.map(getInstructionalVideoAsset);
 }
 
-// Make a raw public path safe to use as a media src.
-//
-// An absolute URL, including a Supabase storage URL, is returned unchanged.
-// A site-relative path has each segment encoded so spaces stay valid.
 export function resolveExamMediaSrc(src: string): string {
   if (/^[a-z][a-z0-9+.-]*:/i.test(src)) {
     return src;

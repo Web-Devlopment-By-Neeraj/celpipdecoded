@@ -18,7 +18,7 @@ export function Footer() {
       <Container className="py-14">
         <div className="flex flex-col items-center gap-5 text-center">
           <Link href="/" aria-label={brandCopy.name}>
-            <CelpipDecodedLogo tone="reversed" size="lg" />
+            <CelpipDecodedLogo tone="reversed" size="lg" showPromiseBelow />
           </Link>
 
           <p className="text-sm font-medium text-cream/70">

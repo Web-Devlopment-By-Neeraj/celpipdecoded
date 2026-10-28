@@ -22,6 +22,11 @@ export const INSTRUCTOR_NAME = "Amar";
 
 export const COMMUNITY_NAME = "The Codebreakers";
 
+// Three-word promise from Website Build Pack v3.1 and the hero mockup.
+export const BRAND_PROMISE_PARTS = ["Decode", "Practice", "Succeed"] as const;
+
+export const BRAND_PROMISE_ROW = BRAND_PROMISE_PARTS.join(" · ");
+
 // The full legal line. Shown once per surface, in the footer.
 export const BRAND_DISCLAIMER =
   "Not affiliated with, endorsed by, or acting on behalf of Paragon Testing Enterprises, Prometric, or CELPIP. CELPIP is a trademark of its owner. AI feedback is a practice estimate, not an official CELPIP result.";
@@ -48,6 +53,8 @@ export const brandCopy = {
   instructorLabel: "Instructor: " + INSTRUCTOR_NAME,
 
   tagline: "CELPIP practice, decoded",
+  brandPromiseRow: BRAND_PROMISE_ROW,
+  brandPromiseParts: BRAND_PROMISE_PARTS,
   communityName: COMMUNITY_NAME,
   communityLine:
     "Practise alongside " + COMMUNITY_NAME + ", the CELPIP Decoded community.",

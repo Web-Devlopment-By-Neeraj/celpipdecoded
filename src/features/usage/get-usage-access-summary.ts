@@ -56,14 +56,26 @@ function readAccessStatus(value: unknown): AccessStatus {
 export function normalizeUsageAccessSummary(
   payload: Record<string, unknown>,
 ): UsageAccessSummary {
+  const freeSpeakingRemaining = readInteger(payload.free_speaking_remaining);
+  const freeWritingRemaining = readInteger(payload.free_writing_remaining);
+
   return {
     accessStatus: readAccessStatus(payload.access_status),
-    freeAttemptsRemaining: readInteger(payload.free_attempts_remaining),
+    freeAttemptsRemaining: readInteger(
+      payload.free_attempts_remaining,
+      freeSpeakingRemaining + freeWritingRemaining,
+    ),
+    freeSpeakingRemaining,
+    freeWritingRemaining,
     monthlyAttemptsRemaining: readInteger(payload.monthly_attempts_remaining),
     paidAttemptsRemaining: readInteger(payload.paid_attempts_remaining),
     totalAttemptsRemaining: readInteger(payload.total_attempts_remaining),
-    freeAttemptsTotal: readInteger(payload.free_scored_attempts_total),
+    freeAttemptsTotal: readInteger(payload.free_scored_attempts_total, 2),
     freeAttemptsUsed: readInteger(payload.free_scored_attempts_used),
+    freeSpeakingTotal: readInteger(payload.free_speaking_scored_total, 1),
+    freeSpeakingUsed: readInteger(payload.free_speaking_scored_used),
+    freeWritingTotal: readInteger(payload.free_writing_scored_total, 1),
+    freeWritingUsed: readInteger(payload.free_writing_scored_used),
     planCode: readNullableText(payload.plan_code),
     monthlyAttemptLimit: readNullableInteger(payload.monthly_scored_attempt_limit),
     monthlyPeriodStart: readNullableText(payload.monthly_period_start),

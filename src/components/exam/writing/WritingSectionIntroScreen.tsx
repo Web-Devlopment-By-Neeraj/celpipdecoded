@@ -46,6 +46,8 @@ export type WritingSectionIntroScreenProps = {
   onNext?: () => void;
   onBack?: () => void;
   showBack?: boolean;
+  backHref?: string;
+  backLabel?: string;
 };
 
 // The shared word target, when every task has the same one. Undefined
@@ -76,6 +78,8 @@ export function WritingSectionIntroScreen({
   onNext,
   onBack,
   showBack = true,
+  backHref,
+  backLabel,
 }: WritingSectionIntroScreenProps) {
   const screen = content.instructionScreen;
   const wordTarget = sharedWordTarget(content);
@@ -106,6 +110,8 @@ export function WritingSectionIntroScreen({
       onNext={onNext}
       onBack={onBack}
       showBack={showBack}
+      backHref={backHref}
+      backLabel={backLabel}
       intro={
         <ExamSectionIntroCard
           label={examCopy.practiceLabel}

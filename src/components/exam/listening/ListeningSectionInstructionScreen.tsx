@@ -41,6 +41,8 @@ export type ListeningSectionInstructionScreenProps = {
   onNext?: () => void;
   onBack?: () => void;
   showBack?: boolean;
+  backHref?: string;
+  backLabel?: string;
 };
 
 export function ListeningSectionInstructionScreen({
@@ -49,6 +51,8 @@ export function ListeningSectionInstructionScreen({
   onNext,
   onBack,
   showBack = false,
+  backHref,
+  backLabel,
 }: ListeningSectionInstructionScreenProps) {
   return (
     <ExamInstructionScreen
@@ -60,6 +64,8 @@ export function ListeningSectionInstructionScreen({
       onNext={onNext}
       onBack={onBack}
       showBack={showBack}
+      backHref={backHref}
+      backLabel={backLabel}
     />
   );
 }

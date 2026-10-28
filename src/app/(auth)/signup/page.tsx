@@ -5,6 +5,7 @@ import { CelpipDecodedLogo } from "@/components/brand/CelpipDecodedLogo";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { SignupForm } from "@/components/auth/SignupForm";
+import { loadOnboardingProfile } from "@/features/onboarding/onboarding-store";
 import { safeInternalPath } from "@/features/platform/security";
 
 export const metadata: Metadata = {
@@ -26,6 +27,10 @@ export default async function SignupPage({
   } = await supabase.auth.getUser();
 
   if (user) {
+    const profileResult = await loadOnboardingProfile(supabase, user.id);
+    if (profileResult.ok && !profileResult.profile.onboarding_completed_at) {
+      redirect("/onboarding");
+    }
     redirect(nextPath ?? "/dashboard");
   }
 

@@ -29,6 +29,7 @@
 
 import type {
   ExamInstruction,
+  ExamSectionInstructionVideoContent,
   ExamSectionIntroDetail,
 } from "./instruction-screen-types";
 import type { ReadingTaskScreen } from "./reading-flow";
@@ -105,6 +106,7 @@ export type ReadingSectionContent = {
   // keeps its own content.title.
   title: string;
   instructionScreen: ReadingSectionInstructionContent;
+  videoScreen?: ExamSectionInstructionVideoContent;
   parts: ReadingSectionPart[];
 };
 
@@ -150,6 +152,8 @@ export type ReadingSectionPartScreen =
 export type ReadingSectionScreen =
   // 1. Reading section intro.
   | { kind: "section-intro"; id: string }
+  // Optional instructional video after the intro.
+  | { kind: "section-video"; id: string }
   // 2 to 9. The four parts, in order, each an intro and a split screen.
   | {
       kind: "part";

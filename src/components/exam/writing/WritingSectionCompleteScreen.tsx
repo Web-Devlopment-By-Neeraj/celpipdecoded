@@ -76,6 +76,8 @@ export type WritingSectionCompleteScreenProps = {
   metaText?: string;
   onBack?: () => void;
   showBack?: boolean;
+  onFinishSection?: () => void;
+  finishSectionLabel?: string;
 };
 
 export function WritingSectionCompleteScreen({
@@ -89,6 +91,8 @@ export function WritingSectionCompleteScreen({
   metaText,
   onBack,
   showBack = true,
+  onFinishSection,
+  finishSectionLabel = "Move to next section",
 }: WritingSectionCompleteScreenProps) {
   // The choice column is drawn only when a task in the section offers a
   // choice, so a section of plain writing tasks gets a two column table
@@ -198,6 +202,14 @@ export function WritingSectionCompleteScreen({
                 copy={copy}
               />
             </section>
+          ) : null}
+
+          {onFinishSection ? (
+            <div className={examScreenBody.actions}>
+              <ExamButton variant="primary" size="md" onClick={onFinishSection}>
+                {finishSectionLabel}
+              </ExamButton>
+            </div>
           ) : null}
 
           <div className={examScreenBody.actions}>

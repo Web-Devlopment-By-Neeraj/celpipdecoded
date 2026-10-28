@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { AppShell } from "@/components/app/AppShell";
+import { requireOnboardingComplete } from "@/features/onboarding/require-onboarding-complete";
 
 // Protects every /dashboard route server side and wraps them in the shared
 // app shell. Layouts do not re-render on client navigation, so each page
@@ -20,6 +21,8 @@ export default async function DashboardLayout({
   if (!user) {
     redirect("/login");
   }
+
+  await requireOnboardingComplete(user.id);
 
   return (
     <AppShell userEmail={user.email ?? "Signed in"}>{children}</AppShell>

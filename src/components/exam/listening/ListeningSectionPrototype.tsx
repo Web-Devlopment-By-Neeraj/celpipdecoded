@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useMemo, useRef, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { ExamButton } from "../ExamButton";
 import { ExamInstructionRow } from "../ExamInstructionRow";
 import { ExamShell } from "../ExamShell";
@@ -58,6 +58,12 @@ import type {
   ListeningSectionMarkedResult,
   ListeningSectionPartScreenRef,
 } from "@/features/exam-engine/listening-section-types";
+import { MockTestSectionPrepScreen } from "@/components/mock-tests/MockTestSectionPrepScreen";
+import {
+  appendMockTestFullSectionResult,
+  type MockTestPlayerContext,
+} from "@/features/mock-tests/mock-test-flow";
+import { mockTestExitBackProps } from "@/features/mock-tests/mock-test-player-ui";
 
 // Full Listening section prototype (EXAM-15).
 //
@@ -175,12 +181,14 @@ export type ListeningSectionPrototypeProps = {
   content: ListeningSectionContent;
   markAnswers: ListeningSectionMarkAction;
   copy?: ListeningSectionCopy;
+  mockTestContext?: MockTestPlayerContext;
 };
 
 export function ListeningSectionPrototype({
   content,
   markAnswers,
   copy = listeningSectionCopy,
+  mockTestContext,
 }: ListeningSectionPrototypeProps) {
   const screens = useMemo(() => buildListeningSectionFlow(content), [content]);
   const totalQuestions = useMemo(
@@ -191,6 +199,7 @@ export function ListeningSectionPrototype({
   const [screenIndex, setScreenIndex] = useState(0);
   const [answers, setAnswers] = useState<ListeningSectionAnswerMap>({});
   const [marking, setMarking] = useState<MarkingState>({ status: "idle" });
+  const [fullMockHandoff, setFullMockHandoff] = useState(false);
 
   // The one time up message for the whole run (TIMER-01). It lives here
   // rather than on a screen because a screen is unmounted by the very Next
@@ -207,6 +216,7 @@ export function ListeningSectionPrototype({
   // bumping it must take effect immediately rather than at the next
   // render.
   const markingRequestId = useRef(0);
+  const savedFullMockListeningResult = useRef(false);
 
   const answeredCount = useMemo(
     () => countAnsweredListeningSectionQuestions(content, answers),
@@ -245,8 +255,35 @@ export function ListeningSectionPrototype({
   // showing without going back into Part 6 first, so entering the review
   // is exactly the moment the result is needed and exactly the moment it
   // is known to be current.
+  useEffect(() => {
+    if (
+      !fullMockHandoff ||
+      marking.status !== "ready" ||
+      savedFullMockListeningResult.current
+    ) {
+      return;
+    }
+
+    savedFullMockListeningResult.current = true;
+    appendMockTestFullSectionResult({
+      label: "Listening",
+      detail: `${marking.marked.summary.correctCount ?? 0}/${marking.marked.summary.totalQuestions} correct`,
+    });
+  }, [fullMockHandoff, marking]);
+
   const goNext = () => {
     const nextIndex = Math.min(screenIndex + 1, totalScreens - 1);
+
+    if (
+      mockTestContext?.flow === "full" &&
+      mockTestContext.nextSection &&
+      screens[nextIndex]?.kind === "section-review"
+    ) {
+      void requestMarking(answers);
+      dismissTimeUp();
+      setFullMockHandoff(true);
+      return;
+    }
 
     if (screens[nextIndex]?.kind === "section-review") {
       void requestMarking(answers);
@@ -303,8 +340,13 @@ export function ListeningSectionPrototype({
   // The marking screen therefore has no Back either. Its recovery is the
   // retry control it already carries, which re-sends the answers this
   // component is still holding.
-  const showBack =
-    screen?.kind === "section-score" || screen?.kind === "section-end";
+  const showBack = screenIndex > 0;
+
+  const exitBack = mockTestExitBackProps(
+    mockTestContext,
+    screen?.kind === "section-instructions" ||
+      screen?.kind === "section-video",
+  );
 
   // Stands in for the review and the score while the server is marking,
   // and carries the retry when it could not. The retry is the whole
@@ -695,6 +737,18 @@ export function ListeningSectionPrototype({
   // Everything after the part branch belongs to the section rather than to
   // a part, so it carries the section title and the section meta line.
   const renderCurrentScreen = () => {
+    if (fullMockHandoff && mockTestContext?.nextSection) {
+      return (
+        <MockTestSectionPrepScreen
+          title={content.title}
+          completedSectionLabel="Listening"
+          nextSectionLabel={mockTestContext.nextSection.label}
+          nextHref={mockTestContext.nextSection.href}
+          exitHref={mockTestContext.exitHref}
+        />
+      );
+    }
+
     if (screen.kind === "part") {
       return renderPartScreen(screen);
     }
@@ -715,7 +769,9 @@ export function ListeningSectionPrototype({
           metaText={metaText}
           onNext={goNext}
           onBack={goBack}
-          showBack={showBack}
+          showBack={exitBack.showBack || showBack}
+          backHref={exitBack.backHref}
+          backLabel={exitBack.backLabel}
         />
       );
     }
@@ -732,7 +788,9 @@ export function ListeningSectionPrototype({
           // second path through the flow.
           onSkip={goNext}
           onBack={goBack}
-          showBack={showBack}
+          showBack={exitBack.showBack || showBack}
+          backHref={exitBack.backHref}
+          backLabel={exitBack.backLabel}
         />
       );
     }
@@ -806,8 +864,23 @@ export function ListeningSectionPrototype({
       );
     }
 
-    // End of Listening section screen. The last screen in the flow, so
-    // there is no Next.
+    if (
+      mockTestContext?.flow === "full" &&
+      mockTestContext.nextSection &&
+      marking.status === "ready"
+    ) {
+      return (
+        <MockTestSectionPrepScreen
+          title={content.title}
+          completedSectionLabel="Listening"
+          nextSectionLabel={mockTestContext.nextSection.label}
+          nextHref={mockTestContext.nextSection.href}
+          exitHref={mockTestContext.exitHref}
+          metaText={metaText}
+        />
+      );
+    }
+
     return (
       <ListeningSectionEndScreen
         title={content.title}
@@ -816,6 +889,7 @@ export function ListeningSectionPrototype({
         metaText={metaText}
         onBack={goBack}
         showBack={showBack}
+        showNextSectionPlaceholder={mockTestContext?.flow !== "full"}
       />
     );
   };

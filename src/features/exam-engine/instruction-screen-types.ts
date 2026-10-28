@@ -81,6 +81,14 @@ export type ExamInstructionScreenContent = {
   noticeText?: string;
 };
 
+// Instructional video block after a section intro (shared by all skills).
+export type ExamSectionInstructionVideoContent = {
+  title: string;
+  video: ExamInstructionalVideoAsset;
+  description?: string;
+  helperText?: string;
+};
+
 // Data shape for an instructional video screen.
 export type ExamVideoScreenContent = {
   id: string;

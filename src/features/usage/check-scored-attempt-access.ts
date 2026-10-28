@@ -23,10 +23,12 @@ import {
   type UsageAccessSummary,
 } from "./access-types";
 import { getUsageAccessSummary } from "./get-usage-access-summary";
+import { remainingScoredAttemptsForModule } from "./module-scored-access";
 
 export type CheckScoredAttemptAccessInput = {
   userId: string;
   attemptId: string;
+  moduleSlug: string;
 };
 
 // True when this attempt has already been charged. A lookup failure
@@ -97,7 +99,7 @@ export async function checkScoredAttemptAccess(
     return { allowed: false, reason: "access_suspended", summary };
   }
 
-  if (summary.totalAttemptsRemaining <= 0) {
+  if (remainingScoredAttemptsForModule(summary, input.moduleSlug) <= 0) {
     return { allowed: false, reason: "no_attempts_remaining", summary };
   }
 

@@ -36,6 +36,7 @@
 
 import type {
   ExamInstruction,
+  ExamSectionInstructionVideoContent,
   ExamSectionIntroDetail,
 } from "./instruction-screen-types";
 
@@ -337,6 +338,7 @@ export type SpeakingSectionContent = {
   // keeps its own content.title.
   title: string;
   instructionScreen: SpeakingSectionInstructionContent;
+  videoScreen?: ExamSectionInstructionVideoContent;
   tasks: SpeakingTaskContent[];
 };
 
@@ -452,6 +454,7 @@ export type SpeakingChoiceMap = Readonly<Record<string, SpeakingTaskChoice>>;
 export type SpeakingSectionScreen =
   // 1. Speaking section intro.
   | { kind: "section-intro"; id: string }
+  | { kind: "section-video"; id: string }
   // The eight tasks, one recording screen each.
   //
   // On seven of the eight this is the whole task: the prompt, the

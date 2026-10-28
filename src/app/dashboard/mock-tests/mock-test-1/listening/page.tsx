@@ -7,6 +7,10 @@ import { listeningCopy } from "@/features/exam-engine/listening-copy";
 import { withoutListeningSectionAnswerKeys } from "@/features/exam-engine/listening-section-flow";
 import { mockTest1ListeningSection } from "@/features/exam-engine/mock-tests/mock-test-1/full-listening-section";
 import { markListeningSection } from "./actions";
+import {
+  buildMockTestPlayerContext,
+  parseMockTestFlowMode,
+} from "@/features/mock-tests/mock-test-flow";
 
 export const metadata: Metadata = {
   title: "Mock Test 1 listening test - CELPIP Decoded",
@@ -67,7 +71,16 @@ export const metadata: Metadata = {
 // 6. The learner's answers stay in local React state in the browser and
 // only the finished review rows and practice score come back.
 
-export default async function MockTest1ListeningSectionPage() {
+export default async function MockTest1ListeningSectionPage({
+  searchParams,
+}: {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const params = searchParams ? await searchParams : {};
+  const mockTestContext = buildMockTestPlayerContext(
+    "listening",
+    parseMockTestFlowMode(params),
+  );
   const supabase = await createSupabaseServerClient();
 
   // The dashboard layout already checks the session, but layouts do not
@@ -89,6 +102,7 @@ export default async function MockTest1ListeningSectionPage() {
       <ListeningSectionPrototype
         content={learnerContent}
         markAnswers={markListeningSection}
+        mockTestContext={mockTestContext}
       />
     </ExamModeViewport>
   );

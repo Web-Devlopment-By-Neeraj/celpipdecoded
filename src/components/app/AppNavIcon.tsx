@@ -8,6 +8,8 @@ import type { AppNavIconName } from "@/features/navigation/app-nav-items";
 
 const PATHS: Record<AppNavIconName, string> = {
   dashboard: "M3.5 3.5h6v6h-6zM12.5 3.5h6v4h-6zM12.5 10.5h6v6h-6zM3.5 12.5h6v4h-6z",
+  mockTests:
+    "M4 5.5h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2zM7 9.5h8M7 13h5",
   speaking:
     "M11 2.5a2.5 2.5 0 0 0-2.5 2.5v5a2.5 2.5 0 0 0 5 0V5A2.5 2.5 0 0 0 11 2.5zM5.5 9.5a5.5 5.5 0 0 0 11 0M11 15v3.5M8 18.5h6",
   writing: "M4 16.5 15.5 5a2.1 2.1 0 0 1 3 3L7 19.5l-4 1z",

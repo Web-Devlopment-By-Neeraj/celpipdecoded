@@ -145,6 +145,11 @@ export async function userHasCourseAccess(userId: string): Promise<boolean> {
   return can(entitlements, "course_videos", new Date());
 }
 
+export async function userHasPaidMockAccess(userId: string): Promise<boolean> {
+  const entitlements = await loadUserEntitlements(userId);
+  return can(entitlements, "all_mocks", new Date());
+}
+
 export async function loadUserEntitlements(userId: string): Promise<Entitlement[]> {
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase

@@ -1,5 +1,14 @@
 "use client";
 
+/** Dark/Light toggle — disabled for Task 4; restore from block comment in Task 3a. */
+export function ThemeToggle({ className }: { className?: string }) {
+  void className;
+  return null;
+}
+
+/*
+"use client";
+
 import { useState } from "react";
 
 const STORAGE_KEY = "celpip-theme";
@@ -42,3 +51,4 @@ export function ThemeToggle({
     </button>
   );
 }
+*/
