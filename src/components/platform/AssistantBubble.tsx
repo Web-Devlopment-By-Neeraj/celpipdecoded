@@ -392,7 +392,7 @@ export function AssistantBubble() {
           <div ref={threadRef} className="mt-3 flex-1 space-y-2 overflow-y-auto pr-1">
             {messages.length === 0 ? (
               <p className="text-sm leading-6 text-ink/70">
-                Ask me anything about practice, or just talk. I will answer in the chat and say it out loud.
+                I am an AI assistant. Ask me anything about practice, or just talk. I will answer in the chat and say it out loud.
               </p>
             ) : (
               messages.map((message, index) => (
@@ -440,7 +440,7 @@ export function AssistantBubble() {
 
           <form onSubmit={onSubmit} className="mt-3 flex items-end gap-2">
             <label className="sr-only" htmlFor="assistant-question">
-              Your message
+              Your question
             </label>
             <textarea
               id="assistant-question"
