@@ -11,6 +11,9 @@ export default defineConfig({
   use: {
     baseURL,
     trace: "on-first-retry",
+    // Smooth scrolling keeps elements moving after fill() scrolls the page,
+    // and Playwright refuses to click an element that is still moving.
+    reducedMotion: "reduce",
   },
   projects: [
     {

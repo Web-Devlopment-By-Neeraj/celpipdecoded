@@ -6,6 +6,7 @@ test.describe("public pages", () => {
   test("CRS form returns a server-rendered estimate without JavaScript", async ({ browser }) => {
     const context = await browser.newContext({
       javaScriptEnabled: false,
+      reducedMotion: "reduce",
       viewport: { width: 375, height: 812 },
     });
     const page = await context.newPage();

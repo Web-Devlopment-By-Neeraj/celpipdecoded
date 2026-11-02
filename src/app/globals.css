@@ -246,9 +246,14 @@
    lands with its top exactly under the header. Sections must not add a
    scroll-mt of their own: the two would stack. */
 html {
-  scroll-behavior: smooth;
   scroll-padding-top: calc(4rem + 1px + env(safe-area-inset-top));
   -webkit-tap-highlight-color: transparent;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 @media (min-width: 40rem) {
