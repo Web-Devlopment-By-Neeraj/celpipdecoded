@@ -14,7 +14,7 @@ export function WritingEvaluationProcessingCard() {
         aria-hidden
         className="mx-auto block h-8 w-8 animate-spin rounded-full border-2 border-brand/30 border-t-brand"
       />
-      <h3 className="mt-4 font-serif text-lg font-semibold tracking-tight text-ink">
+      <h3 className="mt-4 font-serif text-lg font-bold tracking-tight text-ink">
         {writingEvaluationCopy.processingHeading}
       </h3>
       <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-ink/70">

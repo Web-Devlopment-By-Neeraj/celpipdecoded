@@ -13,9 +13,9 @@ export function WritingNextPracticeActions({
   return (
     <section
       aria-label={writingResultCopy.actionsLabel}
-      className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-ink/5 sm:p-8"
+      className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-ink/5 sm:p-8"
     >
-      <h2 className="font-serif text-xl font-semibold tracking-tight text-ink">
+      <h2 className="font-serif text-xl font-bold tracking-tight text-ink">
         {writingResultCopy.actionsLabel}
       </h2>
       <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">

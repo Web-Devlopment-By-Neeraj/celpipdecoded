@@ -49,6 +49,7 @@ export type ListeningVideoScreenProps = {
   hintText?: string;
   // Ask the browser to start the clip when the screen opens.
   autoPlayMedia?: boolean;
+  lockPlayback?: boolean;
   metaText?: string;
   onVideoEnded?: () => void;
   onNext?: () => void;
@@ -66,6 +67,7 @@ export function ListeningVideoScreen({
   instructionText = listeningCopy.discussionInstruction,
   hintText = listeningCopy.discussionVideoHint,
   autoPlayMedia = false,
+  lockPlayback = false,
   metaText,
   onVideoEnded,
   onNext,
@@ -93,6 +95,7 @@ export function ListeningVideoScreen({
             durationLabel={durationLabel}
             preload="metadata"
             autoPlay={autoPlayMedia}
+            hideControls={lockPlayback}
             playerLabel={listeningCopy.discussionVideoPlayerLabel}
             unsupportedText={listeningCopy.discussionVideoUnsupportedText}
             onEnded={onVideoEnded}

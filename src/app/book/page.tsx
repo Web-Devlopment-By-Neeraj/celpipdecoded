@@ -10,7 +10,7 @@ export default function BookPage() {
   return (
     <main className="min-h-screen overflow-x-hidden bg-cream px-4 py-10 text-ink">
       <div className="mx-auto max-w-xl">
-        <h1 className="font-serif text-3xl font-semibold">Book</h1>
+        <h1 className="font-serif text-3xl font-bold">Book</h1>
         <p className="mt-3 text-sm leading-6">
           Live batches meet Monday, Tuesday, Thursday, and Friday at 7:30 PM Eastern. A card reservation does not charge you until enough students join. Private sessions are paid when you book.
         </p>

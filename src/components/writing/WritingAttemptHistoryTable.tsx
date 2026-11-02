@@ -45,7 +45,7 @@ export function WritingAttemptHistoryTable({
         {attempts.map((attempt) => (
           <li
             key={attempt.id}
-            className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-ink/5"
+            className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-ink/5"
           >
             <div className="flex flex-wrap items-start justify-between gap-2">
               <p className="text-sm font-semibold text-ink">
@@ -99,7 +99,7 @@ export function WritingAttemptHistoryTable({
       </ul>
 
       {/* Desktop: table */}
-      <div className="hidden overflow-x-auto rounded-3xl bg-white shadow-sm ring-1 ring-ink/5 lg:block">
+      <div className="hidden overflow-x-auto rounded-2xl bg-white shadow-sm ring-1 ring-ink/5 lg:block">
         <table className="w-full text-left text-sm">
           <thead>
             <tr className="border-b border-ink/10 text-xs font-semibold uppercase tracking-wide text-ink/50">

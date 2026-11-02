@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CelpipDecodedLogo } from "@/components/brand/CelpipDecodedLogo";
 import { PricingPlansGrid } from "@/components/pricing/PricingPlanCard";
 import { brandCopy } from "@/features/brand/brand-copy";
 
@@ -19,26 +18,12 @@ export default async function PricingPage({
 
   return (
     <main className="min-h-screen overflow-x-hidden bg-cream text-ink">
-      <div className="border-b border-ink/10 bg-white/80 backdrop-blur">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 sm:px-8">
-          <Link href="/" className="flex items-center gap-3">
-            <CelpipDecodedLogo size="md" />
-          </Link>
-          <Link
-            href="/login"
-            className="text-sm font-semibold text-ink/75 hover:text-ink"
-          >
-            Sign in
-          </Link>
-        </div>
-      </div>
-
-      <div className="mx-auto max-w-6xl px-5 py-12 sm:px-8 sm:py-16">
+      <div className="mx-auto max-w-6xl px-5 pb-12 pt-10 sm:px-8 sm:pb-16">
         <div className="max-w-2xl">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand">
             Plans and pricing
           </p>
-          <h1 className="mt-4 font-serif text-4xl font-semibold tracking-tight sm:text-5xl">
+          <h1 className="mt-4 font-serif text-4xl font-bold tracking-tight sm:text-5xl">
             Choose how you practice
           </h1>
           <p className="mt-4 text-base leading-7 text-ink/70">

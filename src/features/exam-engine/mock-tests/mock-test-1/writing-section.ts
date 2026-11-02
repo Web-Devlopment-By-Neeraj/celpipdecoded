@@ -66,7 +66,7 @@ import type { WritingSectionContent } from "../../writing-mock-types";
 // The learner facing name of the test, so the first screen of the run
 // says the same thing as the dashboard card that opened it. The same rule
 // the full Listening and full Reading sections settled.
-const SECTION_TITLE = "Mock Test 1 - Writing Test";
+const SECTION_TITLE = "Mock Test 1 - Writing";
 
 // Where the two prompt images live.
 //
@@ -120,9 +120,10 @@ export const mockTest1WritingSection: WritingSectionContent = {
   },
 
   videoScreen: {
-    title: `${SECTION_TITLE}: Instructional video`,
+    title: "Mock Test 1 - Writing Instructional Video",
+    description: "This video comes from the official CELPIP website. It shows how the real test runs from start to finish, and what to expect in each of the four sections. Our mock tests follow the same flow. CELPIP updates its test from time to time, so some details may have changed. For the latest format, check celpip.ca.",
+    helperText: "Video: CELPIP official website, celpip.ca",
     video: getInstructionalVideoAsset("writing"),
-    description: getInstructionalVideoAsset("writing").description,
   },
 
   tasks: [
@@ -130,7 +131,7 @@ export const mockTest1WritingSection: WritingSectionContent = {
       taskId: "mock-test-1-writing-task-1",
       taskNumber: 1,
       taskLabel: "Writing Task 1",
-      title: "Mock Test 1 - Writing Task 1",
+      title: "Mock Test 1 - Writing Task 1: Writing an Email",
       // The task name exactly as the source document prints it.
       taskTitle: "Writing an Email",
 
@@ -173,7 +174,7 @@ export const mockTest1WritingSection: WritingSectionContent = {
       taskId: "mock-test-1-writing-task-2",
       taskNumber: 2,
       taskLabel: "Writing Task 2",
-      title: "Mock Test 1 - Writing Task 2",
+      title: "Mock Test 1 - Writing Task 2: Responding to Survey Questions",
       taskTitle: "Responding to Survey Questions",
 
       situationInstruction: "Read the following information.",

@@ -192,12 +192,12 @@ export default async function WritingAttemptResultPage({
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand">
             {writingResultCopy.pageBadge}
           </p>
-          <h1 className="mt-2 font-serif text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
+          <h1 className="mt-2 font-serif text-2xl font-bold tracking-tight text-ink sm:text-3xl">
             {writingResultCopy.pageHeading}
           </h1>
         </header>
         {failed ? (
-          <section className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-ink/5 sm:p-8">
+          <section className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-ink/5 sm:p-8">
             <WritingEvaluationErrorCard
               message={writingResultCopy.failedText}
             />
@@ -212,7 +212,7 @@ export default async function WritingAttemptResultPage({
             </div>
           </section>
         ) : (
-          <section className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-ink/5 sm:p-8">
+          <section className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-ink/5 sm:p-8">
             <WritingEvaluationProcessingCard />
             <p className="mx-auto mt-4 max-w-md text-center text-sm leading-6 text-ink/60">
               {writingResultCopy.notReadyText}
@@ -286,7 +286,7 @@ export default async function WritingAttemptResultPage({
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand">
           {writingResultCopy.pageBadge}
         </p>
-        <h1 className="mt-2 font-serif text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
+        <h1 className="mt-2 font-serif text-2xl font-bold tracking-tight text-ink sm:text-3xl">
           {writingResultCopy.pageHeading}
         </h1>
         <p className="mt-2 text-sm leading-6 text-ink/70">

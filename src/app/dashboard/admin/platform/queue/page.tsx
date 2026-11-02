@@ -11,7 +11,7 @@ export default async function TodayQueuePage() {
   if (!admin.ok) return <AdminAccessDenied reason={admin.reason} />;
   return (
     <main className="mx-auto max-w-3xl overflow-x-hidden px-4 py-8">
-      <h1 className="font-serif text-3xl font-semibold text-academy-navy">Today</h1>
+      <h1 className="font-serif text-3xl font-bold text-academy-navy">Today</h1>
       <p className="mt-3 text-sm leading-6 text-academy-navy/75">
         New sign-ups, unverified emails, waiting evaluations, and unpaid batch seats will list here once those rows are stored. The queue is empty because nothing is waiting in the database.
       </p>

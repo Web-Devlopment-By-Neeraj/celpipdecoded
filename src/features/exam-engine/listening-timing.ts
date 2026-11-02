@@ -90,18 +90,18 @@ export const LISTENING_PART_SCREEN_TIMERS: Readonly<
   Record<number, ListeningScreenTimer>
 > = {
   4: {
-    seconds: 210,
-    warningAtSeconds: LONG_WINDOW_WARNING_SECONDS,
-    urgentAtSeconds: LONG_WINDOW_URGENT_SECONDS,
-    source: "derived",
-    note: "Part 4 is about 5 minutes and its news clip is about 1.5 minutes, leaving about 3.5 minutes for the 5 questions.",
-  },
-  5: {
     seconds: 240,
     warningAtSeconds: LONG_WINDOW_WARNING_SECONDS,
     urgentAtSeconds: LONG_WINDOW_URGENT_SECONDS,
-    source: "derived",
-    note: "Part 5 is 6 minutes and its discussion video is about 2 minutes, leaving 4 minutes for the 8 questions. 8 questions at the study pack's 30 seconds each is the same 4 minutes. Research document section 17.2 resolved in favour of 6 minutes.",
+    source: "published",
+    note: "Part 4 question screen is 4 minutes, from the official test explanation used for every mock test.",
+  },
+  5: {
+    seconds: 300,
+    warningAtSeconds: LONG_WINDOW_WARNING_SECONDS,
+    urgentAtSeconds: LONG_WINDOW_URGENT_SECONDS,
+    source: "published",
+    note: "Part 5 question screen is 5 minutes, from the official test explanation used for every mock test.",
   },
   6: {
     seconds: 300,

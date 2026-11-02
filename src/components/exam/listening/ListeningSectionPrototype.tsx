@@ -2,6 +2,7 @@
 
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { ExamButton } from "../ExamButton";
+import { ExamInstructionCountdown } from "../timer/ExamInstructionCountdown";
 import { ExamInstructionRow } from "../ExamInstructionRow";
 import { ExamShell } from "../ExamShell";
 import {
@@ -61,6 +62,7 @@ import type {
 import { MockTestSectionPrepScreen } from "@/components/mock-tests/MockTestSectionPrepScreen";
 import {
   appendMockTestFullSectionResult,
+  nextExamScreenIndex,
   type MockTestPlayerContext,
 } from "@/features/mock-tests/mock-test-flow";
 import { mockTestExitBackProps } from "@/features/mock-tests/mock-test-player-ui";
@@ -272,7 +274,11 @@ export function ListeningSectionPrototype({
   }, [fullMockHandoff, marking]);
 
   const goNext = () => {
-    const nextIndex = Math.min(screenIndex + 1, totalScreens - 1);
+    const nextIndex = nextExamScreenIndex(
+      screens,
+      screenIndex,
+      mockTestContext?.flow,
+    );
 
     if (
       mockTestContext?.flow === "full" &&
@@ -320,26 +326,14 @@ export function ListeningSectionPrototype({
 
   // Shared chrome props.
   //
-  // Back is hidden for the whole of the test itself (EXAM-15F). The
-  // official rule is that a learner cannot return to a previous part, and
-  // the same holds within a part: a question that has been left is left.
-  // So rather than clamping Back to the current part and then having to
-  // explain why it sometimes does nothing, the run is forward only from
-  // the section instructions to the last question screen of Part 6.
+  // Back sits beside Next and returns to the previous screen, in a
+  // complete test and in one section. The first screen uses Back to mock
+  // test instead, because there is no earlier screen in this section.
   //
-  // Forward only is unchanged by TIMER-01. What changed is who moves the
-  // run forward: a closing window used to do it, and now only Next does.
-  //
-  // The two screens that keep it are the practice score and the end of
-  // section screen, and neither is answerable. Back on the score returns to
-  // the answer review, which is the same move the score screen's own
-  // "Review answers" control makes, and Back on the end screen returns to
-  // the score. The answer review itself does not get Back, because behind
-  // it is Part 6 with the correct answers now on display.
-  //
-  // The marking screen therefore has no Back either. Its recovery is the
-  // retry control it already carries, which re-sends the answers this
-  // component is still holding.
+  // The answer review does not get Back. Behind it is the last question
+  // screen, and the review has just put the correct answers on the screen.
+  // The marking screen has no Back either. Its recovery is the retry
+  // control it already carries.
   const showBack = screenIndex > 0;
 
   const exitBack = mockTestExitBackProps(
@@ -363,7 +357,7 @@ export function ListeningSectionPrototype({
         metaText={metaText}
         showNext={false}
         onBack={goBack}
-        showBack={showBack}
+        showBack={false}
       >
         <div className={examScreenBody.stack}>
           <ExamInstructionRow
@@ -432,6 +426,9 @@ export function ListeningSectionPrototype({
           }
           formatLabel={part.formatLabel}
           metaText={metaText}
+          onTimeExpire={
+            mockTestContext?.flow === "full" ? goNext : showTimeUp
+          }
           onNext={goNext}
           onBack={goBack}
           showBack={showBack}
@@ -445,6 +442,14 @@ export function ListeningSectionPrototype({
           title={part.content.title}
           scenario={part.content.scenario}
           metaText={metaText}
+          timerSlot={
+            <ExamInstructionCountdown
+              screenKey={partScreen.id}
+              onExpire={
+                mockTestContext?.flow === "full" ? goNext : showTimeUp
+              }
+            />
+          }
           onNext={goNext}
           onBack={goBack}
           showBack={showBack}
@@ -465,6 +470,10 @@ export function ListeningSectionPrototype({
             partScreen.sectionIndex,
             part.content.sections.length,
           )}
+          screenKey={partScreen.id}
+          onTimeExpire={
+            mockTestContext?.flow === "full" ? goNext : showTimeUp
+          }
           metaText={metaText}
           onNext={goNext}
           onBack={goBack}
@@ -498,6 +507,10 @@ export function ListeningSectionPrototype({
             part.content.sections.length,
           )}
           autoPlayMedia
+          lockPlayback={mockTestContext?.flow === "full"}
+          onAudioEnded={
+            mockTestContext?.flow === "full" ? goNext : undefined
+          }
           metaText={metaText}
           onNext={goNext}
           onBack={goBack}
@@ -536,6 +549,7 @@ export function ListeningSectionPrototype({
           // The question is spoken in this part, so the clip is the
           // question. It starts with the screen (EXAM-15F).
           autoPlayAudio
+          lockPlayback={mockTestContext?.flow === "full"}
           // The flow screen id, so the answering window restarts when the
           // learner moves to another question and not when they change
           // their mind about an option (EXAM-15D).
@@ -546,7 +560,9 @@ export function ListeningSectionPrototype({
           // 30 seconds up turns the reading red and raises the time up
           // message. The question stays on screen with its answer, and
           // Next stays the learner's to press (TIMER-01).
-          onTimeExpire={showTimeUp}
+          onTimeExpire={
+                  mockTestContext?.flow === "full" ? goNext : showTimeUp
+                }
           metaText={metaText}
           onNext={goNext}
           onBack={goBack}
@@ -567,6 +583,10 @@ export function ListeningSectionPrototype({
               part.content.mediaInstruction ?? listeningCopy.newsItemInstruction
             }
             autoPlayMedia
+            lockPlayback={mockTestContext?.flow === "full"}
+            onAudioEnded={
+              mockTestContext?.flow === "full" ? goNext : undefined
+            }
             metaText={metaText}
           onNext={goNext}
           onBack={goBack}
@@ -582,6 +602,10 @@ export function ListeningSectionPrototype({
             media={part.content.media}
             instructionText={part.content.mediaInstruction}
             autoPlayMedia
+            lockPlayback={mockTestContext?.flow === "full"}
+            onAudioEnded={
+              mockTestContext?.flow === "full" ? goNext : undefined
+            }
             metaText={metaText}
           onNext={goNext}
           onBack={goBack}
@@ -609,6 +633,10 @@ export function ListeningSectionPrototype({
             part.content.mediaInstruction ?? listeningCopy.discussionInstruction
           }
           autoPlayMedia
+          lockPlayback={mockTestContext?.flow === "full"}
+          onVideoEnded={
+            mockTestContext?.flow === "full" ? goNext : undefined
+          }
           metaText={metaText}
           onNext={goNext}
           onBack={goBack}
@@ -651,7 +679,9 @@ export function ListeningSectionPrototype({
           // The screen window closing turns the reading red and raises
           // the time up message. Every selection on the screen is kept and
           // the run waits for Next (TIMER-01).
-          onTimeExpire={showTimeUp}
+          onTimeExpire={
+                  mockTestContext?.flow === "full" ? goNext : showTimeUp
+                }
           metaText={metaText}
           onNext={goNext}
           onBack={goBack}
@@ -683,7 +713,9 @@ export function ListeningSectionPrototype({
           // The screen window closing turns the reading red and raises
           // the time up message. Every selection on the screen is kept and
           // the run waits for Next (TIMER-01).
-          onTimeExpire={showTimeUp}
+          onTimeExpire={
+                  mockTestContext?.flow === "full" ? goNext : showTimeUp
+                }
           metaText={metaText}
           onNext={goNext}
           onBack={goBack}
@@ -715,7 +747,9 @@ export function ListeningSectionPrototype({
           // The screen window closing turns the reading red and raises
           // the time up message. Every selection on the screen is kept and
           // the run waits for Next (TIMER-01).
-          onTimeExpire={showTimeUp}
+          onTimeExpire={
+                  mockTestContext?.flow === "full" ? goNext : showTimeUp
+                }
           metaText={metaText}
           onNext={goNext}
           onBack={goBack}
@@ -767,6 +801,9 @@ export function ListeningSectionPrototype({
         <ListeningSectionInstructionScreen
           content={content.instructionScreen}
           metaText={metaText}
+          onTimeExpire={
+            mockTestContext?.flow === "full" ? goNext : showTimeUp
+          }
           onNext={goNext}
           onBack={goBack}
           showBack={exitBack.showBack || showBack}
@@ -783,6 +820,9 @@ export function ListeningSectionPrototype({
           {...sectionProgress}
           metaText={metaText}
           onNext={goNext}
+          onVideoEnded={
+            mockTestContext?.flow === "full" ? goNext : undefined
+          }
           // Skip goes exactly where Next goes. Nothing here is gated on the
           // clip, so the control is a shortcut past the player rather than a
           // second path through the flow.
@@ -830,13 +870,11 @@ export function ListeningSectionPrototype({
           {...sectionProgress}
           metaText={metaText}
           onNext={goNext}
-          // showBack is false here (EXAM-15F). Behind the review is the
-          // last question screen of Part 6, and the review has just put the
-          // correct answers on the screen, so returning to it is the one
-          // move the run must not offer. The handler stays wired so the
-          // screen keeps one navigation contract with every other screen.
+          // Behind the review is the last question screen, and the review
+          // has just put the correct answers on the screen, so returning
+          // to it is the one move the run must not offer.
           onBack={goBack}
-          showBack={showBack}
+          showBack={false}
         />
       );
     }
@@ -884,12 +922,14 @@ export function ListeningSectionPrototype({
     return (
       <ListeningSectionEndScreen
         title={content.title}
+        dashboardHref={mockTestContext?.exitHref ?? "/dashboard"}
+        leaveLabel={mockTestContext ? "Back to mock test" : undefined}
         onRestart={restart}
         copy={copy}
         metaText={metaText}
         onBack={goBack}
         showBack={showBack}
-        showNextSectionPlaceholder={mockTestContext?.flow !== "full"}
+        showNextSectionPlaceholder={!mockTestContext}
       />
     );
   };

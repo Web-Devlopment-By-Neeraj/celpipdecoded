@@ -1,3 +1,4 @@
+import { ExamReviewProgress } from "../ExamReviewProgress";
 import { ExamInstructionRow } from "../ExamInstructionRow";
 import { ExamShell } from "../ExamShell";
 import { WritingPracticeDisclaimer } from "./WritingPracticeDisclaimer";
@@ -64,6 +65,7 @@ export function WritingEvaluationProcessingScreen({
             heading={copy.reviewProcessingHeading}
             text={copy.reviewProcessingText}
           />
+          <ExamReviewProgress />
         </div>
 
         <WritingPracticeDisclaimer copy={copy} />

@@ -52,6 +52,7 @@ export type ListeningAudioScreenProps = {
   hintText?: string;
   // Ask the browser to start the clip when the screen opens.
   autoPlayMedia?: boolean;
+  lockPlayback?: boolean;
   metaText?: string;
   onAudioEnded?: () => void;
   onNext?: () => void;
@@ -69,6 +70,7 @@ export function ListeningAudioScreen({
   instructionText = listeningCopy.conversationInstruction,
   hintText,
   autoPlayMedia = false,
+  lockPlayback = false,
   metaText,
   onAudioEnded,
   onNext,
@@ -94,6 +96,8 @@ export function ListeningAudioScreen({
             title={audioTitle}
             durationLabel={durationLabel}
             autoPlay={autoPlayMedia}
+            lockPlayback={lockPlayback}
+            showPlaybarNote={!lockPlayback}
             onEnded={onAudioEnded}
           />
 

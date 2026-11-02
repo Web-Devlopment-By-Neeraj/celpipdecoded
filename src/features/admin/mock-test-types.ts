@@ -35,7 +35,7 @@ export const MOCK_TEST_STATUS_HINTS: Record<MockTestStatus, string> = {
   draft: "Being authored. Not visible to students.",
   internal_preview: "Staff review only. Still not visible to students.",
   published:
-    "Reserved. Publishing stays blocked until a later ticket adds questions, answer keys and timers.",
+    "Visible on the student Mock tests page for anyone with Test Sprint. Use the slug mock-test-2 or later. Mock Test 1 stays the built-in free test.",
   archived: "Retired. Not visible to students.",
 };
 

@@ -14,7 +14,7 @@ export function TaskDetailPanel({ task }: { task: SpeakingTask }) {
   const scoringFocus = getScoringFocus(task);
 
   return (
-    <article className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-ink/5 sm:p-8">
+    <article className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-ink/5 sm:p-8">
       <Link
         href="/dashboard/speaking"
         className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand transition-colors hover:text-brand-dark"
@@ -26,7 +26,7 @@ export function TaskDetailPanel({ task }: { task: SpeakingTask }) {
       <p className="mt-5 text-xs font-semibold uppercase tracking-[0.2em] text-ink/50">
         Task {taskNumber}
       </p>
-      <h1 className="mt-1 font-serif text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
+      <h1 className="mt-1 font-serif text-2xl font-bold tracking-tight text-ink sm:text-3xl">
         {task.title}
       </h1>
 

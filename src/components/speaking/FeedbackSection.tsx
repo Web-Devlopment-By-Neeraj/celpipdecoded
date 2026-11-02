@@ -48,7 +48,7 @@ export function FeedbackSection({
   return (
     <section
       aria-label={resultCopy.strengthsHeading}
-      className="space-y-7 rounded-3xl bg-white p-6 shadow-sm ring-1 ring-ink/5 sm:p-8"
+      className="space-y-7 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-ink/5 sm:p-8"
     >
       <FeedbackList heading={resultCopy.strengthsHeading} items={strengths} />
       <FeedbackList

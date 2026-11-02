@@ -9,9 +9,14 @@ import type { ExamTimerReading } from "@/features/exam-engine/exam-shell-types";
 // Compact grey title bar at the top of the player window (EXAM-UI-02).
 //
 // It carries the screen title on the left, then the timer readings, an
-// optional note and the Next control on the right. Around 48 pixels tall,
-// which is the middle of the band the brief asks for, and it refuses to
-// shrink, so Next stays reachable on a short window.
+// optional note and the Back and Next controls on the right. Around 48
+// pixels tall, which is the middle of the band the brief asks for, and it
+// refuses to shrink, so Next stays reachable on a short window.
+//
+// Back and Next are one group that never wraps apart. On a phone the bar
+// stacks into the same three lines on every screen: title, readings, then
+// Back and Next as a row of equal buttons. Back lives only here: the
+// bottom bar does not repeat it.
 //
 // **There is no logo in this bar, by design.** No wordmark, no product
 // name, no brand colour. A learner sitting a practice test should see a
@@ -41,6 +46,12 @@ export type MockTestTopBarProps = {
   onNext?: () => void;
   nextDisabled?: boolean;
 
+  showBack?: boolean;
+  backLabel?: string;
+  backHref?: string;
+  onBack?: () => void;
+  backDisabled?: boolean;
+
   // Extra controls, dropped in before Next.
   children?: ReactNode;
   className?: string;
@@ -56,6 +67,11 @@ export function MockTestTopBar({
   nextHref,
   onNext,
   nextDisabled = false,
+  showBack = false,
+  backLabel = examCopy.backLabel,
+  backHref,
+  onBack,
+  backDisabled = false,
   children,
   className,
 }: MockTestTopBarProps) {
@@ -67,39 +83,58 @@ export function MockTestTopBar({
         {title}
       </h2>
 
-      <div className={playerBar.actions}>
-        {readings.length > 0 || timerSlot ? (
-          <div className={playerBar.readings}>
-            {readings.map((reading, index) => (
-              <MockTestTimerBadge
-                key={`${reading.label ?? "timer"}-${index}`}
-                label={reading.label}
-                value={reading.value}
-                state={reading.state}
-              />
-            ))}
+      {readings.length > 0 || timerSlot || metaText ? (
+        <div className={playerBar.actions}>
+          {readings.length > 0 || timerSlot ? (
+            <div className={playerBar.readings}>
+              {readings.map((reading, index) => (
+                <MockTestTimerBadge
+                  key={`${reading.label ?? "timer"}-${index}`}
+                  label={reading.label}
+                  value={reading.value}
+                  state={reading.state}
+                />
+              ))}
 
-            {timerSlot}
-          </div>
-        ) : null}
+              {timerSlot}
+            </div>
+          ) : null}
 
-        {metaText ? <span className={playerBar.meta}>{metaText}</span> : null}
+          {metaText ? <span className={playerBar.meta}>{metaText}</span> : null}
+        </div>
+      ) : null}
 
-        {children}
+      {showBack || showNext || children ? (
+        <div className={playerBar.nav}>
+          {children}
 
-        {showNext ? (
-          <MockTestButton
-            variant="primary"
-            size="xs"
-            href={nextHref}
-            onClick={onNext}
-            disabled={nextDisabled}
-            ariaLabel={examCopy.nextAriaLabel}
-          >
-            {nextLabel}
-          </MockTestButton>
-        ) : null}
-      </div>
+          {showBack ? (
+            <MockTestButton
+              variant="secondary"
+              size="xs"
+              href={backHref}
+              onClick={onBack}
+              disabled={backDisabled}
+              ariaLabel={examCopy.backAriaLabel}
+            >
+              {backLabel}
+            </MockTestButton>
+          ) : null}
+
+          {showNext ? (
+            <MockTestButton
+              variant="primary"
+              size="xs"
+              href={nextHref}
+              onClick={onNext}
+              disabled={nextDisabled}
+              ariaLabel={examCopy.nextAriaLabel}
+            >
+              {nextLabel}
+            </MockTestButton>
+          ) : null}
+        </div>
+      ) : null}
     </header>
   );
 }

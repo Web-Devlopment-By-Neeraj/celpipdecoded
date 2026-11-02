@@ -18,7 +18,7 @@ export default async function CohortPage() {
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-8">
-      <h1 className="font-serif text-3xl font-semibold text-academy-navy">What works</h1>
+      <h1 className="font-serif text-3xl font-bold text-academy-navy">What works</h1>
       <p className="mt-2 text-sm leading-6 text-academy-navy/75">
         Which mini-course moves which skill. Rows with fewer than {defaultSettings()["cohort.min_n"]} proved prescriptions stay grey. Student names are not on this report.
       </p>

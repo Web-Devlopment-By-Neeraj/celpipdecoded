@@ -24,9 +24,23 @@
   --brand-teal-soft: #e4f5ee;
   --brand-offwhite: #f4f1ea;
   --brand-offwhite-deep: #eae5d9;
+  /* Light teal for text and marks that sit on a navy surface, where the
+     deep teal drops below AA. Same hue as the brand teal. */
+  --brand-mint: #5ad3a4;
 
   --background: var(--brand-offwhite);
   --foreground: var(--brand-ink);
+
+  /* Navy panel (DESIGN.md). The one dark surface of the light theme:
+     the app sidebar, the hero card, the results spotlight. It stays dark
+     in the dark theme too, one step off the page colour. */
+  --navy-panel: var(--brand-ink);
+
+  /* Score ring tones (DESIGN.md, Build Pack 4.8). 9 and above, 7 to 8,
+     below 7. Used only for practice levels and testimonial scores. */
+  --score-high: #0e9f6e;
+  --score-mid: #d6952c;
+  --score-low: #cf4436;
 
   /* Accent used for the public site buttons and eyebrows. */
   --brand: var(--brand-teal-deep);
@@ -157,6 +171,11 @@
   --color-brand-teal-deep: var(--brand-teal-deep);
   --color-brand-teal-soft: var(--brand-teal-soft);
   --color-brand-offwhite: var(--brand-offwhite);
+  --color-brand-mint: var(--brand-mint);
+  --color-navy-panel: var(--navy-panel);
+  --color-score-high: var(--score-high);
+  --color-score-mid: var(--score-mid);
+  --color-score-low: var(--score-low);
   --color-cream: var(--cream);
   --color-cream-soft: var(--cream-soft);
   --color-ink: var(--ink);
@@ -196,8 +215,46 @@
   --font-mono: var(--font-brand-mono);
 }
 
+/* Motion (DESIGN.md). Used behind motion-safe: only. */
+@theme {
+  --animate-sheet-up: sheet-up 0.26s cubic-bezier(0.2, 0.8, 0.2, 1);
+  --animate-fade-up: fade-up 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  @keyframes sheet-up {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+/* One offset for every in-page jump: the sticky header (h-16, sm:h-[4.5rem],
+   plus its 1px border) and the notch inset it pads for, so a section always
+   lands with its top exactly under the header. Sections must not add a
+   scroll-mt of their own: the two would stack. */
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: calc(4rem + 1px + env(safe-area-inset-top));
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (min-width: 40rem) {
+  html {
+    scroll-padding-top: calc(4.5rem + 1px + env(safe-area-inset-top));
+  }
 }
 
 body {
@@ -205,6 +262,211 @@ body {
   color: var(--foreground);
   font-family: var(--font-brand-sans), "Segoe UI", system-ui, -apple-system,
     Arial, Helvetica, sans-serif;
+}
+
+/* Dark theme (DESIGN.md, Task 3a).
+
+   Turned on by data-theme="dark" on <html>, which the boot script in
+   src/app/layout.tsx sets before first paint from the saved choice, so
+   there is no flash of the light theme.
+
+   How it works. Text colours are re-pointed as variables, so every
+   opacity step (text-ink/70, ring-ink/5, border-ink/15 ...) keeps its
+   place in the hierarchy without a rule per class. The few utilities
+   that use the same navy as a solid fill, plus white and cream surfaces,
+   get an explicit dark value in the utilities layer further down.
+
+   What it must never touch. A mock test is plain testing software and
+   stays exactly as it is in the light theme. ExamModeViewport carries
+   data-theme-scope="light" and the player root carries
+   data-mock-test-player; both restore the light values below, and every
+   class override excludes them. */
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --background: #0b1a2b;
+  --foreground: #e8edf3;
+  --ink: #e8edf3;
+  --academy-navy: #e8edf3;
+  --academy-navy-soft: #1a3450;
+  --academy-blue-soft: #123c35;
+  --academy-red-soft: #3b1f22;
+  --academy-amber: #f0b35b;
+  --academy-paper: #11263b;
+  --academy-paper-warm: #0b1a2b;
+  --academy-line: #24405a;
+  --navy-panel: #0f2338;
+  --score-high: #34c08f;
+  --score-mid: #e9ad4c;
+  --score-low: #ef6b5f;
+}
+
+:where(html[data-theme="dark"]) :is([data-theme-scope="light"], [data-mock-test-player]) {
+  color-scheme: light;
+  --background: var(--brand-offwhite);
+  --foreground: var(--brand-ink);
+  --ink: var(--brand-ink);
+  --academy-navy: var(--brand-ink);
+  --academy-navy-soft: var(--brand-ink-soft);
+  --academy-blue-soft: var(--brand-teal-soft);
+  --academy-red-soft: #fbeceb;
+  --academy-amber: #a1591a;
+  --academy-paper: #ffffff;
+  --academy-paper-warm: var(--brand-offwhite);
+  --academy-line: #dfe4ec;
+  --navy-panel: var(--brand-ink);
+  --score-high: #0e9f6e;
+  --score-mid: #d6952c;
+  --score-low: #cf4436;
+}
+
+/* A test fills the window, so the page behind it keeps light scrollbars
+   and a light body too. */
+html[data-theme="dark"]:has([data-theme-scope="light"]) {
+  color-scheme: light;
+}
+
+html[data-theme="dark"] body:has([data-theme-scope="light"]) {
+  background: var(--brand-offwhite);
+  color: var(--brand-ink);
+}
+
+@layer utilities {
+  /* Each selector below has the specificity of the one utility it
+     replaces, so hover and focus variants still win over it. The :not()
+     keeps every rule out of a test. */
+
+  /* Page and section surfaces. */
+  :where(html[data-theme="dark"]) :is(.bg-cream, .bg-background, .bg-academy-paper-warm):not(:where([data-theme-scope="light"], [data-theme-scope="light"] *, [data-mock-test-player], [data-mock-test-player] *)) {
+    background-color: #0b1a2b;
+  }
+
+  :where(html[data-theme="dark"]) :is(.bg-cream-soft, .bg-brand-offwhite):not(:where([data-theme-scope="light"], [data-theme-scope="light"] *, [data-mock-test-player], [data-mock-test-player] *)) {
+    background-color: #102438;
+  }
+
+  :where(html[data-theme="dark"]) .bg-cream\/60:not(:where([data-theme-scope="light"], [data-theme-scope="light"] *, [data-mock-test-player], [data-mock-test-player] *)) {
+    background-color: rgb(11 26 43 / 0.6);
+  }
+
+  /* Cards and sheets. */
+  :where(html[data-theme="dark"]) .bg-white:not(:where([data-theme-scope="light"], [data-theme-scope="light"] *, [data-mock-test-player], [data-mock-test-player] *)) {
+    background-color: #11263b;
+  }
+
+  :where(html[data-theme="dark"]) :is(.bg-white\/70, .bg-white\/80, .bg-white\/85, .bg-white\/90, .bg-white\/95):not(:where([data-theme-scope="light"], [data-theme-scope="light"] *, [data-mock-test-player], [data-mock-test-player] *)) {
+    background-color: rgb(14 32 50 / 0.88);
+  }
+
+  /* Navy used as a solid fill: dark sections, avatars, progress fills.
+     The text variable above turned light, so these need a dark value. */
+  :where(html[data-theme="dark"]) .bg-ink:not(:where([data-theme-scope="light"], [data-theme-scope="light"] *, [data-mock-test-player], [data-mock-test-player] *)) {
+    background-color: #0f2338;
+  }
+
+  :where(html[data-theme="dark"]) :is(.bg-ink\/90, .bg-ink\/95):not(:where([data-theme-scope="light"], [data-theme-scope="light"] *, [data-mock-test-player], [data-mock-test-player] *)) {
+    background-color: rgb(15 35 56 / 0.94);
+  }
+
+  :where(html[data-theme="dark"]) :is(.bg-ink\/40, .bg-ink\/50):not(:where([data-theme-scope="light"], [data-theme-scope="light"] *, [data-mock-test-player], [data-mock-test-player] *)) {
+    background-color: rgb(2 8 15 / 0.65);
+  }
+
+  :where(html[data-theme="dark"]) .hover\:bg-ink\/90:hover:not(:where([data-theme-scope="light"], [data-theme-scope="light"] *, [data-mock-test-player], [data-mock-test-player] *)) {
+    background-color: #1a3450;
+  }
+
+  :where(html[data-theme="dark"]) .bg-academy-navy:not(:where([data-theme-scope="light"], [data-theme-scope="light"] *, [data-mock-test-player], [data-mock-test-player] *)) {
+    background-color: #2a4b6b;
+  }
+
+  /* Brand navy and teal as text. The deep teal is too dark to read on a
+     navy surface, so it moves to the mint step of the same hue. */
+  :where(html[data-theme="dark"]) .text-brand-ink:not(:where([data-theme-scope="light"], [data-theme-scope="light"] *, [data-mock-test-player], [data-mock-test-player] *)) {
+    color: #e8edf3;
+  }
+
+  :where(html[data-theme="dark"]) .text-brand-ink\/55:not(:where([data-theme-scope="light"], [data-theme-scope="light"] *, [data-mock-test-player], [data-mock-test-player] *)) {
+    color: rgb(232 237 243 / 0.55);
+  }
+
+  :where(html[data-theme="dark"]) :is(.text-brand, .text-brand-teal-deep, .text-academy-blue):not(:where([data-theme-scope="light"], [data-theme-scope="light"] *, [data-mock-test-player], [data-mock-test-player] *)) {
+    color: #4fd1a1;
+  }
+
+  :where(html[data-theme="dark"]) :is(.text-brand-teal-deep\/80):not(:where([data-theme-scope="light"], [data-theme-scope="light"] *, [data-mock-test-player], [data-mock-test-player] *)) {
+    color: rgb(79 209 161 / 0.8);
+  }
+
+  :where(html[data-theme="dark"]) .text-academy-red:not(:where([data-theme-scope="light"], [data-theme-scope="light"] *, [data-mock-test-player], [data-mock-test-player] *)) {
+    color: #f28b82;
+  }
+
+  /* Status colours from the Tailwind palette (status-styles.ts and the
+     form alerts). */
+  :where(html[data-theme="dark"]) .bg-red-50:not(:where([data-theme-scope="light"], [data-theme-scope="light"] *, [data-mock-test-player], [data-mock-test-player] *)) {
+    background-color: #3b1f22;
+  }
+
+  :where(html[data-theme="dark"]) :is(.text-red-600\/90, .text-red-700, .text-red-800, .text-red-900):not(:where([data-theme-scope="light"], [data-theme-scope="light"] *, [data-mock-test-player], [data-mock-test-player] *)) {
+    color: #f6a39b;
+  }
+
+  :where(html[data-theme="dark"]) :is(.ring-red-200, .border-red-200):not(:where([data-theme-scope="light"], [data-theme-scope="light"] *, [data-mock-test-player], [data-mock-test-player] *)) {
+    --tw-ring-color: #6b2b2b;
+    border-color: #6b2b2b;
+  }
+
+  :where(html[data-theme="dark"]) .bg-emerald-50:not(:where([data-theme-scope="light"], [data-theme-scope="light"] *, [data-mock-test-player], [data-mock-test-player] *)) {
+    background-color: #10352c;
+  }
+
+  :where(html[data-theme="dark"]) .bg-emerald-100:not(:where([data-theme-scope="light"], [data-theme-scope="light"] *, [data-mock-test-player], [data-mock-test-player] *)) {
+    background-color: #134236;
+  }
+
+  :where(html[data-theme="dark"]) :is(.text-emerald-700, .text-emerald-800):not(:where([data-theme-scope="light"], [data-theme-scope="light"] *, [data-mock-test-player], [data-mock-test-player] *)) {
+    color: #6ee0b1;
+  }
+
+  :where(html[data-theme="dark"]) .ring-emerald-200:not(:where([data-theme-scope="light"], [data-theme-scope="light"] *, [data-mock-test-player], [data-mock-test-player] *)) {
+    --tw-ring-color: #1d5a47;
+  }
+
+  :where(html[data-theme="dark"]) .bg-amber-50:not(:where([data-theme-scope="light"], [data-theme-scope="light"] *, [data-mock-test-player], [data-mock-test-player] *)) {
+    background-color: #3a2c12;
+  }
+
+  :where(html[data-theme="dark"]) .bg-amber-100:not(:where([data-theme-scope="light"], [data-theme-scope="light"] *, [data-mock-test-player], [data-mock-test-player] *)) {
+    background-color: #4a3713;
+  }
+
+  :where(html[data-theme="dark"]) :is(.text-amber-800, .text-amber-900):not(:where([data-theme-scope="light"], [data-theme-scope="light"] *, [data-mock-test-player], [data-mock-test-player] *)) {
+    color: #f3c77a;
+  }
+
+  :where(html[data-theme="dark"]) .ring-amber-200:not(:where([data-theme-scope="light"], [data-theme-scope="light"] *, [data-mock-test-player], [data-mock-test-player] *)) {
+    --tw-ring-color: #6b5220;
+  }
+}
+
+/* Mobile bottom navigation (DESIGN.md).
+
+   AppMobileTabBar and PublicMobileTabBar carry data-mobile-tab-bar. Below
+   the lg breakpoint the page gets room for the bar and the assistant
+   button lifts above it. A test owns the whole screen, so while one is on
+   the page the bar is not shown at all. */
+@media (max-width: 1023.98px) {
+  body:has([data-mobile-tab-bar]):not(:has([data-theme-scope="light"], [data-mock-test-player])) {
+    padding-bottom: calc(4.25rem + env(safe-area-inset-bottom));
+  }
+
+  body:has([data-mobile-tab-bar]) [data-assistant-bubble] {
+    bottom: calc(5rem + env(safe-area-inset-bottom));
+  }
+}
+
+body:has([data-theme-scope="light"], [data-mock-test-player]) [data-mobile-tab-bar] {
+  display: none;
 }
 
 /* Mock test player skin (EXAM-UI-02).
@@ -236,137 +498,6 @@ body {
    utility such as bg-academy-navy-soft compiles to
    background-color: var(--academy-navy-soft) and picks up whatever the
    nearest ancestor has that variable set to. */
-/* Task 4: dark mode CSS disabled — uncomment block for Task 3a.
-   Dark mode keeps the navy brand bars (bg-ink, text-cream) as they are.
-   Only the reading surfaces and the text on them change, so a header,
-   hero, or timer does not flip into pale text on a pale background.
-html[data-theme="dark"] {
-  color-scheme: dark;
-  --background: #0c1b2a;
-  --foreground: #f4f1ea;
-  --academy-paper: #173044;
-  --academy-paper-warm: #102433;
-  --academy-navy-soft: #1e3c54;
-  --academy-line: #31516c;
-  --academy-blue-soft: #14392d;
-  --academy-red-soft: #3d2220;
-}
-
-html[data-theme="dark"] body,
-html[data-theme="dark"] .bg-cream,
-html[data-theme="dark"] .bg-background {
-  background-color: #0c1b2a;
-  color: #f4f1ea;
-}
-
-html[data-theme="dark"] .bg-cream-soft,
-html[data-theme="dark"] .bg-academy-paper-warm {
-  background-color: #122536;
-}
-
-html[data-theme="dark"] .bg-white,
-html[data-theme="dark"] .bg-academy-paper {
-  background-color: #1a3d56;
-  color: #f4f1ea;
-  box-shadow: inset 0 0 0 1px rgb(244 241 234 / 0.08);
-}
-
-   Navy pills (active nav, avatars) need a light fill once the page is dark.
-html[data-theme="dark"] .bg-academy-navy.text-white {
-  background-color: #f4f1ea;
-  color: #102433;
-}
-
-html[data-theme="dark"] .bg-academy-navy.text-white [class*="text-white"] {
-  color: rgb(16 36 51 / 0.72);
-}
-
-   Dashboard wordmark is ink-on-cream; on a dark sidebar that ink disappears.
-html[data-theme="dark"] .text-brand-ink {
-  color: #f4f1ea;
-}
-
-html[data-theme="dark"] .bg-brand-offwhite {
-  background-color: rgb(244 241 234 / 0.1);
-}
-
-html[data-theme="dark"] .text-ink,
-html[data-theme="dark"] .text-foreground,
-html[data-theme="dark"] .text-academy-navy {
-  color: #f4f1ea;
-}
-
-html[data-theme="dark"] [class*="text-ink/"],
-html[data-theme="dark"] [class*="text-foreground/"],
-html[data-theme="dark"] [class*="text-academy-navy/"] {
-  color: rgb(244 241 234 / 0.74);
-}
-
-html[data-theme="dark"] [class*="border-ink"],
-html[data-theme="dark"] input,
-html[data-theme="dark"] textarea,
-html[data-theme="dark"] select {
-  border-color: rgb(244 241 234 / 0.18);
-}
-
-html[data-theme="dark"] [class*="ring-ink"] {
-  --tw-ring-color: rgb(244 241 234 / 0.14);
-}
-
-html[data-theme="dark"] input,
-html[data-theme="dark"] textarea,
-html[data-theme="dark"] select {
-  background-color: #102433;
-  color: #f4f1ea;
-}
-
-html[data-theme="dark"] input::placeholder,
-html[data-theme="dark"] textarea::placeholder {
-  color: rgb(244 241 234 / 0.45);
-}
-
-html[data-theme="dark"] .hover\:text-academy-navy:hover,
-html[data-theme="dark"] .hover\:text-ink:hover {
-  color: #ffffff;
-}
-
-html[data-theme="dark"] [data-mock-test-player] {
-  color-scheme: light;
-  --background: #f2f2f2;
-  --foreground: #1f2937;
-  --academy-paper: #ffffff;
-  --academy-paper-warm: #ffffff;
-  --academy-navy-soft: var(--player-chrome);
-  --academy-line: var(--player-line);
-  --academy-blue-soft: var(--player-blue-soft);
-}
-
-html[data-theme="dark"] [data-mock-test-player] .bg-white,
-html[data-theme="dark"] [data-mock-test-player] .bg-cream,
-html[data-theme="dark"] [data-mock-test-player] .bg-cream-soft,
-html[data-theme="dark"] [data-mock-test-player] .bg-academy-paper {
-  background-color: #ffffff;
-  color: #1f2937;
-  box-shadow: none;
-}
-
-html[data-theme="dark"] [data-mock-test-player] input,
-html[data-theme="dark"] [data-mock-test-player] textarea,
-html[data-theme="dark"] [data-mock-test-player] select {
-  background-color: #ffffff;
-  color: #1f2937;
-  border-color: #d1d5db;
-}
-
-html[data-theme="dark"] [data-mock-test-player] .text-ink,
-html[data-theme="dark"] [data-mock-test-player] .text-foreground,
-html[data-theme="dark"] [data-mock-test-player] .text-academy-navy,
-html[data-theme="dark"] [data-mock-test-player] [class*="text-ink/"],
-html[data-theme="dark"] [data-mock-test-player] [class*="text-academy-navy/"] {
-  color: #1f2937;
-}
-*/
-
 [data-mock-test-player] {
   --academy-navy: var(--player-ink);
   --academy-navy-dark: #111827;

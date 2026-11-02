@@ -23,7 +23,7 @@ export function WritingTimer({
     <section
       role="timer"
       aria-label={`${writingPracticeCopy.timerLabel}: ${formatClock(seconds)} remaining`}
-      className="rounded-3xl bg-ink p-5 text-center text-white sm:p-6"
+      className="rounded-2xl bg-ink p-5 text-center text-white sm:p-6"
     >
       <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/60">
         {writingPracticeCopy.timerLabel}

@@ -4,7 +4,7 @@ import { DEFAULT_LANGUAGES } from "@/features/platform/video";
 export function CourseCatalog({ unlocked = false }: { unlocked?: boolean }) {
   return (
     <div className="mx-auto w-full max-w-3xl">
-      <h1 className="font-serif text-3xl font-semibold text-ink">Course</h1>
+      <h1 className="font-serif text-3xl font-bold text-ink">Course</h1>
       <p className="mt-3 text-sm leading-6 text-ink/70">
         {unlocked
           ? "Your course is unlocked. English and Hindi lessons are available."
@@ -21,7 +21,7 @@ export function CourseCatalog({ unlocked = false }: { unlocked?: boolean }) {
           </li>
         ))}
       </ul>
-      <article className="mt-8 rounded-3xl bg-white p-5 text-ink ring-1 ring-ink/10">
+      <article className="mt-8 rounded-2xl bg-white p-5 text-ink ring-1 ring-ink/10">
         <h2 className="text-lg font-semibold">
           {unlocked ? "Lesson 1" : "Lesson 1 preview"}
         </h2>

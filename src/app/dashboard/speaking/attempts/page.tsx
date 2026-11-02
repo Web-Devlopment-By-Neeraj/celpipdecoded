@@ -74,7 +74,7 @@ export default async function SpeakingAttemptsPage() {
         <p className="mt-4 text-xs font-semibold uppercase tracking-[0.2em] text-brand">
           {historyCopy.pageBadge}
         </p>
-        <h1 className="mt-2 font-serif text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
+        <h1 className="mt-2 font-serif text-2xl font-bold tracking-tight text-ink sm:text-3xl">
           {historyCopy.pageHeading}
         </h1>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-ink/70">

@@ -283,7 +283,7 @@ export function OnboardingWizard() {
           >
             {INSTRUCTOR_NAME.charAt(0)}
           </div>
-          <h1 className="mt-6 font-serif text-2xl font-semibold text-ink sm:text-3xl">
+          <h1 className="mt-6 font-serif text-2xl font-bold text-ink sm:text-3xl">
             Let&apos;s build your study plan
           </h1>
           <p className="mt-3 text-sm leading-6 text-ink/70">
@@ -446,7 +446,7 @@ export function OnboardingWizard() {
 
       {step === "finish" ? (
         <div>
-          <h1 className="font-serif text-2xl font-semibold text-ink sm:text-3xl">
+          <h1 className="font-serif text-2xl font-bold text-ink sm:text-3xl">
             You&apos;re all set, {firstName}.
           </h1>
           <div className="mt-6 rounded-2xl border border-brand/20 bg-brand/5 p-5">
@@ -481,7 +481,7 @@ function QuestionShell({
 }) {
   return (
     <div>
-      <h1 className="font-serif text-2xl font-semibold text-ink">{meta.title}</h1>
+      <h1 className="font-serif text-2xl font-bold text-ink">{meta.title}</h1>
       {meta.subtitle ? (
         <p className="mt-2 text-sm leading-6 text-ink/65">{meta.subtitle}</p>
       ) : null}

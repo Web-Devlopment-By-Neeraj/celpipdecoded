@@ -1,6 +1,7 @@
 import { LandingHeader } from "@/components/landing/LandingHeader";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { ProgramHeroSection } from "@/components/landing/ProgramHeroSection";
+import { ResultsSection } from "@/components/landing/ResultsSection";
 import { IncludedSection } from "@/components/landing/IncludedSection";
 import { LiveClassesSection } from "@/components/landing/LiveClassesSection";
 import { AiPracticeSection } from "@/components/landing/AiPracticeSection";
@@ -22,6 +23,7 @@ export default async function Home() {
       <LandingHeader signedIn={signedIn} />
       <main className="flex-1">
         <ProgramHeroSection signedIn={signedIn} />
+        <ResultsSection />
         <IncludedSection />
         <LiveClassesSection />
         <AiPracticeSection />

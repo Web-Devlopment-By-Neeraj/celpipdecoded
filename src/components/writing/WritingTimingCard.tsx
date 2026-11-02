@@ -10,7 +10,7 @@ export function WritingTimingCard({ details }: { details: WritingTaskDetails }) 
   return (
     <section
       aria-label={writingCopy.timingCardTitle}
-      className="rounded-3xl bg-cream-soft p-6 ring-1 ring-ink/5"
+      className="rounded-2xl bg-cream-soft p-6 ring-1 ring-ink/5"
     >
       <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-ink/50">
         {writingCopy.timingCardTitle}
@@ -21,7 +21,7 @@ export function WritingTimingCard({ details }: { details: WritingTaskDetails }) 
           <dt className="text-xs font-semibold text-ink/60">
             {writingCopy.timeLimitLabel}
           </dt>
-          <dd className="mt-1 font-serif text-lg font-semibold text-ink">
+          <dd className="mt-1 font-serif text-lg font-bold text-ink">
             {formatSeconds(details.time_seconds)}
           </dd>
         </div>
@@ -29,7 +29,7 @@ export function WritingTimingCard({ details }: { details: WritingTaskDetails }) 
           <dt className="text-xs font-semibold text-ink/60">
             {writingCopy.wordTargetLabel}
           </dt>
-          <dd className="mt-1 font-serif text-lg font-semibold text-ink">
+          <dd className="mt-1 font-serif text-lg font-bold text-ink">
             {formatWordTarget(details)}
           </dd>
         </div>

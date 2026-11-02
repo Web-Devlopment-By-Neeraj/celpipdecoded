@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { ExamInstructionRow } from "../ExamInstructionRow";
 import { ExamShell } from "../ExamShell";
 import {
@@ -29,6 +30,7 @@ export type ListeningScenarioScreenProps = {
   title: string;
   scenario: ListeningScenario;
   metaText?: string;
+  timerSlot?: ReactNode;
   onNext?: () => void;
   onBack?: () => void;
   showBack?: boolean;
@@ -38,6 +40,7 @@ export function ListeningScenarioScreen({
   title,
   scenario,
   metaText,
+  timerSlot,
   onNext,
   onBack,
   showBack = true,

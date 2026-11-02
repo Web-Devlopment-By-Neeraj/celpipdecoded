@@ -67,7 +67,7 @@ const IMAGE_BASE = "https://res.cloudinary.com/dkvsshy7n/image/upload";
 export const listeningPart2: ListeningPartContent = {
   testId: "mock-test-1",
   sectionId: "listening-part-2",
-  title: "Practice Test 1 - Listening Part 2: Listening to a Daily Life Conversation",
+  title: "Mock Test 1 - Listening Part 2: Listening to a Daily Life Conversation",
   partTitle: "Listening to a Daily Life Conversation",
   subtitle:
     "Read the following information before this part of the practice test begins.",

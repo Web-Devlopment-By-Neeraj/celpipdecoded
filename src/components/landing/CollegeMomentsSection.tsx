@@ -31,10 +31,10 @@ const habits = [
 export function CollegeMomentsSection() {
   return (
     <section className="overflow-hidden bg-cream text-foreground">
-      <Container className="py-20 sm:py-28">
+      <Container className="py-16 sm:py-24">
         <div className="max-w-2xl">
           <Eyebrow className="text-brand">{brandCopy.communityName}</Eyebrow>
-          <h2 className="mt-5 font-serif text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">
+          <h2 className="mt-3 font-serif text-3xl font-bold leading-tight tracking-tight sm:text-4xl lg:text-5xl">
             A community that decodes the test together
           </h2>
           <p className="mt-5 text-lg leading-8 text-foreground/70">
@@ -46,9 +46,9 @@ export function CollegeMomentsSection() {
           {habits.map((habit) => (
             <div
               key={habit.title}
-              className="rounded-3xl bg-white p-8 shadow-sm ring-1 ring-foreground/5"
+              className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-ink/10 sm:p-8"
             >
-              <h3 className="text-xl font-semibold text-foreground">
+              <h3 className="text-lg font-bold tracking-tight text-foreground sm:text-xl">
                 {habit.title}
               </h3>
               <p className="mt-3 leading-7 text-foreground/70">{habit.body}</p>

@@ -34,6 +34,8 @@ export type ListeningSectionEndScreenProps = {
   title: string;
   // Where Back to dashboard goes.
   dashboardHref?: string;
+  // Replaces the dashboard label when the section belongs to a mock.
+  leaveLabel?: string;
   // Clears all of the answers and returns to the first screen. Omit to
   // hide the control.
   onRestart?: () => void;
@@ -48,6 +50,7 @@ export type ListeningSectionEndScreenProps = {
 export function ListeningSectionEndScreen({
   title,
   dashboardHref = "/dashboard",
+  leaveLabel,
   onRestart,
   showNextSectionPlaceholder = true,
   copy = listeningSectionCopy,
@@ -69,7 +72,7 @@ export function ListeningSectionEndScreen({
         <div className={examListening.mediaStack}>
           <div className={examScreenBody.actions}>
             <ExamButton variant="primary" size="md" href={dashboardHref}>
-              {copy.backToDashboardLabel}
+              {leaveLabel ?? copy.backToDashboardLabel}
             </ExamButton>
 
             {onRestart ? (

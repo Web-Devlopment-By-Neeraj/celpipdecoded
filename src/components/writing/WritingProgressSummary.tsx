@@ -16,7 +16,7 @@ function StatTile({ label, value }: { label: string; value: string }) {
       <p className="text-xs font-semibold uppercase tracking-[0.15em] text-ink/50">
         {label}
       </p>
-      <p className="mt-2 font-serif text-2xl font-semibold tracking-tight text-ink">
+      <p className="mt-2 font-serif text-2xl font-bold tracking-tight text-ink">
         {value}
       </p>
     </div>
@@ -76,7 +76,7 @@ export function WritingProgressSummary({
   return (
     <section
       aria-label={writingProgressCopy.summaryLabel}
-      className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-ink/5 sm:p-8"
+      className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-ink/5 sm:p-8"
     >
       <div className="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3">
         {stats.map((stat) => (

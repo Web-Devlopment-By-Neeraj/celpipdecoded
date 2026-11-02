@@ -88,7 +88,7 @@ export function EarlyAccessForm() {
   return (
     <section
       id="inquiry"
-      className="relative isolate scroll-mt-16 overflow-hidden bg-ink text-cream"
+      className="relative isolate overflow-hidden bg-ink text-cream"
     >
       {/* Soft brand glow behind the form panel. */}
       <div
@@ -96,10 +96,10 @@ export function EarlyAccessForm() {
         className="absolute -left-40 top-1/4 -z-10 h-[28rem] w-[28rem] rounded-full bg-brand/15 blur-3xl"
       />
 
-      <div className="relative mx-auto grid w-full max-w-6xl gap-12 px-5 py-20 sm:px-8 sm:py-28 lg:grid-cols-2 lg:gap-16">
+      <div className="relative mx-auto grid w-full max-w-6xl gap-12 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-2 lg:gap-16">
         <div className="lg:pt-6">
-          <Eyebrow className="text-brand">Program inquiry</Eyebrow>
-          <h2 className="mt-5 font-serif text-4xl font-semibold leading-tight tracking-tight text-cream sm:text-5xl">
+          <Eyebrow className="text-brand-mint">Program inquiry</Eyebrow>
+          <h2 className="mt-3 font-serif text-3xl font-bold leading-tight tracking-tight text-cream sm:text-4xl lg:text-5xl">
             Get CELPIP program information
           </h2>
           <p className="mt-6 max-w-md text-lg leading-8 text-cream/75">
@@ -125,7 +125,7 @@ export function EarlyAccessForm() {
                   />
                 </svg>
               </div>
-              <h3 className="mt-5 font-serif text-2xl font-semibold text-foreground">
+              <h3 className="mt-5 font-serif text-2xl font-bold text-foreground">
                 Thank you. Your information has been received.
               </h3>
               <p className="mt-3 text-sm text-foreground/60">

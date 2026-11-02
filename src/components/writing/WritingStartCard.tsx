@@ -23,9 +23,9 @@ export function WritingStartCard({
   return (
     <section
       aria-label={writingPracticeCopy.startCardTitle}
-      className="rounded-3xl bg-cream-soft p-6 ring-1 ring-ink/5"
+      className="rounded-2xl bg-cream-soft p-6 ring-1 ring-ink/5"
     >
-      <h2 className="font-serif text-xl font-semibold tracking-tight text-ink">
+      <h2 className="font-serif text-xl font-bold tracking-tight text-ink">
         {writingPracticeCopy.startCardTitle}
       </h2>
 
@@ -34,7 +34,7 @@ export function WritingStartCard({
           <dt className="text-xs font-semibold text-ink/60">
             {writingPracticeCopy.timeLimitLabel}
           </dt>
-          <dd className="mt-1 font-serif text-lg font-semibold text-ink">
+          <dd className="mt-1 font-serif text-lg font-bold text-ink">
             {formatSeconds(timeSeconds)}
           </dd>
         </div>
@@ -42,7 +42,7 @@ export function WritingStartCard({
           <dt className="text-xs font-semibold text-ink/60">
             {writingPracticeCopy.wordTargetLabel}
           </dt>
-          <dd className="mt-1 font-serif text-lg font-semibold text-ink">
+          <dd className="mt-1 font-serif text-lg font-bold text-ink">
             {formatWordRange(wordMin, wordMax)}
           </dd>
         </div>

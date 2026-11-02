@@ -22,10 +22,10 @@ export function WritingRecentAttemptsCard({
   return (
     <section
       aria-label={writingHistoryCopy.recentHeading}
-      className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-ink/5 sm:p-8"
+      className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-ink/5 sm:p-8"
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="font-serif text-xl font-semibold tracking-tight text-ink">
+        <h2 className="font-serif text-xl font-bold tracking-tight text-ink">
           {writingHistoryCopy.recentHeading}
         </h2>
         {attempts.length > 0 && (

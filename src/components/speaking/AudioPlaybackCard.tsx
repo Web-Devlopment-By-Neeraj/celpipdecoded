@@ -14,9 +14,9 @@ export function AudioPlaybackCard({
   return (
     <section
       aria-label={recordingCopy.playbackHeading}
-      className="rounded-3xl bg-white p-5 ring-1 ring-ink/5 sm:p-6"
+      className="rounded-2xl bg-white p-5 ring-1 ring-ink/5 sm:p-6"
     >
-      <h2 className="font-serif text-xl font-semibold tracking-tight text-ink">
+      <h2 className="font-serif text-xl font-bold tracking-tight text-ink">
         {recordingCopy.playbackHeading}
       </h2>
       <p className="mt-1 text-sm leading-6 text-ink/60">

@@ -41,6 +41,7 @@ export type ListeningSectionVideoScreenProps = {
   copy?: ListeningSectionCopy;
   metaText?: string;
   onNext?: () => void;
+  onVideoEnded?: () => void;
   onSkip?: () => void;
   onBack?: () => void;
   showBack?: boolean;
@@ -56,6 +57,7 @@ export function ListeningSectionVideoScreen({
   copy = listeningSectionCopy,
   metaText,
   onNext,
+  onVideoEnded,
   onSkip,
   onBack,
   showBack = true,
@@ -75,6 +77,7 @@ export function ListeningSectionVideoScreen({
       helperText={content.helperText}
       metaText={metaText}
       onNext={onNext}
+      onVideoEnded={onVideoEnded}
       onSkip={onSkip}
       onBack={onBack}
       showBack={showBack}

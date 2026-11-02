@@ -39,7 +39,7 @@ export default async function LoginPage({
           <Link href="/" className="inline-flex justify-center">
             <CelpipDecodedLogo size="lg" />
           </Link>
-          <h1 className="mt-4 font-serif text-3xl font-semibold tracking-tight text-ink">
+          <h1 className="mt-4 font-serif text-3xl font-bold tracking-tight text-ink">
             Welcome back
           </h1>
           <p className="mt-2 text-sm leading-6 text-ink/70">
@@ -47,7 +47,7 @@ export default async function LoginPage({
           </p>
         </div>
 
-        <div className="mt-8 rounded-3xl bg-white p-6 shadow-sm ring-1 ring-ink/5 sm:p-8">
+        <div className="mt-8 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-ink/5 sm:p-8">
           {linkFailed ? (
             <p role="alert" className="mb-5 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
               That email link is invalid or has expired. Request a new one from Forgot password.

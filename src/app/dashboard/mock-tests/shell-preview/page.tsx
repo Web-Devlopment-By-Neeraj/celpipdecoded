@@ -35,7 +35,7 @@ export const metadata: Metadata = {
 const INSTRUCTION_BULLETS = [
   "This is a CELPIP Decoded practice test, not the official CELPIP test.",
   "Each part begins with a short instruction screen like this one.",
-  "Use Next at the top right to move forward, and Back at the bottom left to return.",
+  "Use Next at the top right to move forward, and Back beside it to return.",
   "Placeholder text only. Practice test content is added in a later ticket.",
 ];
 
@@ -79,7 +79,7 @@ function SampleOptionList({ name }: { name: string }) {
 
 function SampleHeading({ id, label }: { id: string; label: string }) {
   return (
-    <h2 id={id} className={cx(text.heading, "scroll-mt-24 text-lg")}>
+    <h2 id={id} className={cx(text.heading, "text-lg")}>
       {label}
     </h2>
   );

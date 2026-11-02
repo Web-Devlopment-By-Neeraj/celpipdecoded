@@ -110,15 +110,15 @@ export default async function CrsPage({
 
   return (
     <main className="min-h-screen overflow-x-hidden bg-cream text-ink">
-      <div className="mx-auto w-full max-w-3xl px-4 py-8 pb-28">
+      <div className="mx-auto w-full max-w-3xl px-4 pb-28 pt-10">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand">Free tool</p>
-        <h1 className="mt-2 font-serif text-3xl font-semibold tracking-tight">CRS calculator</h1>
+        <h1 className="mt-2 font-serif text-3xl font-bold tracking-tight">CRS calculator</h1>
         <p className="mt-3 text-sm leading-6 text-ink/75">
           Work out an estimate from your own answers. No account is required. Language levels use CELPIP, and CELPIP maps one-to-one onto CLB.
         </p>
 
         <form method="get" action="/crs" className="mt-8 space-y-8">
-          <fieldset className="space-y-4 rounded-3xl bg-white p-4 shadow-sm ring-1 ring-ink/5">
+          <fieldset className="space-y-4 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-ink/5">
             <legend className="px-1 text-base font-semibold">Core</legend>
             <label className="block text-sm font-medium">
               Age in years
@@ -166,7 +166,7 @@ export default async function CrsPage({
             }}
           />
 
-          <fieldset className="space-y-4 rounded-3xl bg-white p-4 shadow-sm ring-1 ring-ink/5">
+          <fieldset className="space-y-4 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-ink/5">
             <legend className="px-1 text-base font-semibold">Additional</legend>
             <label className="block text-sm font-medium">
               Foreign work experience, in years
@@ -212,8 +212,8 @@ export default async function CrsPage({
         </form>
 
         {result && best ? (
-          <section className="mt-8 space-y-4 rounded-3xl bg-white p-4 shadow-sm ring-1 ring-ink/5" aria-live="polite">
-            <h2 className="font-serif text-2xl font-semibold">Estimate: {result.total}</h2>
+          <section className="mt-8 space-y-4 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-ink/5" aria-live="polite">
+            <h2 className="font-serif text-2xl font-bold">Estimate: {result.total}</h2>
             <p className="text-sm leading-6">{CRS_ESTIMATE_DISCLAIMER}</p>
             <p className="text-sm">
               <a className="font-semibold text-brand underline" href={IRCC_CALCULATOR_URL}>Official IRCC CRS calculator</a>

@@ -41,7 +41,7 @@ export default async function SignupPage({
           <Link href="/" className="inline-flex justify-center">
             <CelpipDecodedLogo size="lg" />
           </Link>
-          <h1 className="mt-4 font-serif text-3xl font-semibold tracking-tight text-ink">
+          <h1 className="mt-4 font-serif text-3xl font-bold tracking-tight text-ink">
             Create your account
           </h1>
           <p className="mt-2 text-sm leading-6 text-ink/70">
@@ -49,7 +49,7 @@ export default async function SignupPage({
           </p>
         </div>
 
-        <div className="mt-8 rounded-3xl bg-white p-6 shadow-sm ring-1 ring-ink/5 sm:p-8">
+        <div className="mt-8 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-ink/5 sm:p-8">
           <SignupForm nextPath={nextPath} />
         </div>
 

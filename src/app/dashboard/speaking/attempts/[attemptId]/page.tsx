@@ -150,16 +150,16 @@ export default async function SpeakingAttemptResultPage({
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand">
             {resultCopy.pageBadge}
           </p>
-          <h1 className="mt-2 font-serif text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
+          <h1 className="mt-2 font-serif text-2xl font-bold tracking-tight text-ink sm:text-3xl">
             {resultCopy.pageHeading}
           </h1>
         </header>
         {failed ? (
           <section
             aria-label={resultCopy.failedHeading}
-            className="rounded-3xl bg-white p-6 text-center shadow-sm ring-1 ring-ink/5 sm:p-8"
+            className="rounded-2xl bg-white p-6 text-center shadow-sm ring-1 ring-ink/5 sm:p-8"
           >
-            <h2 className="font-serif text-xl font-semibold tracking-tight text-ink">
+            <h2 className="font-serif text-xl font-bold tracking-tight text-ink">
               {resultCopy.failedHeading}
             </h2>
             <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-ink/70">
@@ -167,7 +167,7 @@ export default async function SpeakingAttemptResultPage({
             </p>
           </section>
         ) : (
-          <section className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-ink/5 sm:p-8">
+          <section className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-ink/5 sm:p-8">
             <FeedbackProcessingCard />
             <p className="mx-auto mt-4 max-w-md text-center text-sm leading-6 text-ink/60">
               {resultCopy.notReadyText}
@@ -231,7 +231,7 @@ export default async function SpeakingAttemptResultPage({
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand">
           {resultCopy.pageBadge}
         </p>
-        <h1 className="mt-2 font-serif text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
+        <h1 className="mt-2 font-serif text-2xl font-bold tracking-tight text-ink sm:text-3xl">
           {resultCopy.pageHeading}
         </h1>
         <p className="mt-2 text-sm leading-6 text-ink/70">

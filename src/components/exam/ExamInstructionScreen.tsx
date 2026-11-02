@@ -54,6 +54,7 @@ export type ExamInstructionScreenProps = {
   timerValue?: string;
   timerState?: ExamTimerState;
   timers?: ExamTimerReading[];
+  timerSlot?: ReactNode;
 
   showNext?: boolean;
   nextLabel?: string;

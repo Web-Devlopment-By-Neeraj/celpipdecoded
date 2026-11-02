@@ -49,7 +49,7 @@ export function LeaveOfferDialog() {
         aria-labelledby="leave-offer-title"
         className="w-full max-w-md rounded-3xl bg-white p-6 text-ink shadow-xl"
       >
-        <h2 id="leave-offer-title" className="font-serif text-2xl font-semibold">
+        <h2 id="leave-offer-title" className="font-serif text-2xl font-bold">
           15% off before you go
         </h2>
         <p className="mt-2 text-sm leading-6 text-ink/70">

@@ -35,7 +35,7 @@
 export function buildWritingMockCopy({ testLabel }: { testLabel: string }) {
   return {
     // 1. Writing section intro.
-    introScreenTitle: testLabel + " - Writing Test",
+    introScreenTitle: testLabel + " - Writing",
     introSubtitle:
       "Read the following information before the Writing section begins.",
     introLines: [
@@ -45,11 +45,22 @@ export function buildWritingMockCopy({ testLabel }: { testLabel: string }) {
       },
       {
         heading: "Moving forward",
-        text: "Press Next to move to the next screen. You can move back and forward, and everything you have typed stays as you left it.",
+        text: "In a complete test the screen moves on when its time ends, and you cannot go back. In a Writing section on its own, press Next when you are ready.",
       },
       {
-        heading: "Your writing",
-        text: "Your responses are held on this screen only. Nothing is saved, and leaving or reloading the page clears them.",
+        text: "In the real test, if Task 1 isn't finished after 27 minutes, the screen moves to Task 2 on its own, and you can't go back. Here, it depends on how you started:",
+      },
+      {
+        heading: "Complete test:",
+        text: "works the same as the real test.",
+      },
+      {
+        heading: "Writing section on its own:",
+        text: "the screen waits for you, and you move on by clicking Next.",
+      },
+      {
+        text: "The Writing section takes 53 minutes in total: 27 for Task 1 and 26 for Task 2.",
+        emphasis: true,
       },
       {
         heading: "AI review at the end",
@@ -57,7 +68,7 @@ export function buildWritingMockCopy({ testLabel }: { testLabel: string }) {
       },
     ],
     introNotice:
-      "This is CELPIP Decoded writing practice, not an official CELPIP test. The review is AI-supported and gives a practice estimate, not an official CELPIP score. Nothing you type here is saved.",
+      "Scores are practice estimates, not official CELPIP scores.",
     introCardTitle: "Writing section",
     introCardSummary:
       "Both Writing tasks in one run, with a live word count and a countdown on each task, followed by an optional AI review and an estimated Writing level for practice.",
@@ -305,6 +316,10 @@ export function formatWritingTaskScreenTitle(
   title: string,
   taskTitle: string,
 ): string {
+  if (title.endsWith(taskTitle)) {
+    return title;
+  }
+
   return title + ": " + taskTitle;
 }
 

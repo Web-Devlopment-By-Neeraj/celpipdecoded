@@ -7,25 +7,30 @@ export function PracticeTimer({
   seconds,
   totalSeconds,
   running,
+  grows = false,
 }: {
   label: string;
   seconds: number;
   totalSeconds: number;
   running: boolean;
+  // Preparation fills from empty to full as the window is used.
+  // A countdown that is not preparation keeps the remaining share.
+  grows?: boolean;
 }) {
+  const fraction = grows ? totalSeconds - seconds : seconds;
   const progress =
-    totalSeconds > 0 ? Math.min(1, Math.max(0, seconds / totalSeconds)) : 0;
+    totalSeconds > 0 ? Math.min(1, Math.max(0, fraction / totalSeconds)) : 0;
 
   return (
     <section
       role="timer"
       aria-label={`${label}: ${formatClock(seconds)} remaining`}
-      className="rounded-3xl bg-ink p-6 text-center text-white sm:p-8"
+      className="rounded-2xl bg-ink p-6 text-center text-white sm:p-8"
     >
       <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/60">
         {label}
       </p>
-      <p className="mt-2 font-serif text-6xl font-semibold tabular-nums tracking-tight sm:text-7xl">
+      <p className="mt-2 font-serif text-6xl font-bold tabular-nums tracking-tight sm:text-7xl">
         {formatClock(seconds)}
       </p>
       <div

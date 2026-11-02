@@ -69,7 +69,7 @@
 export function buildSpeakingMockCopy({ testLabel }: { testLabel: string }) {
   return {
     // 1. Speaking section intro.
-    introScreenTitle: testLabel + " - Speaking Test",
+    introScreenTitle: testLabel + " - Speaking",
     introSubtitle:
       "Read the following information before the Speaking section begins.",
     introLines: [
@@ -79,15 +79,26 @@ export function buildSpeakingMockCopy({ testLabel }: { testLabel: string }) {
       },
       {
         heading: "Preparation, then recording",
-        text: "The preparation countdown starts when the task screen opens. The recording countdown starts when you press Start recording, and your microphone is only asked for at that moment.",
+        text: "In a complete test, recording starts when preparation time ends. In a Speaking section on its own, click Record your answer when preparation ends. When you have finished, click Next, or Record again if you want another try.",
       },
       {
         heading: "Moving forward",
-        text: "Press Next to move to the next screen. You can move back and forward, and any recording you have made stays as you left it.",
+        text: "In a complete test you cannot go back to an earlier task. In a Speaking section on its own, press Next when you are ready.",
       },
       {
-        heading: "Your recordings",
-        text: "Recordings are held in this browser tab only. You can play them back and record again as many times as you like. Nothing is saved, and leaving or reloading the page clears them.",
+        text: "In the real test, each Speaking task moves on by itself when its time runs out, and you can't go back to an earlier task. Here, it depends on how you started:",
+      },
+      {
+        heading: "Complete test:",
+        text: "works the same as the real test. Recording starts as soon as preparation time ends.",
+      },
+      {
+        heading: "Speaking section on its own:",
+        text: "when preparation ends, click Record your answer. When you've finished, click Next to move on, or Record again if you want another try.",
+      },
+      {
+        text: "Aim to finish the Speaking section in about 15-20 minutes.",
+        emphasis: true,
       },
       {
         heading: "AI review at the end",
@@ -95,7 +106,7 @@ export function buildSpeakingMockCopy({ testLabel }: { testLabel: string }) {
       },
     ],
     introNotice:
-      "This is CELPIP Decoded speaking practice, not an official CELPIP test. The review is AI-supported and gives a practice estimate, not an official CELPIP score. Nothing you record here is saved.",
+      "Scores are practice estimates, not official CELPIP scores.",
     introCardTitle: "Speaking section",
     introCardSummary:
       "All eight Speaking tasks in one run, each with a preparation countdown, a recording countdown and a local playback of what you recorded, followed by an optional AI review and an estimated Speaking level for practice.",
@@ -217,9 +228,9 @@ export function buildSpeakingMockCopy({ testLabel }: { testLabel: string }) {
     // words: the window is closed, nothing happened, you are still in
     // charge of when this screen ends.
     taskFiveInstructionsSubtitle:
-      "This task has three parts. Read what each one asks for, then press Next to begin.",
+      "Speaking Task 5 has three parts. Read what each one asks for, then press Next to begin.",
     taskFiveInstructionsNotice:
-      "Nothing is recorded on the first three screens. You record once, on the last one.",
+      "Scores are practice estimates, not official CELPIP scores.",
 
     // The choice screen.
     choiceTimerLabel: "Choice time",
@@ -239,7 +250,8 @@ export function buildSpeakingMockCopy({ testLabel }: { testLabel: string }) {
     // telling them that is fine has to still be there a minute later.
     // Saying it in two different ways would be worse than saying it
     // twice, so the durable line repeats the passing one exactly.
-    choiceTimeUpNote: "Time is up. You can continue when you are ready.",
+    choiceTimeUpNote:
+      "Time is up. In the real test, the screen moves on by itself at this point. You are practicing one section, so you can take a moment and click Next when you're ready.",
 
     // The preparation screen.
     prepareScreenHint:
@@ -522,6 +534,10 @@ export function formatSpeakingTaskScreenTitle(
   title: string,
   taskTitle: string,
 ): string {
+  if (title.endsWith(taskTitle)) {
+    return title;
+  }
+
   return title + ": " + taskTitle;
 }
 

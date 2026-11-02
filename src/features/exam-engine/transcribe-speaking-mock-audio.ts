@@ -44,24 +44,12 @@ import type OpenAI from "openai";
 // missing variable is a configured default rather than a failed review.
 const DEFAULT_TRANSCRIPTION_MODEL = "gpt-4o-mini-transcribe";
 
-// The transcription bias prompt.
+// A short style hint, not an instruction.
 //
-// A transcription model will tidy speech if it is not told otherwise: it
-// drops the "um", joins the false start to the sentence that replaced
-// it, and hands back a fluent paragraph. That would be a transcript of a
-// better answer than the one that was given, and it would quietly delete
-// the evidence Listenability is judged on, so this prompt asks for the
-// opposite.
-//
-// It is a bias, not a guarantee. How much of the hesitation survives
-// depends on the model, which is exactly why the result screen says the
-// transcript is a close record rather than an exact one.
-const TRANSCRIPTION_PROMPT =
-  "This is a CELPIP speaking practice response from an English-language " +
-  "test preparation student. Transcribe exactly what the speaker said. " +
-  "Keep filler words such as um, uh and like. Keep repetitions, false " +
-  "starts and self-corrections. Do not correct grammar, do not tidy the " +
-  "wording and do not rewrite the answer.";
+// gpt-4o-mini-transcribe treats this field as the start of the
+// transcript. A long instruction makes a short answer come back empty.
+const TRANSCRIPTION_PROMPT = "Um, uh, okay, so I think";
+const FALLBACK_TRANSCRIPTION_MODEL = "whisper-1";
 
 // Audio containers a browser MediaRecorder produces, plus the ones the
 // transcription API accepts for them.
@@ -280,21 +268,19 @@ export async function transcribeSpeakingMockAudio(
     return { status: "unsupported" };
   }
 
+  const fileName = buildTranscriptionFileName(taskId, file.type);
   let transcript = "";
 
   try {
-    const result = await client.audio.transcriptions.create({
-      // Wrapped as a named file so the API can detect the container from
-      // the extension as well as the type. The name is built from the
-      // task id and the container and carries nothing about the learner.
-      file: await toFile(file, buildTranscriptionFileName(taskId, file.type)),
-      model,
-      language: "en",
-      response_format: "json",
-      prompt: TRANSCRIPTION_PROMPT,
-    });
-
-    transcript = result.text?.trim() ?? "";
+    transcript = await requestMockTranscript(client, file, fileName, model);
+    if (!transcript && model !== FALLBACK_TRANSCRIPTION_MODEL) {
+      transcript = await requestMockTranscript(
+        client,
+        file,
+        fileName,
+        FALLBACK_TRANSCRIPTION_MODEL,
+      );
+    }
   } catch (error) {
     // Logged server side so a failure is diagnosable, and never
     // returned, so a provider message can never reach a learner's
@@ -346,4 +332,22 @@ function buildTranscriptionFileName(taskId: string, mimeType: string): string {
   const safeTaskId = taskId.replace(/[^a-zA-Z0-9-]/g, "-").slice(0, 80);
 
   return safeTaskId + "." + extension;
+}
+
+async function requestMockTranscript(
+  client: OpenAI,
+  file: Blob,
+  fileName: string,
+  model: string,
+): Promise<string> {
+  const bytes = Buffer.from(await file.arrayBuffer());
+  const result = await client.audio.transcriptions.create({
+    file: await toFile(bytes, fileName),
+    model,
+    language: "en",
+    response_format: "json",
+    prompt: TRANSCRIPTION_PROMPT,
+  });
+
+  return result.text?.trim() ?? "";
 }

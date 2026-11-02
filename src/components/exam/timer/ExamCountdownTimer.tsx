@@ -96,7 +96,11 @@ function ExamCountdownTimerWindow({
       label,
     },
     () => {
-      onExpire?.();
+      if (onExpire) {
+        onExpire();
+        return;
+      }
+
       setTimeUpOpen(true);
     },
   );

@@ -81,7 +81,7 @@ const PREVIEW_SECTIONS: PreviewSection[] = [
       "Placeholder line: each audio clip plays once, and the answer window opens when the clip ends.",
       {
         heading: "Moving through the test.",
-        text: "Use Next at the top right to move forward, and Back at the bottom left to return to the previous screen.",
+        text: "Use Next at the top right to move forward, and Back beside it to return to the previous screen.",
       },
     ],
     noticeText: PLACEHOLDER_NOTICE,
@@ -214,7 +214,7 @@ const PREVIEW_SCREENS: PreviewScreen[] = [
 
 function SampleHeading({ id, label }: { id: string; label: string }) {
   return (
-    <h2 id={id} className={cx(text.heading, "scroll-mt-24 text-lg")}>
+    <h2 id={id} className={cx(text.heading, "text-lg")}>
       {label}
     </h2>
   );

@@ -15,8 +15,8 @@ export default async function CheckoutSuccessPage({
 
   return (
     <main className="min-h-screen overflow-x-hidden bg-cream px-4 py-16 text-ink">
-      <div className="mx-auto max-w-lg rounded-3xl bg-white p-6 shadow-sm ring-1 ring-ink/5">
-        <h1 className="font-serif text-3xl font-semibold">Payment received. Setting up your access.</h1>
+      <div className="mx-auto max-w-lg rounded-2xl bg-white p-6 shadow-sm ring-1 ring-ink/5">
+        <h1 className="font-serif text-3xl font-bold">Payment received. Setting up your access.</h1>
         {sessionId ? (
           <ConfirmCheckout sessionId={sessionId} />
         ) : (

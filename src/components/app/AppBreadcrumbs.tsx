@@ -12,13 +12,30 @@ import { buildBreadcrumbs } from "@/features/navigation/app-nav-items";
 // the path, so a new route under /dashboard gets one without extra work.
 //
 // Nothing renders on /dashboard itself, a single crumb pointing at the
-// current page is noise.
+// current page is noise. Nor on a page whose hero already carries its own
+// Back to dashboard link, where the trail would only repeat it.
+const PATHS_WITH_OWN_BACK_LINK = new Set([
+  "/dashboard/writing",
+  "/dashboard/speaking",
+]);
 
 export function AppBreadcrumbs() {
   const pathname = usePathname() ?? "";
   const crumbs = buildBreadcrumbs(pathname);
 
   if (crumbs.length < 2) return null;
+  const path = pathname.replace(/\/+$/, "");
+  if (PATHS_WITH_OWN_BACK_LINK.has(path)) return null;
+  // Task and practice pages already have their own back link. The trail
+  // above them only repeats Dashboard / Speaking practice / Task.
+  if (
+    path.startsWith("/dashboard/speaking/tasks/") ||
+    path.startsWith("/dashboard/writing/tasks/") ||
+    path.startsWith("/dashboard/speaking/practice/") ||
+    path.startsWith("/dashboard/writing/practice/")
+  ) {
+    return null;
+  }
 
   return (
     <nav aria-label="Breadcrumb" className="mb-6">

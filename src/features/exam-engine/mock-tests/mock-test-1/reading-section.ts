@@ -57,7 +57,7 @@ import type { ReadingSectionContent } from "../../reading-section-types";
 // the rule the full Listening section settled. The four part titles are
 // deliberately left alone: they are shared with the part level routes,
 // which are internal and stay that way.
-const SECTION_TITLE = "Mock Test 1 - Reading Test";
+const SECTION_TITLE = "Mock Test 1 - Reading";
 
 export const mockTest1ReadingSection: ReadingSectionContent = {
   testId: "mock-test-1",
@@ -81,7 +81,6 @@ export const mockTest1ReadingSection: ReadingSectionContent = {
     video: getInstructionalVideoAsset("reading"),
     description: getInstructionalVideoAsset("reading").description,
   },
-
   // The four parts, in test order.
   //
   // formatLabel is the Format row on each part intro card, and it is the

@@ -1,31 +1,20 @@
+"use client";
+
 import { ExamInstructionRow } from "../ExamInstructionRow";
-import { ExamMediaPlaceholder } from "../ExamMediaPlaceholder";
 import { ExamShell } from "../ExamShell";
-import { examListening, examScreenBody } from "@/features/exam-engine/exam-theme";
+import { ExamCountdownTimer } from "../timer/ExamCountdownTimer";
+import { examScreenBody } from "@/features/exam-engine/exam-theme";
 import { listeningCopy } from "@/features/exam-engine/listening-copy";
 
-// Section break screen for a Listening part (EXAM-03).
-//
-// The short pause the source document marks between the conversation
-// sections. One line telling the learner what is coming, and a small
-// inert placeholder standing in for the timed pause that a later ticket
-// plays here.
-//
-// The placeholder is the EXAM-01 ExamMediaPlaceholder, so the break
-// screen reserves the same area the real preparation pause will use and
-// nothing has to move when it lands.
-//
-// No timer, and no countdown. In this prototype the learner leaves the
-// break screen by pressing Next.
+const PREPARATION_PAUSE_SECONDS = 10;
 
 export type ListeningSectionBreakScreenProps = {
   title: string;
-  // For example "You will hear the second section of the conversation
-  // shortly."
   message: string;
-  // Section position, for example "Section 2 of 3".
   sectionLabel?: string;
+  screenKey: string;
   metaText?: string;
+  onTimeExpire?: () => void;
   onNext?: () => void;
   onBack?: () => void;
   showBack?: boolean;
@@ -35,7 +24,9 @@ export function ListeningSectionBreakScreen({
   title,
   message,
   sectionLabel,
+  screenKey,
   metaText,
+  onTimeExpire,
   onNext,
   onBack,
   showBack = true,
@@ -44,6 +35,13 @@ export function ListeningSectionBreakScreen({
     <ExamShell
       title={title}
       metaText={metaText}
+      timerSlot={
+        <ExamCountdownTimer
+          screenKey={screenKey}
+          durationSeconds={PREPARATION_PAUSE_SECONDS}
+          onExpire={onTimeExpire}
+        />
+      }
       onNext={onNext}
       onBack={onBack}
       showBack={showBack}
@@ -53,18 +51,6 @@ export function ListeningSectionBreakScreen({
           heading={sectionLabel ?? listeningCopy.sectionBreakHeading}
           text={message}
         />
-
-        <div className={examListening.mediaStack}>
-          <ExamMediaPlaceholder
-            kind="audio"
-            label={listeningCopy.sectionBreakPlaceholderLabel}
-            helperText={listeningCopy.sectionBreakPlaceholderHelper}
-          />
-
-          <p className={examScreenBody.hint}>
-            {listeningCopy.sectionBreakHint}
-          </p>
-        </div>
       </div>
     </ExamShell>
   );

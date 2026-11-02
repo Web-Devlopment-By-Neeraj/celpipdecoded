@@ -1,4 +1,4 @@
-// Mock Test 1, Listening Part 6: Listening for Viewpoints (EXAM-13).
+// Mock Test 1, Listening Part 6: Listening to Viewpoints (EXAM-13).
 //
 // Source: mock-tests/mock-test-1/Mock Test 1 -Sajinlinks.docx, Listening
 // PART 06, with the Cloudinary URLs cross checked against
@@ -95,7 +95,7 @@ const IMAGE_BASE = "https://res.cloudinary.com/dkvsshy7n/image/upload";
 export const listeningPart6: ListeningViewpointsPartContent = {
   testId: "mock-test-1",
   sectionId: "listening-part-6",
-  title: "Practice Test 1 - Listening Part 6: Listening for Viewpoints",
+  title: "Mock Test 1 - Listening Part 6: Listening to Viewpoints",
   partTitle: "Listening for Viewpoints",
   subtitle:
     "Read the following information before this part of the practice test begins.",

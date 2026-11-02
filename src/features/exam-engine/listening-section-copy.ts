@@ -1,3 +1,5 @@
+import type { ExamInstruction } from "@/features/exam-engine/instruction-screen-types";
+
 // Learner facing wording for the full Listening section screens
 // (EXAM-15).
 //
@@ -40,7 +42,7 @@ export type ListeningSectionCopy = {
   instructionTitle: string;
   instructionHeading: string;
   instructionSubtitle: string;
-  instructionLines: string[];
+  instructionLines: ExamInstruction[];
   instructionNotice: string;
   introTitle: string;
   introSummary: string;
@@ -132,6 +134,10 @@ export function buildListeningSectionCopy({
       "Answer all questions.",
       "At the end, you will review your answers and see a practice score.",
       "This is CELPIP Decoded practice, not an official CELPIP score.",
+      {
+        text: "This Listening section follows the same format as the real CELPIP test. On test day, your Listening section may run a little longer, because CELPIP sometimes adds extra questions it is trying out for future tests.",
+        emphasis: true,
+      },
     ],
     // EXAM-15B dropped the "Internal prototype" opening. This route is a
     // learner facing test now, so the notice says what a learner needs to

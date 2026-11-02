@@ -22,7 +22,7 @@ export function PricingPlanCard({
 
   return (
     <article
-      className={`relative flex h-full flex-col rounded-3xl p-6 sm:p-8 ${
+      className={`relative flex h-full flex-col rounded-2xl p-6 sm:p-8 ${
         featured
           ? "bg-white shadow-lg ring-2 ring-brand"
           : "bg-white shadow-sm ring-1 ring-ink/10"
@@ -45,7 +45,7 @@ export function PricingPlanCard({
       </p>
 
       <p className="mt-4 pr-24">
-        <span className="font-serif text-4xl font-semibold tracking-tight">
+        <span className="font-serif text-4xl font-bold tracking-tight">
           {content.priceLabel}
         </span>
         <span className="ml-2 text-sm font-medium text-ink/55">

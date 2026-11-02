@@ -23,10 +23,10 @@ export default function BlogPage() {
   return (
     <main className="min-h-screen overflow-x-hidden bg-cream px-4 py-10 text-ink">
       <div className="mx-auto max-w-xl">
-        <h1 className="font-serif text-3xl font-semibold">Practice notes</h1>
+        <h1 className="font-serif text-3xl font-bold">Practice notes</h1>
         <ul className="mt-6 space-y-4">
           {POSTS.map((post) => (
-            <li key={post.slug} className="rounded-3xl bg-white p-5 ring-1 ring-ink/10">
+            <li key={post.slug} className="rounded-2xl bg-white p-5 ring-1 ring-ink/10">
               <h2 className="text-lg font-semibold">{post.title}</h2>
               <p className="mt-2 text-sm leading-6">{post.summary}</p>
             </li>

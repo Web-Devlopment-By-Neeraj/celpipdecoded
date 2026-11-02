@@ -1,7 +1,6 @@
-import Link from "next/link";
-import { AppButtonLink } from "@/components/app/AppButtonLink";
 import { AppCard } from "@/components/app/AppCard";
 import { AppStatusBadge } from "@/components/app/AppStatusBadge";
+import { MockTestPublishButton } from "@/components/admin/mock-tests/MockTestPublishButton";
 import { cx, text } from "@/features/design/design-tokens";
 import {
   MOCK_TEST_STATUS_LABELS,
@@ -17,27 +16,18 @@ import type { MockTestListItem } from "@/features/admin/mock-test-queries";
 
 export type AdminMockTestListProps = {
   mockTests: MockTestListItem[];
-  newHref: string;
 };
 
-export function AdminMockTestList({
-  mockTests,
-  newHref,
-}: AdminMockTestListProps) {
+export function AdminMockTestList({ mockTests }: AdminMockTestListProps) {
   if (mockTests.length === 0) {
     return (
       <AppCard variant="subtle" ariaLabel="No practice tests yet" as="section">
         <h2 className={cx(text.heading, "text-lg")}>No practice tests yet</h2>
         <p className={cx("mt-2 max-w-xl text-sm leading-6", text.secondary)}>
-          Create a draft to start building. A draft is invisible to
-          students, and stays that way: nothing built here reaches the
-          student dashboard in this version of the builder.
+          Upload a content file to save a draft. Students cannot see a
+          draft. Press Publish, with a slug such as mock-test-2, when you
+          have looked at it.
         </p>
-        <div className="mt-5">
-          <AppButtonLink href={newHref} size="sm">
-            Create a practice test
-          </AppButtonLink>
-        </div>
       </AppCard>
     );
   }
@@ -65,10 +55,10 @@ export function AdminMockTestList({
                 Parts
               </th>
               <th scope="col" className={headerCell}>
-                Checks
+                Updated
               </th>
               <th scope="col" className={headerCell}>
-                Updated
+                Students
               </th>
             </tr>
           </thead>
@@ -79,15 +69,7 @@ export function AdminMockTestList({
                 className="border-b border-academy-line/60 last:border-0"
               >
                 <td className={bodyCell}>
-                  <Link
-                    href={`/dashboard/admin/mock-tests/${mockTest.id}`}
-                    className={cx(
-                      "font-semibold underline underline-offset-2 hover:no-underline",
-                      text.accent,
-                    )}
-                  >
-                    {mockTest.title}
-                  </Link>
+                  <p className={cx("font-semibold", text.heading)}>{mockTest.title}</p>
                   <p className={cx("mt-1 font-mono text-xs", text.muted)}>
                     {mockTest.slug} - v{mockTest.version}
                   </p>
@@ -110,15 +92,11 @@ export function AdminMockTestList({
                   {mockTest.partCount}
                 </td>
 
-                <td className={bodyCell}>
-                  <ChecksCell
-                    errorCount={mockTest.openErrorCount}
-                    warningCount={mockTest.openWarningCount}
-                  />
-                </td>
-
                 <td className={cx(bodyCell, text.muted)}>
                   {formatDate(mockTest.updated_at)}
+                </td>
+                <td className={bodyCell}>
+                  <MockTestPublishButton id={mockTest.id} status={mockTest.status} />
                 </td>
               </tr>
             ))}
@@ -126,36 +104,6 @@ export function AdminMockTestList({
         </table>
       </div>
     </AppCard>
-  );
-}
-
-// The stored issue counts, which are only as fresh as the last run of
-// the structure check. The wording says so rather than implying the row
-// is live.
-function ChecksCell({
-  errorCount,
-  warningCount,
-}: {
-  errorCount: number;
-  warningCount: number;
-}) {
-  if (errorCount === 0 && warningCount === 0) {
-    return <span className={text.muted}>Not checked</span>;
-  }
-
-  return (
-    <span className="flex flex-wrap items-center gap-2">
-      {errorCount > 0 ? (
-        <AppStatusBadge tone="error">
-          {errorCount} to fix
-        </AppStatusBadge>
-      ) : null}
-      {warningCount > 0 ? (
-        <AppStatusBadge tone="warning">
-          {warningCount} warning{warningCount === 1 ? "" : "s"}
-        </AppStatusBadge>
-      ) : null}
-    </span>
   );
 }
 

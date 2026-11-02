@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ExamInstructionRow } from "../ExamInstructionRow";
 import { ExamShell } from "../ExamShell";
 import { ExamTwoColumnLayout } from "../ExamTwoColumnLayout";
@@ -79,6 +79,8 @@ export type SpeakingTaskFiveRecordingScreenProps = {
   // Fired once when the recording window reaches zero (TIMER-01). The
   // recorder is not touched.
   onTimeExpire?: () => void;
+  completeTest?: boolean;
+  onAdvance?: () => void;
   copy?: SpeakingMockCopy;
   metaText?: string;
   nextLabel?: string;
@@ -93,6 +95,8 @@ export function SpeakingTaskFiveRecordingScreen({
   response,
   onRecorded,
   onTimeExpire,
+  completeTest = false,
+  onAdvance,
   copy = speakingMockCopy,
   metaText,
   nextLabel,
@@ -113,6 +117,19 @@ export function SpeakingTaskFiveRecordingScreen({
   // make each take's window key different from the last, so a re-record
   // opens a new window rather than resuming the old one.
   const [takeCount, setTakeCount] = useState(0);
+  const [startToken, setStartToken] = useState(0);
+  const [stopToken, setStopToken] = useState(0);
+  const advanceAfterStop = useRef(false);
+  const autoStarted = useRef(false);
+
+  useEffect(() => {
+    if (!completeTest || autoStarted.current) {
+      return;
+    }
+
+    autoStarted.current = true;
+    setStartToken(1);
+  }, [completeTest]);
 
   const step = task.choiceStep;
 
@@ -146,6 +163,26 @@ export function SpeakingTaskFiveRecordingScreen({
     setStatus("idle");
     setTakeKey(null);
     onRecorded(recording);
+
+    if (advanceAfterStop.current) {
+      advanceAfterStop.current = false;
+      onAdvance?.();
+    }
+  };
+
+  const handleResponseExpire = () => {
+    if (!completeTest) {
+      onTimeExpire?.();
+      return;
+    }
+
+    if (status === "recording") {
+      advanceAfterStop.current = true;
+      setStopToken((current) => current + 1);
+      return;
+    }
+
+    onAdvance?.();
   };
 
   const handleRecordingError = (kind: SpeakingRecordingErrorKind) => {
@@ -234,7 +271,7 @@ export function SpeakingTaskFiveRecordingScreen({
                 // The window running out says so and stops there. The take
                 // is not stopped, the audio already captured is kept, and
                 // Stop recording stays the learner's to press (TIMER-01).
-                onExpire={onTimeExpire}
+                onExpire={handleResponseExpire}
                 copy={copy}
               />
             </div>
@@ -244,6 +281,8 @@ export function SpeakingTaskFiveRecordingScreen({
               status={status}
               errorKind={errorKind}
               hasRecording={hasRecording}
+              startToken={startToken}
+              stopToken={stopToken}
               onRequestStart={handleRequestStart}
               onRecordingStarted={handleRecordingStarted}
               onRecordingStopping={handleRecordingStopping}

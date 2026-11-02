@@ -5,7 +5,7 @@ import { MockTest1FullStartFlow } from "@/components/mock-tests/MockTest1FullSta
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Mock Test 1 — Full mock - CELPIP Decoded",
+  title: "Mock Test 1 - Complete test - CELPIP Decoded",
   robots: { index: false, follow: false },
 };
 

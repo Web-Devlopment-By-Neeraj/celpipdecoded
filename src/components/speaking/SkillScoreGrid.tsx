@@ -13,9 +13,9 @@ export function SkillScoreGrid({ skills }: { skills: SkillScore[] }) {
   return (
     <section
       aria-label={resultCopy.skillBreakdownHeading}
-      className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-ink/5 sm:p-8"
+      className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-ink/5 sm:p-8"
     >
-      <h2 className="font-serif text-xl font-semibold tracking-tight text-ink">
+      <h2 className="font-serif text-xl font-bold tracking-tight text-ink">
         {resultCopy.skillBreakdownHeading}
       </h2>
       <ul className="mt-5 grid gap-4 sm:grid-cols-2">

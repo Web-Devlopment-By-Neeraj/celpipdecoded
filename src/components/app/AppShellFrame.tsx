@@ -39,6 +39,7 @@ export type AppShellFrameProps = {
   topNav: ReactNode;
   breadcrumbs: ReactNode;
   footer: ReactNode;
+  mobileTabBar?: ReactNode;
   children: ReactNode;
 };
 
@@ -47,6 +48,7 @@ export function AppShellFrame({
   topNav,
   breadcrumbs,
   footer,
+  mobileTabBar,
   children,
 }: AppShellFrameProps) {
   const pathname = usePathname() ?? "";
@@ -66,7 +68,7 @@ export function AppShellFrame({
       <div className="flex min-w-0 flex-1 flex-col">
         {topNav}
 
-        <main className="w-full flex-1 px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+        <main className="w-full flex-1 px-4 py-6 sm:px-6 sm:py-10 lg:px-8">
           <div className="mx-auto w-full max-w-5xl">
             {breadcrumbs}
             {children}
@@ -75,6 +77,7 @@ export function AppShellFrame({
 
         {footer}
       </div>
+      {mobileTabBar}
       <ProductTour />
     </div>
   );

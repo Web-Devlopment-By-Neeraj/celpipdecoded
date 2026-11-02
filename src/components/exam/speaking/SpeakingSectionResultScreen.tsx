@@ -62,6 +62,9 @@ export type SpeakingSectionResultScreenProps = {
   // screen. Omit to hide the control.
   onRestart?: () => void;
   dashboardHref?: string;
+  leaveLabel?: string;
+  continueHref?: string;
+  continueLabel?: string;
   copy?: SpeakingMockCopy;
   metaText?: string;
   onBack?: () => void;
@@ -73,6 +76,9 @@ export function SpeakingSectionResultScreen({
   evaluation,
   onRestart,
   dashboardHref = "/dashboard",
+  leaveLabel,
+  continueHref,
+  continueLabel,
   copy = speakingMockCopy,
   metaText,
   onBack,
@@ -120,25 +126,24 @@ export function SpeakingSectionResultScreen({
           </div>
 
           <div className={examScreenBody.actions}>
+            {continueHref ? (
+              <ExamButton
+                variant="primary"
+                size="md"
+                href={continueHref}
+                uppercase={false}
+              >
+                {continueLabel}
+              </ExamButton>
+            ) : null}
             <ExamButton
-              variant="primary"
+              variant={continueHref ? "secondary" : "primary"}
               size="md"
               href={dashboardHref}
               uppercase={false}
             >
-              {copy.backToDashboardLabel}
+              {leaveLabel ?? copy.backToDashboardLabel}
             </ExamButton>
-
-            {onRestart ? (
-              <ExamButton
-                variant="secondary"
-                size="md"
-                onClick={onRestart}
-                uppercase={false}
-              >
-                {copy.restartLabel}
-              </ExamButton>
-            ) : null}
           </div>
 
           <p className={examScreenBody.notice}>{copy.reviewResultNotice}</p>

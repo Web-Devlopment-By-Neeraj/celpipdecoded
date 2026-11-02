@@ -1,6 +1,5 @@
 import { ExamInstructionScreen } from "../ExamInstructionScreen";
-import { ExamSectionIntroCard } from "../ExamSectionIntroCard";
-import { examCopy } from "@/features/exam-engine/exam-copy";
+import { ExamInstructionCountdown } from "../timer/ExamInstructionCountdown";
 import { readingCopy } from "@/features/exam-engine/reading-copy";
 import type { ExamSectionIntroDetail } from "@/features/exam-engine/instruction-screen-types";
 import type { ReadingPartContent } from "@/features/exam-engine/reading-types";
@@ -27,15 +26,6 @@ import type { ReadingPartContent } from "@/features/exam-engine/reading-types";
 // No timer. The part intro screen carries no countdown: the window starts
 // when the passage does.
 
-// Minutes, rounded, for the intro card. A Reading part allowance is a
-// whole number of minutes in every source we hold, so nothing here has to
-// print seconds.
-function formatMinutes(seconds: number): string {
-  const minutes = Math.round(seconds / 60);
-
-  return `${minutes} ${minutes === 1 ? "minute" : "minutes"}`;
-}
-
 // EXAM-24 added noticeText, and nothing else. The four part routes pass
 // none and are unchanged: it defaults to the part wording they already
 // printed.
@@ -58,6 +48,7 @@ export type ReadingPartIntroScreenProps = {
   // Quiet note under the instruction list. Defaults to the part wording.
   noticeText?: string;
   metaText?: string;
+  onTimeExpire?: () => void;
   onNext?: () => void;
   onBack?: () => void;
   showBack?: boolean;
@@ -65,21 +56,13 @@ export type ReadingPartIntroScreenProps = {
 
 export function ReadingPartIntroScreen({
   content,
-  questionCount,
-  formatLabel = readingCopy.partIntroFormatLabel,
-  details,
   noticeText = readingCopy.partIntroNotice,
   metaText,
+  onTimeExpire,
   onNext,
   onBack,
   showBack = true,
 }: ReadingPartIntroScreenProps) {
-  const introDetails: ExamSectionIntroDetail[] = details ?? [
-    { label: "Questions", value: String(questionCount) },
-    { label: "Time", value: formatMinutes(content.timer.seconds) },
-    { label: "Format", value: formatLabel },
-  ];
-
   return (
     <ExamInstructionScreen
       title={content.title}
@@ -87,17 +70,17 @@ export function ReadingPartIntroScreen({
       instructions={content.instructions}
       noticeText={noticeText}
       metaText={metaText}
+      timerSlot={
+        onTimeExpire ? (
+          <ExamInstructionCountdown
+            screenKey={`${content.title}-instructions`}
+            onExpire={onTimeExpire}
+          />
+        ) : undefined
+      }
       onNext={onNext}
       onBack={onBack}
       showBack={showBack}
-      intro={
-        <ExamSectionIntroCard
-          label={examCopy.practiceLabel}
-          title={content.partTitle}
-          summary={content.summary}
-          details={introDetails}
-        />
-      }
     />
   );
 }

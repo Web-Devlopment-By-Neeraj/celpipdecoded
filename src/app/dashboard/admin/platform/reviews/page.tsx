@@ -11,7 +11,7 @@ export default async function ReviewsPage() {
   if (!admin.ok) return <AdminAccessDenied reason={admin.reason} />;
   return (
     <main className="mx-auto max-w-3xl overflow-x-hidden px-4 py-8">
-      <h1 className="font-serif text-3xl font-semibold text-academy-navy">Reviews</h1>
+      <h1 className="font-serif text-3xl font-bold text-academy-navy">Reviews</h1>
       <p className="mt-3 text-sm leading-6 text-academy-navy/75">
         A review stays private until it is published. Publishing requires the student consent already stored with the review. Nothing is waiting.
       </p>

@@ -1,4 +1,5 @@
 import { ExamInstructionScreen } from "../ExamInstructionScreen";
+import { ExamInstructionCountdown } from "../timer/ExamInstructionCountdown";
 import type { ListeningSectionInstructionContent } from "@/features/exam-engine/listening-section-types";
 
 // Listening section instruction text screen (EXAM-15).
@@ -38,6 +39,7 @@ import type { ListeningSectionInstructionContent } from "@/features/exam-engine/
 export type ListeningSectionInstructionScreenProps = {
   content: ListeningSectionInstructionContent;
   metaText?: string;
+  onTimeExpire?: () => void;
   onNext?: () => void;
   onBack?: () => void;
   showBack?: boolean;
@@ -48,6 +50,7 @@ export type ListeningSectionInstructionScreenProps = {
 export function ListeningSectionInstructionScreen({
   content,
   metaText,
+  onTimeExpire,
   onNext,
   onBack,
   showBack = false,
@@ -61,6 +64,14 @@ export function ListeningSectionInstructionScreen({
       instructions={content.instructions}
       noticeText={content.noticeText}
       metaText={metaText}
+      timerSlot={
+        onTimeExpire ? (
+          <ExamInstructionCountdown
+            screenKey={`${content.title}-instructions`}
+            onExpire={onTimeExpire}
+          />
+        ) : undefined
+      }
       onNext={onNext}
       onBack={onBack}
       showBack={showBack}

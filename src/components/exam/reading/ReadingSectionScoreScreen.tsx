@@ -66,6 +66,7 @@ export type ReadingSectionScoreScreenProps = {
   onReviewAnswers?: () => void;
   onRestart?: () => void;
   dashboardHref?: string;
+  leaveLabel?: string;
   metaText?: string;
   onBack?: () => void;
   showBack?: boolean;

@@ -14,7 +14,7 @@ export function PracticePhaseCard({ phase }: { phase: PracticePhase }) {
   return (
     <section
       aria-label="Current phase"
-      className="rounded-3xl bg-cream-soft p-5 ring-1 ring-ink/5 sm:p-6"
+      className="rounded-2xl bg-cream-soft p-5 ring-1 ring-ink/5 sm:p-6"
     >
       <div className="flex items-center justify-between gap-3">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink/50">
@@ -31,7 +31,7 @@ export function PracticePhaseCard({ phase }: { phase: PracticePhase }) {
           ))}
         </div>
       </div>
-      <h2 className="mt-3 font-serif text-xl font-semibold tracking-tight text-ink sm:text-2xl">
+      <h2 className="mt-3 font-serif text-xl font-bold tracking-tight text-ink sm:text-2xl">
         {info.label}
       </h2>
       <p className="mt-1.5 text-sm leading-6 text-ink/70">{info.hint}</p>

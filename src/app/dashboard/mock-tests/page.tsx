@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { MockTestsHub } from "@/components/mock-tests/MockTestsHub";
+import { listPublishedMockSummaries } from "@/features/mock-tests/published-mock-queries";
+import type { LearnerMockTestSummary } from "@/features/mock-tests/published-mock-catalog";
 import { userHasPaidMockAccess } from "@/features/platform/fulfill-stripe-purchase";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -20,6 +22,13 @@ export default async function MockTestsPage() {
   }
 
   const mocksUnlocked = await userHasPaidMockAccess(user.id);
+  let published: LearnerMockTestSummary[] = [];
 
-  return <MockTestsHub mocksUnlocked={mocksUnlocked} />;
+  try {
+    published = await listPublishedMockSummaries();
+  } catch (error) {
+    console.error("Published practice tests could not be loaded.", error);
+  }
+
+  return <MockTestsHub mocksUnlocked={mocksUnlocked} published={published} />;
 }

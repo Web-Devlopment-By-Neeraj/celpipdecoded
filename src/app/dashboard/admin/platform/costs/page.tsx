@@ -16,7 +16,7 @@ export default async function CostsPage() {
   );
   return (
     <main className="mx-auto max-w-3xl overflow-x-hidden px-4 py-8">
-      <h1 className="font-serif text-3xl font-semibold text-academy-navy">AI cost</h1>
+      <h1 className="font-serif text-3xl font-bold text-academy-navy">AI cost</h1>
       <p className="mt-3 text-sm leading-6 text-academy-navy/75">
         A sample writing-sized call at the current price table is {sample} cents. Completed evaluations will add their own rows here when they are stored. Calibration cost is included in the total and kept out of a student average.
       </p>

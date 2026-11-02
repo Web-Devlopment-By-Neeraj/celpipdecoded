@@ -15,7 +15,7 @@ export default async function DrawsPage({
   return (
     <main className="min-h-screen overflow-x-hidden bg-cream px-4 py-10 text-ink">
       <div className="mx-auto max-w-2xl">
-        <h1 className="font-serif text-3xl font-semibold">Recent draws</h1>
+        <h1 className="font-serif text-3xl font-bold">Recent draws</h1>
         <p className="mt-3 text-sm leading-6">
           {total ? `Your calculator estimate was ${total}. ` : ""}
           Draw scores change, and this page does not predict an invitation to apply. Compare the number with the official draw history.

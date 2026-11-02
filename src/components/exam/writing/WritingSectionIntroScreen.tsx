@@ -1,13 +1,5 @@
 import { ExamInstructionScreen } from "../ExamInstructionScreen";
-import { ExamSectionIntroCard } from "../ExamSectionIntroCard";
-import { examCopy } from "@/features/exam-engine/exam-copy";
-import {
-  formatWritingMinutes,
-  formatWritingWordTarget,
-  writingMockCopy,
-} from "@/features/exam-engine/writing-mock-copy";
-import { sumWritingSectionSeconds } from "@/features/exam-engine/writing-mock-flow";
-import type { ExamSectionIntroDetail } from "@/features/exam-engine/instruction-screen-types";
+import { ExamInstructionCountdown } from "../timer/ExamInstructionCountdown";
 import type { WritingMockCopy } from "@/features/exam-engine/writing-mock-copy";
 import type { WritingSectionContent } from "@/features/exam-engine/writing-mock-types";
 
@@ -43,6 +35,7 @@ export type WritingSectionIntroScreenProps = {
   content: WritingSectionContent;
   copy?: WritingMockCopy;
   metaText?: string;
+  onTimeExpire?: () => void;
   onNext?: () => void;
   onBack?: () => void;
   showBack?: boolean;
@@ -50,31 +43,10 @@ export type WritingSectionIntroScreenProps = {
   backLabel?: string;
 };
 
-// The shared word target, when every task has the same one. Undefined
-// when the tasks disagree or when there are no tasks, so nothing is
-// printed rather than one task's target being shown as the section's.
-function sharedWordTarget(
-  content: WritingSectionContent,
-): { min: number; max: number } | undefined {
-  const [first] = content.tasks;
-
-  if (!first) {
-    return undefined;
-  }
-
-  const shared = content.tasks.every(
-    (task) =>
-      task.wordTarget.min === first.wordTarget.min &&
-      task.wordTarget.max === first.wordTarget.max,
-  );
-
-  return shared ? first.wordTarget : undefined;
-}
-
 export function WritingSectionIntroScreen({
   content,
-  copy = writingMockCopy,
   metaText,
+  onTimeExpire,
   onNext,
   onBack,
   showBack = true,
@@ -82,23 +54,6 @@ export function WritingSectionIntroScreen({
   backLabel,
 }: WritingSectionIntroScreenProps) {
   const screen = content.instructionScreen;
-  const wordTarget = sharedWordTarget(content);
-
-  const introDetails: ExamSectionIntroDetail[] = screen.introDetails ?? [
-    { label: copy.introTasksLabel, value: String(content.tasks.length) },
-    {
-      label: copy.introTimeLabel,
-      value: formatWritingMinutes(sumWritingSectionSeconds(content)),
-    },
-    ...(wordTarget
-      ? [
-          {
-            label: copy.introWordsLabel,
-            value: formatWritingWordTarget(wordTarget.min, wordTarget.max),
-          },
-        ]
-      : []),
-  ];
 
   return (
     <ExamInstructionScreen
@@ -107,19 +62,19 @@ export function WritingSectionIntroScreen({
       instructions={screen.instructions}
       noticeText={screen.noticeText}
       metaText={metaText}
+      timerSlot={
+        onTimeExpire ? (
+          <ExamInstructionCountdown
+            screenKey={`${screen.title}-instructions`}
+            onExpire={onTimeExpire}
+          />
+        ) : undefined
+      }
       onNext={onNext}
       onBack={onBack}
       showBack={showBack}
       backHref={backHref}
       backLabel={backLabel}
-      intro={
-        <ExamSectionIntroCard
-          label={examCopy.practiceLabel}
-          title={screen.introTitle}
-          summary={screen.introSummary}
-          details={introDetails}
-        />
-      }
     />
   );
 }
