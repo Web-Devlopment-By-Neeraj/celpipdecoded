@@ -271,6 +271,7 @@ export function ListeningPartOnePrototype({
           screen.sectionIndex,
           sectionCount,
         )}
+        screenKey={`part-1-break-${screen.sectionIndex}`}
         metaText={metaText}
         onNext={goNext}
         onBack={goBack}

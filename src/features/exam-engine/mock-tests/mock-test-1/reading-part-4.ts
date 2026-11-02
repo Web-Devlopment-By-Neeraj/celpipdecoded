@@ -125,7 +125,7 @@ const ANSWER_KEY: ReadingAnswerKeyEntry[] = [
 export const readingPart4: ReadingPartContent = {
   testId: "mock-test-1",
   sectionId: "reading-part-4",
-  title: "Practice Test 1 - Reading Part 4: Reading for Viewpoints",
+  title: "Mock Test 1 - Reading Part 4: Reading for Viewpoints",
   partTitle: "Reading for Viewpoints",
   subtitle:
     "Read the following information before this part of the practice test begins.",

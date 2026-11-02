@@ -112,7 +112,7 @@ import type {
 // The learner facing name of the test, so the first screen of the run
 // says the same thing as the dashboard card that opened it. The same rule
 // the full Listening, full Reading and Writing sections settled.
-const SECTION_TITLE = "Mock Test 1 - Speaking Test";
+const SECTION_TITLE = "Mock Test 1 - Speaking";
 
 // Where the nine prompt images live.
 //
@@ -250,9 +250,10 @@ export const mockTest1SpeakingSection: SpeakingSectionContent = {
   },
 
   videoScreen: {
-    title: `${SECTION_TITLE}: Instructional video`,
+    title: "Mock Test 1 - Speaking Instructional Video",
+    description: "This overview video comes from the official CELPIP website. It shows how the real test runs from start to finish, and what to expect in each of the four sections. Our mock tests follow the same flow. CELPIP updates its test from time to time, so some details may have changed. For the latest format, check celpip.ca.",
+    helperText: "Video: CELPIP official website, celpip.ca",
     video: getInstructionalVideoAsset("speaking"),
-    description: getInstructionalVideoAsset("speaking").description,
   },
 
   tasks: [
@@ -260,7 +261,7 @@ export const mockTest1SpeakingSection: SpeakingSectionContent = {
       taskId: "mock-test-1-speaking-task-1",
       taskNumber: 1,
       taskLabel: "Speaking Task 1",
-      title: "Mock Test 1 - Speaking Task 1",
+      title: "Mock Test 1 - Speaking Task 1: Giving Advice",
       // The task name exactly as the source document prints it.
       taskTitle: "Giving Advice",
 
@@ -432,15 +433,15 @@ export const mockTest1SpeakingSection: SpeakingSectionContent = {
         // deserves to know a choice is coming.
         steps: [
           {
-            heading: "1. Choose an option.",
-            text: "You have 60 seconds to read about both camps and pick the one you prefer. Nothing is recorded.",
+            heading: "Choose an option.",
+            text: "You have 60 seconds to read about both options and choose the one you prefer. Nothing is recorded.",
           },
           {
-            heading: "2. Preparation time.",
-            text: "You have 60 seconds to plan how you will argue for your camp against the camp your sister is suggesting. Nothing is recorded.",
+            heading: "Prepare.",
+            text: "You have 60 seconds to plan why your choice is better than the option the other person in the task prefers. Nothing is recorded.",
           },
           {
-            heading: "3. Speaking.",
+            heading: "Speak.",
             text: "You have 60 seconds to record your answer.",
           },
         ],

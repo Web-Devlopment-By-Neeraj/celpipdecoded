@@ -49,8 +49,8 @@ export function MockTestBottomBar({
 }: MockTestBottomBarProps) {
   return (
     <footer className={cx(playerBar.bottom, className)}>
-      <div className={playerBar.back}>
-        {showBack ? (
+      {showBack ? (
+        <div className={playerBar.back}>
           <MockTestButton
             variant="secondary"
             size="sm"
@@ -61,8 +61,8 @@ export function MockTestBottomBar({
           >
             {backLabel}
           </MockTestButton>
-        ) : null}
-      </div>
+        </div>
+      ) : null}
 
       <div className={playerBar.secondary}>
         {secondaryAction}

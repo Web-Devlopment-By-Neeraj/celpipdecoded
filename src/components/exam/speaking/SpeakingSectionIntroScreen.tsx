@@ -1,14 +1,5 @@
 import { ExamInstructionScreen } from "../ExamInstructionScreen";
-import { ExamSectionIntroCard } from "../ExamSectionIntroCard";
-import {
-  formatSpeakingDuration,
-  speakingMockCopy,
-} from "@/features/exam-engine/speaking-mock-copy";
-import {
-  sumSpeakingPrepSeconds,
-  sumSpeakingResponseSeconds,
-} from "@/features/exam-engine/speaking-mock-timing";
-import type { ExamSectionIntroDetail } from "@/features/exam-engine/instruction-screen-types";
+import { ExamInstructionCountdown } from "../timer/ExamInstructionCountdown";
 import type { SpeakingMockCopy } from "@/features/exam-engine/speaking-mock-copy";
 import type { SpeakingSectionContent } from "@/features/exam-engine/speaking-mock-types";
 
@@ -47,6 +38,7 @@ export type SpeakingSectionIntroScreenProps = {
   content: SpeakingSectionContent;
   copy?: SpeakingMockCopy;
   metaText?: string;
+  onTimeExpire?: () => void;
   onNext?: () => void;
   onBack?: () => void;
   showBack?: boolean;
@@ -56,8 +48,8 @@ export type SpeakingSectionIntroScreenProps = {
 
 export function SpeakingSectionIntroScreen({
   content,
-  copy = speakingMockCopy,
   metaText,
+  onTimeExpire,
   onNext,
   onBack,
   showBack = true,
@@ -66,18 +58,6 @@ export function SpeakingSectionIntroScreen({
 }: SpeakingSectionIntroScreenProps) {
   const screen = content.instructionScreen;
 
-  const introDetails: ExamSectionIntroDetail[] = screen.introDetails ?? [
-    { label: copy.introTasksLabel, value: String(content.tasks.length) },
-    {
-      label: copy.introPrepLabel,
-      value: formatSpeakingDuration(sumSpeakingPrepSeconds(content)),
-    },
-    {
-      label: copy.introSpeakingLabel,
-      value: formatSpeakingDuration(sumSpeakingResponseSeconds(content)),
-    },
-  ];
-
   return (
     <ExamInstructionScreen
       title={screen.title}
@@ -85,23 +65,19 @@ export function SpeakingSectionIntroScreen({
       instructions={screen.instructions}
       noticeText={screen.noticeText}
       metaText={metaText}
+      timerSlot={
+        onTimeExpire ? (
+          <ExamInstructionCountdown
+            screenKey={`${screen.title}-instructions`}
+            onExpire={onTimeExpire}
+          />
+        ) : undefined
+      }
       onNext={onNext}
       onBack={onBack}
       showBack={showBack}
       backHref={backHref}
       backLabel={backLabel}
-      intro={
-        // No practice eyebrow above the section name. The window this
-        // screen sits in is the practice test, and a screen inside it
-        // saying so in small caps is a product label on an exam. The
-        // Listening part intro dropped the same eyebrow in the
-        // reference pass, so the two sections open the same way.
-        <ExamSectionIntroCard
-          title={screen.introTitle}
-          summary={screen.introSummary}
-          details={introDetails}
-        />
-      }
     />
   );
 }

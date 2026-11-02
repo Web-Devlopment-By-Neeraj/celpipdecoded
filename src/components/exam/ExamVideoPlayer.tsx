@@ -68,6 +68,7 @@ export type ExamVideoPlayerProps = {
   // Ask the browser to start the clip when the player appears. It can
   // refuse, in which case the notice under the stage says so.
   autoPlay?: boolean;
+  hideControls?: boolean;
   onEnded?: () => void;
   // Overrides the message shown when the clip cannot load.
   fallbackText?: string;

@@ -17,7 +17,7 @@ export default async function CalendarAdminPage() {
 
   return (
     <main className="mx-auto max-w-3xl overflow-x-hidden px-4 py-8">
-      <h1 className="font-serif text-3xl font-semibold text-academy-navy">Calendar</h1>
+      <h1 className="font-serif text-3xl font-bold text-academy-navy">Calendar</h1>
       <p className="mt-2 text-sm leading-6 text-academy-navy/75">
         Move or cancel a session from this screen. A change made only in Google Calendar or Zoom does not email the student. The nightly check flags those mismatches.
       </p>

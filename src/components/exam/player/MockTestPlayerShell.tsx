@@ -57,7 +57,9 @@ import type {
 //
 // **Navigation** takes either an href or a handler. Use an href where the
 // next screen is a route, and a handler where the sequence is held in
-// client state.
+// client state. Back and Next render once, side by side in the top bar.
+// The bottom bar only appears for a screen that hands it a secondary
+// action or extra content, so it never repeats Back.
 
 export type MockTestPlayerShellProps = {
   title: string;
@@ -85,7 +87,7 @@ export type MockTestPlayerShellProps = {
   onBack?: () => void;
   backDisabled?: boolean;
 
-  // Optional action on the right of the bottom bar, opposite Back.
+  // Optional action on the right of the bottom bar.
   secondaryAction?: ReactNode;
   // Extra content in the bottom bar, beside the secondary action.
   bottomContent?: ReactNode;
@@ -155,21 +157,19 @@ export function MockTestPlayerShell({
             nextHref={nextHref}
             onNext={onNext}
             nextDisabled={nextDisabled}
+            showBack={showBack}
+            backLabel={backLabel}
+            backHref={backHref}
+            onBack={onBack}
+            backDisabled={backDisabled}
           />
 
           <MockTestContentPane padded={padded} scroll={scrollContent}>
             {children}
           </MockTestContentPane>
 
-          {showBottomBar ? (
-            <MockTestBottomBar
-              showBack={showBack}
-              backLabel={backLabel}
-              backHref={backHref}
-              onBack={onBack}
-              backDisabled={backDisabled}
-              secondaryAction={secondaryAction}
-            >
+          {showBottomBar && (secondaryAction || bottomContent) ? (
+            <MockTestBottomBar showBack={false} secondaryAction={secondaryAction}>
               {bottomContent}
             </MockTestBottomBar>
           ) : null}

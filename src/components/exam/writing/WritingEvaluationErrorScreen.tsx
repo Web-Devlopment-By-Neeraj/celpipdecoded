@@ -40,6 +40,7 @@ export type WritingEvaluationErrorScreenProps = {
   // Returns to the completion screen with the writing still held.
   onBackToResponses?: () => void;
   dashboardHref?: string;
+  leaveLabel?: string;
   copy?: WritingMockCopy;
   metaText?: string;
   onBack?: () => void;
@@ -52,6 +53,7 @@ export function WritingEvaluationErrorScreen({
   onRetry,
   onBackToResponses,
   dashboardHref = "/dashboard",
+  leaveLabel,
   copy = writingMockCopy,
   metaText,
   onBack,
@@ -102,7 +104,7 @@ export function WritingEvaluationErrorScreen({
             href={dashboardHref}
             uppercase={false}
           >
-            {copy.backToDashboardLabel}
+            {leaveLabel ?? copy.backToDashboardLabel}
           </ExamButton>
         </div>
 

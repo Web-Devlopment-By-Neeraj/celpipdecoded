@@ -47,6 +47,7 @@ export type ListeningViewpointsScreenProps = {
   // Passed straight through to ListeningAudioScreen, so Part 6 behaves the
   // way every other Listening media screen does.
   autoPlayMedia?: boolean;
+  lockPlayback?: boolean;
   metaText?: string;
   onAudioEnded?: () => void;
   onNext?: () => void;
@@ -61,6 +62,7 @@ export function ListeningViewpointsScreen({
   instructionText = listeningCopy.reportInstruction,
   hintText = listeningCopy.reportHint,
   autoPlayMedia = false,
+  lockPlayback = false,
   metaText,
   onAudioEnded,
   onNext,
@@ -77,6 +79,7 @@ export function ListeningViewpointsScreen({
       instructionText={instructionText}
       hintText={hintText}
       autoPlayMedia={autoPlayMedia}
+      lockPlayback={lockPlayback}
       metaText={metaText}
       onAudioEnded={onAudioEnded}
       onNext={onNext}

@@ -29,13 +29,14 @@ import { ATTEMPT_AUDIO_BUCKET } from "./audio-utils";
 import { transcriptCopy } from "./practice-flow";
 
 const DEFAULT_TRANSCRIPTION_MODEL = "gpt-4o-mini-transcribe";
+const FALLBACK_TRANSCRIPTION_MODEL = "whisper-1";
 
-// Keeps the model focused on faithful transcription. The transcript
-// must reflect what the student said, not what they should have said.
-const TRANSCRIPTION_PROMPT =
-  "This is a CELPIP speaking practice response from an English-language " +
-  "test preparation student. Preserve the speaker's wording as accurately " +
-  "as possible. Do not correct grammar. Do not rewrite the answer.";
+// A short style hint, not an instruction.
+//
+// gpt-4o-mini-transcribe treats this field as the start of the
+// transcript. A long instruction makes a short answer come back empty,
+// and an empty transcript used to stop the review before scoring.
+const TRANSCRIPTION_PROMPT = "Um, uh, okay, so I think";
 
 type AttemptRow = {
   id: string;
@@ -205,34 +206,20 @@ export async function transcribeAttempt(
   const model =
     process.env.OPENAI_TRANSCRIPTION_MODEL || DEFAULT_TRANSCRIPTION_MODEL;
   const inputSizeBytes = audio.size;
-  let transcript = "";
+  const openai = new OpenAI({ apiKey });
 
   // USAGE-00: one usage event per paid OpenAI call. Latency is measured
   // across exactly the provider call.
-  const startedAt = Date.now();
-  // Usage reported by the call that just ran, so the empty transcript
-  // branch below can record the same tokens and cost as a success would.
-  let callUsage: Pick<
-    Parameters<typeof recordAiUsageEvent>[0],
-    "tokens" | "audioDurationSeconds"
-  > = {};
+  const first = await requestTranscript({
+    openai,
+    audio,
+    fileName,
+    model,
+    prompt: TRANSCRIPTION_PROMPT,
+  });
 
-  try {
-    const openai = new OpenAI({ apiKey });
-    const result = await openai.audio.transcriptions.create({
-      file: await toFile(audio, fileName),
-      model,
-      language: "en",
-      response_format: "json",
-      prompt: TRANSCRIPTION_PROMPT,
-    });
-    transcript = result.text?.trim() ?? "";
-    callUsage = {
-      tokens: readOpenAiTokenUsage(result),
-      audioDurationSeconds: readOpenAiAudioDuration(result),
-    };
-  } catch (err) {
-    console.error("OpenAI transcription failed:", err);
+  if (!first.ok) {
+    console.error("OpenAI transcription failed:", first.error);
     await recordAiUsageEvent({
       userId: attempt.user_id,
       eventType: "speaking_transcription",
@@ -243,8 +230,8 @@ export async function transcribeAttempt(
       model,
       endpoint: AI_USAGE_ENDPOINTS.transcriptions,
       inputSizeBytes,
-      latencyMs: Date.now() - startedAt,
-      ...describeAiError(err),
+      latencyMs: first.latencyMs,
+      ...describeAiError(first.error),
       metadata: { reached_provider: true },
     });
     await markTranscriptionFailed(attempt.id);
@@ -255,7 +242,68 @@ export async function transcribeAttempt(
     };
   }
 
-  const latencyMs = Date.now() - startedAt;
+  let transcript = first.transcript;
+  let callUsage = first.usage;
+  let latencyMs = first.latencyMs;
+  let modelUsed = model;
+
+  // A short answer plus the old long prompt used to come back blank.
+  // Try the fallback model once before telling the student it failed.
+  if (!transcript && model !== FALLBACK_TRANSCRIPTION_MODEL) {
+    await recordAiUsageEvent({
+      userId: attempt.user_id,
+      eventType: "speaking_transcription",
+      status: "failed",
+      moduleSlug: SPEAKING_MODULE_SLUG,
+      attemptId: attempt.id,
+      taskId: attempt.task_id,
+      model,
+      endpoint: AI_USAGE_ENDPOINTS.transcriptions,
+      ...callUsage,
+      inputSizeBytes,
+      latencyMs,
+      errorCode: "empty_response",
+      errorMessage: "Transcription returned an empty transcript",
+      metadata: { reached_provider: true, retried_with: FALLBACK_TRANSCRIPTION_MODEL },
+    });
+
+    const second = await requestTranscript({
+      openai,
+      audio,
+      fileName,
+      model: FALLBACK_TRANSCRIPTION_MODEL,
+      prompt: TRANSCRIPTION_PROMPT,
+    });
+
+    if (!second.ok) {
+      console.error("OpenAI transcription fallback failed:", second.error);
+      await recordAiUsageEvent({
+        userId: attempt.user_id,
+        eventType: "speaking_transcription",
+        status: "failed",
+        moduleSlug: SPEAKING_MODULE_SLUG,
+        attemptId: attempt.id,
+        taskId: attempt.task_id,
+        model: FALLBACK_TRANSCRIPTION_MODEL,
+        endpoint: AI_USAGE_ENDPOINTS.transcriptions,
+        inputSizeBytes,
+        latencyMs: second.latencyMs,
+        ...describeAiError(second.error),
+        metadata: { reached_provider: true },
+      });
+      await markTranscriptionFailed(attempt.id);
+      return {
+        ok: false,
+        status: 502,
+        message: transcriptCopy.errors.transcriptionFailed,
+      };
+    }
+
+    transcript = second.transcript;
+    callUsage = second.usage;
+    latencyMs = second.latencyMs;
+    modelUsed = FALLBACK_TRANSCRIPTION_MODEL;
+  }
 
   // An empty transcript usually means silence or an unreadable file.
   // Treat it as a failure so the student knows to retry or re-record.
@@ -269,7 +317,7 @@ export async function transcribeAttempt(
       moduleSlug: SPEAKING_MODULE_SLUG,
       attemptId: attempt.id,
       taskId: attempt.task_id,
-      model,
+      model: modelUsed,
       endpoint: AI_USAGE_ENDPOINTS.transcriptions,
       ...callUsage,
       inputSizeBytes,
@@ -293,7 +341,7 @@ export async function transcribeAttempt(
     moduleSlug: SPEAKING_MODULE_SLUG,
     attemptId: attempt.id,
     taskId: attempt.task_id,
-    model,
+    model: modelUsed,
     endpoint: AI_USAGE_ENDPOINTS.transcriptions,
     ...callUsage,
     inputSizeBytes,
@@ -318,4 +366,53 @@ export async function transcribeAttempt(
   }
 
   return { ok: true, attemptId: attempt.id, transcript };
+}
+
+type TranscriptUsage = Pick<
+  Parameters<typeof recordAiUsageEvent>[0],
+  "tokens" | "audioDurationSeconds"
+>;
+
+type TranscriptRequest =
+  | {
+      ok: true;
+      transcript: string;
+      usage: TranscriptUsage;
+      latencyMs: number;
+    }
+  | { ok: false; error: unknown; latencyMs: number };
+
+// One transcription call. The bytes are copied into a new file each
+// time, so a fallback call is not reading a stream the first call used.
+async function requestTranscript(input: {
+  openai: OpenAI;
+  audio: Blob;
+  fileName: string;
+  model: string;
+  prompt: string;
+}): Promise<TranscriptRequest> {
+  const startedAt = Date.now();
+
+  try {
+    const bytes = Buffer.from(await input.audio.arrayBuffer());
+    const result = await input.openai.audio.transcriptions.create({
+      file: await toFile(bytes, input.fileName),
+      model: input.model,
+      language: "en",
+      response_format: "json",
+      prompt: input.prompt,
+    });
+
+    return {
+      ok: true,
+      transcript: result.text?.trim() ?? "",
+      usage: {
+        tokens: readOpenAiTokenUsage(result),
+        audioDurationSeconds: readOpenAiAudioDuration(result),
+      },
+      latencyMs: Date.now() - startedAt,
+    };
+  } catch (error) {
+    return { ok: false, error, latencyMs: Date.now() - startedAt };
+  }
 }

@@ -8,8 +8,9 @@
 // - components import from here instead of hardcoding brand classes
 // - the landing page keeps its own warm editorial palette, it is not
 //   covered by these tokens
-// - brand direction is deep navy primary, white and warm white surfaces,
-//   soft blue secondary, and a controlled Canadian red accent
+// - brand direction (DESIGN.md): ink navy for structure and text, one
+//   emerald primary action colour, white cards on a warm off-white page,
+//   and red only for errors and destructive actions
 
 // Page and surface backgrounds.
 export const surface = {
@@ -33,7 +34,7 @@ export const text = {
   onBrand: "text-white",
   accent: "text-academy-blue",
   danger: "text-academy-red",
-  heading: "font-serif font-semibold tracking-tight text-academy-navy",
+  heading: "font-serif font-bold tracking-tight text-academy-navy",
   eyebrow:
     "text-xs font-semibold uppercase tracking-[0.2em] text-academy-blue",
 } as const;
@@ -54,9 +55,11 @@ export const shadow = {
   none: "shadow-none",
 } as const;
 
-// Corner radii. Cards are generously rounded, controls are pill shaped.
+// Corner radii. Cards are 16px, large feature panels and dialogs 24px,
+// controls are pill shaped.
 export const radius = {
-  card: "rounded-3xl",
+  card: "rounded-2xl",
+  feature: "rounded-3xl",
   panel: "rounded-2xl",
   control: "rounded-full",
   chip: "rounded-full",
@@ -82,22 +85,23 @@ export const layout = {
 // Full card recipes, so a card looks the same wherever it is used.
 export const cardStyles = {
   default: `${radius.card} ${surface.card} ${shadow.card} ${border.ring}`,
-  highlighted: `${radius.card} ${surface.card} ${shadow.raised} ring-1 ring-academy-blue/30`,
+  highlighted: `${radius.card} bg-academy-blue-soft/60 ${shadow.card} ring-1 ring-academy-blue/35`,
   subtle: `${radius.card} ${surface.cardSubtle} ${border.subtle}`,
   danger: `${radius.card} ${surface.dangerSoft} ring-1 ring-academy-red/20`,
 } as const;
 
 export type CardVariant = keyof typeof cardStyles;
 
-// Button recipes. Primary is navy, secondary is a soft blue outline,
-// ghost is text only, and danger is reserved for destructive actions.
+// Button recipes. Primary is the one emerald action colour used on the
+// public site and in the app alike, secondary is a white outline, ghost
+// is text only, and danger is reserved for destructive actions.
 export const buttonBase = `inline-flex items-center justify-center gap-2 ${radius.control} font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${focus.ring}`;
 
 export const buttonVariants = {
   primary:
-    "bg-academy-navy text-white hover:bg-academy-navy-dark disabled:hover:bg-academy-navy",
+    "bg-brand text-white shadow-sm shadow-brand/20 hover:bg-brand-dark disabled:hover:bg-brand",
   secondary:
-    "bg-academy-blue-soft text-academy-navy ring-1 ring-academy-blue/25 hover:bg-academy-navy-soft",
+    "bg-academy-paper text-academy-navy ring-1 ring-academy-navy/15 hover:bg-academy-navy-soft",
   ghost:
     "bg-transparent text-academy-navy hover:bg-academy-navy-soft/70",
   danger:
@@ -119,7 +123,7 @@ export type ButtonSize = keyof typeof buttonSizes;
 // Progress bar track and fill.
 export const progress = {
   track: "w-full overflow-hidden rounded-full bg-academy-navy/10",
-  fill: "h-full rounded-full bg-academy-navy transition-[width] duration-500",
+  fill: "h-full rounded-full bg-brand transition-[width] duration-500",
   fillAccent: "h-full rounded-full bg-academy-blue transition-[width] duration-500",
 } as const;
 

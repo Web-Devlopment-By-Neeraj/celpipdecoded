@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { BrandDisclaimer } from "@/components/brand/BrandDisclaimer";
 import { CelpipDecodedLogo } from "@/components/brand/CelpipDecodedLogo";
 import { AppBreadcrumbs } from "./AppBreadcrumbs";
+import { AppMobileTabBar } from "./AppMobileTabBar";
 import { AppShellFrame } from "./AppShellFrame";
 import { AppSideNav } from "./AppSideNav";
 import { AppTopNav } from "./AppTopNav";
@@ -10,7 +11,7 @@ import { AppTopNav } from "./AppTopNav";
 //
 // It replaces DashboardShell, which had a single header row and no
 // navigation. The layout is a two column grid on desktop, sidebar plus
-// content, and a single column with a drawer on mobile.
+// content, and a single column with a bottom tab bar on mobile.
 //
 // The content column carries min-w-0 so a wide table or a long
 // transcript scrolls inside its own container instead of pushing the
@@ -44,6 +45,7 @@ export function AppShell({
       topNav={<AppTopNav userEmail={userEmail} />}
       breadcrumbs={<AppBreadcrumbs />}
       footer={<AppShellFooter />}
+      mobileTabBar={<AppMobileTabBar userEmail={userEmail} />}
     >
       {children}
     </AppShellFrame>

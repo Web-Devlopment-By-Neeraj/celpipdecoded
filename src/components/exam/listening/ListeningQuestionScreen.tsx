@@ -110,6 +110,7 @@ export type ListeningQuestionScreenProps = {
   requireAnswer?: boolean;
   // Whether the question clip attempts to start on its own.
   autoPlayAudio?: boolean;
+  lockPlayback?: boolean;
   // Label in front of the countdown in the top bar.
   timerLabel?: string;
   // How long the answering window runs. Defaults to the published 30
@@ -141,6 +142,7 @@ export function ListeningQuestionScreen({
   onSelectOption,
   requireAnswer = true,
   autoPlayAudio = false,
+  lockPlayback = false,
   timerLabel = listeningCopy.questionTimerLabel,
   timerSeconds = LISTENING_QUESTION_TIMER.seconds,
   timerWarningAtSeconds,
@@ -210,11 +212,11 @@ export function ListeningQuestionScreen({
           <div className={examListening.columnStack}>
             <ExamInstructionRow text={listeningCopy.questionInstruction} />
 
-            {resolvedAudio.kind === "missing" ? (
-              // No clip for this question in the source material. The
-              // notice says so plainly rather than playing something else.
-              // No content in the project reaches this: it is the guard for
-              // a future part whose source is short a recording.
+            {resolvedAudio.kind === "missing" && !question.prompt ? (
+              // No clip and no printed question. The notice says so
+              // plainly rather than playing something else. A printed
+              // prompt, which an uploaded practice test uses, is the
+              // question, so the missing-clip panel stays off that screen.
               <MockTestAudioVisual
                 status="idle"
                 progress={0}
@@ -223,11 +225,13 @@ export function ListeningQuestionScreen({
                 fallbackHeading={listeningCopy.questionAudioMissingHeading}
                 fallbackText={listeningCopy.questionAudioMissingText}
               />
-            ) : (
+            ) : resolvedAudio.kind === "missing" ? null : (
               <ListeningAudioPlayer
                 src={resolvedAudio.url}
                 title={`${listeningCopy.questionPlayerTitle} ${questionNumber}`}
                 autoPlay={autoPlayAudio}
+                lockPlayback={lockPlayback}
+                showPlaybarNote={!lockPlayback}
                 // The note is printed here too. EXAM-UI-03 hid it on the
                 // question screens as noise repeated under 38 clips, but
                 // the scrub bar it is warning about is on every one of
@@ -260,9 +264,7 @@ export function ListeningQuestionScreen({
             </div>
 
             <fieldset className="min-w-0">
-              <legend className="sr-only">
-                {listeningCopy.chooseAnswerInstruction}
-              </legend>
+              <legend className="sr-only">Answer options</legend>
 
               {/* The option rows are the shared player control since
                   EXAM-UI-03, so hover, selection and the alignment of the

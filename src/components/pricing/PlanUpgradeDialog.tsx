@@ -82,7 +82,7 @@ export function PlanUpgradeDialog({
                 </p>
                 <h2
                   id="plan-upgrade-title"
-                  className="mt-1 font-serif text-2xl font-semibold"
+                  className="mt-1 font-serif text-2xl font-bold"
                 >
                   {content.headline}
                 </h2>
@@ -147,7 +147,7 @@ export function PlanUpgradeDialog({
           </>
         ) : (
           <>
-            <h2 className="font-serif text-2xl font-semibold">15% off today</h2>
+            <h2 className="font-serif text-2xl font-bold">15% off today</h2>
             <p className="mt-2 text-sm leading-6 text-ink/70">
               Not ready to pay full price? Take 15% off {content.name} when you
               checkout now. The discount is applied automatically.

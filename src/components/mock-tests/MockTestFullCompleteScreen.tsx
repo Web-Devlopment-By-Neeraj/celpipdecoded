@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { ExamButton } from "@/components/exam/ExamButton";
 import { ExamInstructionRow } from "@/components/exam/ExamInstructionRow";
 import { ExamShell } from "@/components/exam/ExamShell";
-import { PlanUpgradeDialog } from "@/components/pricing/PlanUpgradeDialog";
 import { examScreenBody, examText } from "@/features/exam-engine/exam-theme";
-import { MOCK_TEST_1_HUB_PATH } from "@/features/mock-tests/mock-test-1-routes";
+import {
+  MOCK_TEST_1_HUB_PATH,
+  MOCK_TEST_2_HUB_PATH,
+} from "@/features/mock-tests/mock-test-1-routes";
 import {
   markMockTestFullRunComplete,
   readMockTestFullResults,
@@ -47,7 +49,6 @@ export function MockTestFullCompleteScreen({
   metaText,
   exitHref = MOCK_TEST_1_HUB_PATH,
 }: MockTestFullCompleteScreenProps) {
-  const [upgradeOpen, setUpgradeOpen] = useState(false);
   const sections = useSyncExternalStore(
     subscribeToFullResults,
     readFullResultSections,
@@ -59,8 +60,7 @@ export function MockTestFullCompleteScreen({
   }, []);
 
   return (
-    <>
-      <ExamShell
+    <ExamShell
         title={title}
         metaText={metaText}
         showNext={false}
@@ -81,7 +81,7 @@ export function MockTestFullCompleteScreen({
                   <span className="font-semibold text-foreground">
                     {row.label}
                   </span>
-                  {row.detail ? ` — ${row.detail}` : null}
+                  {row.detail ? ` - ${row.detail}` : null}
                 </li>
               ))}
             </ul>
@@ -99,25 +99,17 @@ export function MockTestFullCompleteScreen({
             <ExamButton
               variant="secondary"
               size="md"
+              href={MOCK_TEST_2_HUB_PATH}
               uppercase={false}
-              onClick={() => setUpgradeOpen(true)}
             >
-              Move to next mock test
+              Go to Mock Test 2
             </ExamButton>
           </div>
 
           <p className={examScreenBody.notice}>
-            Mock Test 2 and later tests require a paid plan. Practice scores
-            are estimates, not official CELPIP results.
+            Scores are practice estimates, not official CELPIP scores.
           </p>
         </div>
       </ExamShell>
-
-      <PlanUpgradeDialog
-        open={upgradeOpen}
-        productCode="sprint"
-        onClose={() => setUpgradeOpen(false)}
-      />
-    </>
   );
 }

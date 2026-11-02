@@ -27,7 +27,9 @@ export type ExamSectionKey =
 // A plain string is the common case, one idea per bullet. The object form
 // adds a bold lead in for a bullet that needs one, for example
 // { heading: "Timing", text: "Each part has its own time limit." }.
-export type ExamInstruction = string | { heading?: string; text: string };
+export type ExamInstruction =
+  | string
+  | { heading?: string; text: string; emphasis?: boolean };
 
 // One fact in the section intro card, for example
 // { label: "Parts", value: "6" }.

@@ -26,14 +26,14 @@ const features = [
 
 export function AiPracticeSection() {
   return (
-    <section id="ai-practice" className="scroll-mt-20 bg-ink text-cream">
-      <Container className="py-20 sm:py-28">
+    <section id="ai-practice" className="bg-ink text-cream">
+      <Container className="py-16 sm:py-24">
         <div className="grid gap-14 lg:grid-cols-2 lg:gap-20">
           <div>
-            <Eyebrow className="text-brand">
+            <Eyebrow className="text-brand-mint">
               AI-supported speaking practice
             </Eyebrow>
-            <h2 className="mt-5 font-serif text-4xl font-semibold leading-tight tracking-tight text-cream sm:text-5xl">
+            <h2 className="mt-3 font-serif text-3xl font-bold leading-tight tracking-tight text-cream sm:text-4xl lg:text-5xl">
               Practice speaking anytime, as part of the program
             </h2>
             <p className="mt-5 max-w-md text-lg leading-8 text-cream/75">

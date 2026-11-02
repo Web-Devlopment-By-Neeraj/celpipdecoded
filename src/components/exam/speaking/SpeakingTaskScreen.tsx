@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { ExamShell } from "../ExamShell";
 import { ExamTwoColumnLayout } from "../ExamTwoColumnLayout";
 import { SpeakingAudioPreview } from "./SpeakingAudioPreview";
@@ -94,6 +94,10 @@ export type SpeakingTaskScreenProps = {
   // it. Neither window stops the recorder, advances the task or clears a
   // take, before or after it fires.
   onTimeExpire?: () => void;
+  // Complete test starts recording when preparation ends, then moves on
+  // when the recording window ends.
+  completeTest?: boolean;
+  onAdvance?: () => void;
   copy?: SpeakingMockCopy;
   metaText?: string;
   nextLabel?: string;
@@ -108,6 +112,8 @@ export function SpeakingTaskScreen({
   onRecorded,
   timerScreenKey,
   onTimeExpire,
+  completeTest = false,
+  onAdvance,
   copy = speakingMockCopy,
   metaText,
   nextLabel,
@@ -124,6 +130,9 @@ export function SpeakingTaskScreen({
   // make each take's window key different from the last one, so a
   // re-record opens a new window rather than resuming the old one.
   const [takeCount, setTakeCount] = useState(0);
+  const [startToken, setStartToken] = useState(0);
+  const [stopToken, setStopToken] = useState(0);
+  const advanceAfterStop = useRef(false);
 
   const hasRecording = response.audioUrl !== null && response.audioBlob !== null;
 
@@ -157,6 +166,35 @@ export function SpeakingTaskScreen({
     setStatus("idle");
     setTakeKey(null);
     onRecorded(recording);
+
+    if (advanceAfterStop.current) {
+      advanceAfterStop.current = false;
+      onAdvance?.();
+    }
+  };
+
+  const handlePrepExpire = () => {
+    if (completeTest) {
+      setStartToken((current) => current + 1);
+      return;
+    }
+
+    onTimeExpire?.();
+  };
+
+  const handleResponseExpire = () => {
+    if (!completeTest) {
+      onTimeExpire?.();
+      return;
+    }
+
+    if (status === "recording") {
+      advanceAfterStop.current = true;
+      setStopToken((current) => current + 1);
+      return;
+    }
+
+    onAdvance?.();
   };
 
   const handleRecordingError = (kind: SpeakingRecordingErrorKind) => {
@@ -217,18 +255,14 @@ export function SpeakingTaskScreen({
                 // Preparation running out says so and stops there. The
                 // learner presses Start recording when they are ready,
                 // exactly as before (TIMER-01).
-                onExpire={onTimeExpire}
+                onExpire={handlePrepExpire}
                 copy={copy}
               />
 
               <SpeakingRecordingTimer
                 timer={task.responseTimer}
                 runKey={takeKey}
-                // The recording window running out says so and stops
-                // there. The take is not stopped, the audio already
-                // captured is kept, and Stop recording stays the
-                // learner's to press (TIMER-01).
-                onExpire={onTimeExpire}
+                onExpire={handleResponseExpire}
                 copy={copy}
               />
             </div>
@@ -238,6 +272,8 @@ export function SpeakingTaskScreen({
               status={status}
               errorKind={errorKind}
               hasRecording={hasRecording}
+              startToken={startToken}
+              stopToken={stopToken}
               onRequestStart={handleRequestStart}
               onRecordingStarted={handleRecordingStarted}
               onRecordingStopping={handleRecordingStopping}

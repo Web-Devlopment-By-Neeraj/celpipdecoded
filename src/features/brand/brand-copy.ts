@@ -44,9 +44,9 @@ export const brandCopy = {
 
   // Public hero lines from the brief. Kept to the public surfaces: the
   // instructor "I" line is not repeated inside the signed in app.
+  // One headline in two beats: the reassurance, then the real problem.
   heroHeadline: "You're not bad at English.",
-  heroSupport:
-    "Most people do not struggle with CELPIP because of their English. They struggle because they do not know how CELPIP wants them to answer.",
+  heroHeadlineAnswer: "You just don't know how CELPIP wants you to answer.",
   instructorLine:
     "I scored CLB 10+ on CELPIP, and now I teach the exact method I used.",
   instructorCredential: "CLB 10+ CELPIP instructor",

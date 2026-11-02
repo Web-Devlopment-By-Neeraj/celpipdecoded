@@ -18,7 +18,7 @@ export default async function SettingsPage() {
 
   return (
     <main className="mx-auto max-w-3xl overflow-x-hidden px-4 py-8">
-      <h1 className="font-serif text-3xl font-semibold text-academy-navy">Settings</h1>
+      <h1 className="font-serif text-3xl font-bold text-academy-navy">Settings</h1>
       <p className="mt-2 text-sm leading-6 text-academy-navy/75">
         Developer view of every limit the app reads at runtime. Changing a row in the settings table takes effect within 60 seconds. This screen is not the student-facing settings page.
       </p>

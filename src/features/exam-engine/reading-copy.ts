@@ -31,7 +31,7 @@ export const readingCopy = {
   partIntroSubtitle:
     "Read the following information before this part of the practice test begins.",
   partIntroNotice:
-    "Internal prototype. Answers are held on this screen only and nothing is saved. A practice score is shown at the end of the part and is lost when you leave. You can move back and forward between screens and your answers stay as you left them.",
+    "Scores are practice estimates, not official CELPIP scores.",
   // What the learner is given, shown on the intro card.
   partIntroFormatLabel: "Message, response and drop-down questions",
 
@@ -433,7 +433,7 @@ export function buildReadingSectionCopy({
     // the order lives in one place. None of them states a question count:
     // the count is a detail row on the intro card and is counted off the
     // content, so a line here cannot go stale.
-    introScreenTitle: testLabel + " - Reading Test: Instructions",
+    introScreenTitle: testLabel + " - Reading",
     introTitle: "Reading Test",
     introSubtitle:
       "Read the following information before the Reading section begins.",
@@ -444,9 +444,10 @@ export function buildReadingSectionCopy({
       "You can continue with questions unanswered. Any question left blank is counted as incorrect.",
       "At the end you will see a practice score, an estimated Reading band, and a full answer review.",
       "This is CELPIP Decoded practice, not an official CELPIP test.",
+      "Keep an eye on the timer in the top right corner, so you finish each part before time runs out.",
+      "This Reading section follows the same format as the real CELPIP test. On test day, your Reading section may run a little longer, because CELPIP sometimes adds extra questions it is trying out for future tests.",
     ],
-    introNotice:
-      "Your answers are held on this screen only, nothing is saved, and the practice score and estimated band are not an official CELPIP result.",
+    introNotice: "Scores are practice estimates, not official CELPIP scores.",
     // Quiet note under the instruction list on each part intro screen
     // inside the section run.
     //
@@ -456,7 +457,7 @@ export function buildReadingSectionCopy({
     // a practice score at the end of the part, which is the part level
     // score the section run removes.
     partIntroNotice:
-      "Your answers are held on this screen only and nothing is saved. The practice score, the estimated Reading band and the answer review come at the end of the Reading section, not at the end of this part. You can move back and forward between screens and your answers stay as you left them.",
+      "Scores are practice estimates, not official CELPIP scores.",
     introCardTitle: "Reading section",
     introCardSummary:
       "Four parts in one run, with the practice score, the estimated Reading band and the answer review at the end rather than after each part.",

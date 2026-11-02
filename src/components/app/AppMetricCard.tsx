@@ -65,7 +65,7 @@ export function AppMetricCard({
 
       <p
         className={cx(
-          "mt-3 font-serif text-3xl font-semibold leading-none",
+          "mt-3 font-serif text-3xl font-bold leading-none",
           text.primary,
         )}
       >

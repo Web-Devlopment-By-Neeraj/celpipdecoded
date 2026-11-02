@@ -41,7 +41,16 @@ export const examCopy = {
   // toast says it in a sentence. It is a message, not a decision: there
   // is no button on it, it clears itself after a few seconds, and the
   // screen behind it is exactly as it was.
-  timeUpToastText: "Time is up. You can continue when you are ready.",
+  timeUpToastText:
+    "Time is up. In the real test, the screen moves on by itself at this point. You are practicing one section, so you can take a moment and click Next when you're ready.",
+  practiceScoreDisclaimer:
+    "Scores are practice estimates, not official CELPIP scores.",
+  officialVideoLabel: "Instructional Video",
+  officialVideoCaption: "Video: CELPIP official website, celpip.ca",
+  officialOverviewVideoText:
+    "This overview video comes from the official CELPIP website. It shows how the real test runs from start to finish, and what to expect in each of the four sections. Our mock tests follow the same flow. CELPIP updates its test from time to time, so some details may have changed. For the latest format, check celpip.ca.",
+  officialSectionVideoText:
+    "This video comes from the official CELPIP website. It shows how the real test runs from start to finish, and what to expect in each of the four sections. Our mock tests follow the same flow. CELPIP updates its test from time to time, so some details may have changed. For the latest format, check celpip.ca.",
 
   // Instruction row.
   infoIconLabel: "Information",

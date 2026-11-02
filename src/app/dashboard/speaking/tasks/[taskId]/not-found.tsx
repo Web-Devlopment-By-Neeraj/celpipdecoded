@@ -5,8 +5,8 @@ import { speakingCopy } from "@/features/speaking/task-copy";
 // the dashboard layout, so the header stays visible.
 export default function SpeakingTaskNotFound() {
   return (
-    <div className="mx-auto w-full max-w-md rounded-3xl bg-white p-8 text-center shadow-sm ring-1 ring-ink/5">
-      <h1 className="font-serif text-2xl font-semibold tracking-tight text-ink">
+    <div className="mx-auto w-full max-w-md rounded-2xl bg-white p-8 text-center shadow-sm ring-1 ring-ink/5">
+      <h1 className="font-serif text-2xl font-bold tracking-tight text-ink">
         Task not found
       </h1>
       <p className="mt-3 text-sm leading-6 text-ink/70">

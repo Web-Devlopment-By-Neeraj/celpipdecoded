@@ -36,6 +36,10 @@ Things that work but feel incomplete, confusing, or missing copy/empty states.
 
 - [x] *Pricing page UI — plan list looked plain:* `/pricing` uses a card grid (price, period, benefits, featured Decoded Course, full-width CTAs) with header and discount banner (`P2`) · branch: `sahil/qa-tracker-fixes`
 
+- [ ] *Home page "Choose how you prepare" prices are stale:* the landing section still shows "Free preview / $299 live classes / From $5 packages", while `/pricing` sells Test Sprint $49, Decoded Course $199 and so on. Styling was updated in Task 3a; the **content** needs the real plans from Task 10 (`P1`) · branch: `sahil/task-10-pricing-copy`
+
+- [ ] *Home page "Live classes" section also shows $299 per month:* confirm with Amar before launch (`P2`) · branch: `sahil/task-10-pricing-copy`
+
 ---
 
 
@@ -130,19 +134,72 @@ Not built yet or explicitly out of scope until a ticket is done.
 
 ---
 
-### Task 3a — Client UI parity + perfected dark mode (deferred)
+### Task 3a — Client UI parity + perfected dark mode ✓ built
 
 **Goal:** Align **basic UI** with client mockups / Build Pack (spacing, typography, component polish) and **re-enable dark mode properly** — especially **landing/hero** (client: hero dark mode was wrong; dashboard dark was closer). Do this as one focused pass when you have mockups in hand.
 
 **Plan**
 
-- [ ] **UI audit:** Landing, auth, dashboard shell vs client references; fix obvious mismatches (not full Task 8 landing rebuild).
-- [ ] **Dark mode:** Uncomment `ThemeToggle`, `layout.tsx` theme script, and `globals.css` `html[data-theme="dark"]` block (Task 4 left full implementation in comments).
-- [ ] **Hero + marketing:** Dark palette tuned for navy hero / cream text — no washed-out or inverted sections.
-- [ ] **Dashboard + app:** Match light/dark parity tested on mobile; mock player stays light-in-dark where already designed.
-- [ ] **QA:** Toggle works; no flash of wrong theme; PWA unchanged.
+- [x] **UI audit:** Landing, auth, dashboard shell vs client references. Findings and fixes are in [`DESIGN.md`](../../DESIGN.md) §12. One emerald primary button (app was navy), cards `rounded-2xl` / panels `rounded-3xl`, headings bold, navy sidebar, light hero.
+- [x] **Dark mode:** Re-enabled with a new implementation, not the old commented block. `data-theme="dark"` on `<html>`, set before first paint by the boot script in `layout.tsx` (`localStorage["celpip-theme"]`, no flash). Text variables flip so every opacity step keeps its hierarchy; surfaces get explicit dark values in `globals.css`. `ThemeToggle` is in the app top bar, the mobile More sheet and the public header; all switches stay in sync.
+- [x] **Hero + marketing:** Hero is now light (client mockup direction) with a navy proof card, so dark mode has no inverted sections. Teal eyebrows on navy sections switched to mint for contrast.
+- [x] **Dashboard + app:** Light and dark checked on desktop and a 390px phone, signed in. The mock player stays light in dark mode: `ExamModeViewport` carries `data-theme-scope="light"` and every dark rule excludes it and `[data-mock-test-player]` (checked on `/dashboard/mock-tests/mock-test-1/reading` with dark on).
+- [x] **QA (local):** Toggle works, choice survives reload, no flash of the wrong theme, `theme-color` meta follows the theme, PWA manifest unchanged.
+- [ ] **QA on staging:** Repeat the pass above on a real phone (iOS Safari + Android Chrome, installed PWA) once merged.
 
 **Suggested branch:** `sahil/task-3a-ui-dark-polish` · **Severity:** `P2`
+
+---
+
+### Task 3b — Design guide (`DESIGN.md`) ✓ built
+
+**Goal:** One written source for colours, type, spacing, radii, components, mobile and dark-mode rules, so new screens stop drifting.
+
+- [x] [`DESIGN.md`](../../DESIGN.md) at the repo root: principles, light + dark palette, score colours, type scale, layout rhythm, radii, elevation, buttons/cards/forms/nav/testimonials/icons, mobile + PWA rules, dark-mode rules, motion, the mock player exclusion rule, do/don't, and the audit summary.
+- [x] Tokens updated to match: `design-tokens.ts` (primary = emerald, `radius.card = rounded-2xl`, `radius.feature`, bold `text.heading`), `globals.css` (`navy-panel`, `brand-mint`, `score-high/mid/low`, motion keyframes).
+- [x] Sweep across app screens: `rounded-3xl` cards → `rounded-2xl`, `font-semibold` headings → `font-bold`. Mock test player, mock-test components and dialogs excluded.
+- [ ] Team review: Amar / client sign-off on the guide before Task 8 landing rebuild.
+
+**Suggested branch:** `sahil/task-3a-ui-dark-polish` (same PR as 3a) · **Severity:** `P2`
+
+---
+
+### Task 3c — Mobile PWA navigation (bottom tab bars) ✓ built
+
+**Goal:** The installed app should feel native on a phone: thumb-reach navigation, safe areas, no drawer hunting.
+
+- [x] **Signed in tab bar** (`AppMobileTabBar` → shared `MobileTabBar`): Home, Mocks, Speaking, Writing, More. Active tab gets an emerald pill and `aria-current`. Hidden from `lg`, where the navy sidebar takes over.
+- [x] **More sheet** (`AppMobileNav`, now a bottom sheet): account email + Sign out, Courses, Live classes, Dark theme, Take a tour. Escape / backdrop close it, body scroll locks, focus moves in. The avatar in the top bar opens the same sheet.
+- [x] **Top bar on phones:** logo, theme switch, avatar. Hamburger removed. Sticky, translucent, pads under the notch.
+- [x] **Public tab bar** (`PublicMobileTabBar`): Home, Results, CRS, Pricing, Sign in (Dashboard when signed in). Rendered by `LandingHeader`, so every public page has it.
+- [x] **Public pages get header + footer:** `/crs`, `/draws`, `/pricing`, `/results`, `/courses`, `/diagnostic`, `/ask`, `/book`, `/blog`, `/account`, `/legal/*` via a `layout.tsx` → `PublicPageFrame` (page files unchanged except the old ad-hoc pricing header).
+- [x] **Safe areas + spacing:** `viewportFit: "cover"`, `env(safe-area-inset-*)` on bars and sheets, page bottom padding and the AI assistant button lift above the bar automatically (`data-mobile-tab-bar` / `data-assistant-bubble`). Assistant shows as an icon on phones.
+- [x] **Tests excluded:** no tab bar or padding on exam-mode routes or whenever a test overlay is on screen.
+- [x] Product tour copy updated for the bottom bar and More.
+- [ ] **QA on staging:** installed PWA on iPhone (home indicator gap) and Android; tour steps land on the tab bar items.
+
+**Suggested branch:** `sahil/task-3c-mobile-tab-bar` · **Severity:** `P1`
+
+---
+
+### Task 3d — UI fixes round (scroll landing, live classes row, logo, breadcrumbs, player buttons) ✓ built
+
+**Goal:** Fix the inconsistencies found while reviewing 3a–3c on desktop and on an iPhone 12 Pro viewport.
+
+- [x] **Pages land in the right place:** every in-page link (`/#program`, `/#results`, `/#live-classes`, `/#pricing`, Request class schedule → `#inquiry`) now stops with the section top exactly under the sticky header. There is one offset for the whole site (`scroll-padding-top` on `html` in `globals.css` = header height + 1px border + notch inset) instead of mixed `scroll-mt-20` / `scroll-mt-16` / `:target` values. The `:target` rule did not apply on client-side hash changes. Checked on desktop 1280, tablet 820 and phone 390: direct load, link from another page, link on the same page.
+- [x] **Mobile menu no longer shifts the page:** the public header's dropdown menu now floats over the page instead of pushing it down, so tapping a section link from the menu no longer lands too far down when the menu closes.
+- [x] **Page tops are consistent:** every public page starts 40px under the header (`/pricing`, `/results` and `/crs` were 64px, 64px and 32px). Pricing content lines up with the header logo.
+- [x] **Live classes:** `$299 per month` and **Request class schedule** share one row (button on the right). On narrow phones the button wraps under the price.
+- [x] **Hero Decode · Practice · Succeed:** same line above the headline as before, now in the eyebrow green (`BrandPromiseTagline tone="brand"`, `text-brand`, same as "Real student results"). No logo in the hero.
+- [x] **Hero headline:** now reads "You're not bad at English. You just don't know how CELPIP wants you to answer." as one `h1` in two lines of weight: the reassurance in large navy, the answer below it in smaller brand green. Both lines use balanced wrapping, so there are no one-word last lines at 390px or 1280px. The old support paragraph under the headline was removed because it repeated the new second line. Copy lives in `brandCopy.heroHeadline` / `heroHeadlineAnswer`. Checked light and dark.
+- [x] **Public header logo:** "CELPIP Decoded" moves up with the three words in small caps under it (`CelpipDecodedLogo showPromiseBelow`, compact 8px line). Signed in (menu button only), phones from 380px get the full lockup. Signed out, the **Get started** button needs more room, so the three words show from 410px. Narrower phones get the plain logo and under 360px just the mark, so the header buttons never overlap it (at least 21px gap at every width). Footer lockup unchanged.
+- [x] **No duplicate Dashboard button on phones:** the signed-in **Dashboard** button in the public header only shows from `lg` (1024px) up. Below that the bottom tab bar already has Dashboard, so the header is just the logo and the menu.
+- [x] **Dashboard sidebar logo:** plain logo (no words), set in a 64px row so its centre lines up exactly with the top bar (both at 32px).
+- [x] **Writing / Speaking practice:** breadcrumb removed on `/dashboard/writing` and `/dashboard/speaking` (they already have **← Back to dashboard**). Deeper pages (attempts, results) keep the breadcrumb.
+- [x] **Mock test player, buttons only:** **Back** was rendered twice (top bar and bottom bar) on every screen. It now appears once, next to **Next** in the top bar. On a phone the bar is always title, then timer and screen count, then a full-width row with Back on the left and Next on the right; on desktop Back and Next sit together at the top right. The bottom bar only shows when a screen has its own extra action. Mock Test 1 complete screen: removed the second "Back to Mock Test 1" button (top bar Back already goes there). Everything else in the player is unchanged.
+- [ ] **QA on staging:** listening, reading, writing and speaking sections on a real phone: one Back, Back and Next on the same row on every screen.
+
+**Suggested branch:** `sahil/task-3d-ui-fixes` · **Severity:** `P1`
 
 ---
 
@@ -155,6 +212,8 @@ Not built yet or explicitly out of scope until a ticket is done.
 - [x] Comment or gate: `ThemeToggle` in `LandingHeader` / `AppTopNav`, inline theme script in `layout.tsx`, and **`html[data-theme="dark"]` rules** in `globals.css` (force light on load).
 - [x] Confirm signed-in dashboard stays usable in **light** mode only.
 - [x] Leave PWA/manifest as-is unless toggle removal affects icons only.
+
+**Superseded by Task 3a:** dark mode is back on with the new implementation; the commented-out block was removed.
 
 **Suggested branch:** `sahil/task-4-dark-mode-off` · **Severity:** `P2`
 
@@ -184,10 +243,11 @@ Not built yet or explicitly out of scope until a ticket is done.
 #### Task 5d — Back button in test player / section pages
 
 - [x] Add consistent **Back to mock test** on section intro + instructional video screens (`mockTestContext.exitHref`).
+- [x] Follow-up (Task 3d): Back is shown once per screen, beside Next in the top bar. It is no longer repeated in the bottom bar.
 
-#### Task 5e — Full mock: 10s prep between sections
+#### Task 5e — Full mock: no break between sections
 
-- [x] After a section ends in **full mock flow**, show **10 second** preparation, then auto- or manual-advance to next section (`MockTestSectionPrepScreen`).
+- [x] The 30 Oct handover removes the "Prepare for Reading" break. A complete test goes straight to the next section. The 10 second pause that stays is the Listening preparation pause between conversation sections (L-04).
 
 #### Task 5f — “Move to next section” at section end
 
@@ -203,16 +263,34 @@ Not built yet or explicitly out of scope until a ticket is done.
 
 ### Task 6 — Mock Test builder (Amar / client)
 
-**Goal:** Confirm and finish tooling so Amar or the client can **author mock tests** for learners.
+**Goal:** The client uploads a content file. A clean file becomes a draft. Publish puts it on the student Mock tests screen as Mock Test 2, 3, and so on, and the student sits it in the same exam screens as Mock Test 1.
 
 **Plan**
 
-- [ ] **Already in repo:** Admin routes `/dashboard/admin/mock-tests` (builder MVP). See `docs/admin/admin-01-mock-test-builder-mvp.md`, migrations `013`+.
-- [ ] **Verify:** `ADMIN_EMAILS` in env, staff can create/edit mock test structure, preview, validation issues.
-- [ ] **Gaps vs Task 5:** Builder content must feed **Mock Test 1 / 2** hub (not only hard-coded `mock-test-1` routes).
-- [ ] **QA checklist:** Create part → question → preview → learner-visible test (when published).
+- [x] **Upload, not a form.** `/dashboard/admin/mock-tests` downloads a CSV template and uploads it. Example rows are ignored. The checklist names problems such as a missing correct answer or an empty option, and a file with an error is not saved. A clean file is a draft. Publish is a separate button. The step-by-step section, part and question forms were removed.
+- [x] **Same exam as Mock Test 1.** A published test plays through the Listening audio exam, the Reading split page, the Writing editor and the Speaking recorder. The five instruction videos are the shared clips. Repeated part instructions stay in the app. The file supplies the passage, the clip, the picture, the task and the questions. Answer keys are loaded only when the section is marked.
+- [x] **Hub.** `mock-test-1` stays the built-in free test. `mock-test-2` and later replace the coming-soon cards for students with Test Sprint.
+- [ ] **QA, signed in:** Download the template, upload a small file, confirm the checklist blocks a missing answer, publish a clean draft, and sit Listening, Reading, Writing and Speaking as a Test Sprint student. Tick this after that pass, including once the branch is on staging.
 
 **Suggested branch:** `sahil/task-6-mock-builder` · **Severity:** `P1`
+
+---
+
+### Task 6b — Mock Test 1 handover (30 Oct 2026)
+
+**Goal:** Mock Test 1 matches Amar's handover. The same screens are the template for Mock Test 2 and later. Final copy is used word for word.
+
+**Plan**
+
+- [x] **Complete test.** Time running out moves to the next screen. Back sits beside Next and returns to the previous screen. The first screen still has Back to mock test. Part-complete and task-complete screens are skipped. There is no "Prepare for Reading" break. Listening audio and the discussion video play once, without a pause or seek bar. Audio-only screens move on when the clip ends. Instructional videos can be skipped and move on when they end. Speaking recording starts when preparation ends, and the next task starts when recording time ends.
+- [x] **One section.** The same timers run, then this banner stays until Next: "Time is up. In the real test, the screen moves on by itself at this point. You are practicing one section, so you can take a moment and click Next when you're ready." Pause, replay and Back stay available.
+- [x] **Headings and instructions.** Grey bar uses `Mock Test N - Section / Part / Task`, including the official part and task names. Instruction screens drop the repeated name and stats row. Listening, Reading, Writing and Speaking use the approved extra lines. Instructional videos use the celpip.ca caption. Listening Part 4 starts at 4:00 and Part 5 at 5:00. The Listening pause between conversation sections is 10 seconds. Speaking Task 5 instructions are generic.
+- [x] **Hub and details.** Mock tests headline and card lines match the free, locked and paid copy. A card on `/dashboard/mock-tests` opens that mock's details. The buttons on the details page start the test. Mock Test 1 and a published test both use "Before you start". Complete test opens on the Overview Video. After one-section Writing, Continue to Speaking. After Speaking, and after the complete-test summary, Go to Mock Test 2. Breadcrumbs name the mock and Complete test.
+- [x] **Review screens.** The AI wait shows a moving step. Result cards use a dark header, a large level, and red and green boxes for the mistake pair. Evaluation prompts forbid the em dash, and any em dash in the reply is replaced before it is shown.
+- [ ] **Saved attempts (G-07) and the progress hub (D-01).** Attempts, scores, writing text, speaking audio, resume, and the progress cards are not stored yet. A closed tab still loses an in-progress test. Do not tick this until a student can log out and still open the result, the text and the audio. The "saved until you upgrade" line on the details page is Amar's approved copy and is ahead of this save.
+- [ ] **QA, signed in:** Sit Mock Test 1 as a complete test only long enough to confirm the overview video, one Listening question auto-advances, Back returns to the previous screen, and the playbar is hidden. Then sit Listening as one section and let a short timer hit 0:00. Confirm the banner and that Next still works. From the mock list, open a card and confirm the test starts only from a button on the details page. Tick this after that pass, including once the branch is on staging.
+
+**Suggested branch:** `sahil/task-6b-mock-handover` · **Severity:** `P1`
 
 ---
 
@@ -369,7 +447,10 @@ Not built yet or explicitly out of scope until a ticket is done.
 
 **Plan**
 
-- [ ] Landing **results** section: stats strip from records, before/after spotlight, 18 filterable cards, score rings (own design, not official report look).
+- [x] Landing **results** section: stats strip from records, before/after spotlight, 18 filterable cards, score rings (own design, not official report look). Built as `ResultsSection` right after the hero (proof row in the hero links to it) and a full `/results` page with filters (All, CLB 9+ in all four, Big jumps, First attempt). Data in `src/features/testimonials/testimonials.ts`; stats are computed (18 shown, 10 with CLB 9+ in all four, 4 with a 12, biggest jump Dawinder Reading 6 → 10) and covered by `testimonials.test.ts`. On phones the home wall is a swipe row.
+- [ ] **Before production (`P0`):** written **website consent** from every student on the wall (Build Pack §4.8). Until then the section is demo content.
+- [ ] **Client to confirm scores** flagged in the pack: **Nikhil** and **Gurnoor**. Edit `testimonials.ts` only; the stats update themselves.
+- [ ] Confirm the **"100+ students coached to CLB 9+"** headline claim with Amar (`RESULTS_HEADLINE`).
 - [ ] **Review form** + personal token link; admin **Reviews queue** (consent, proof redaction, publish rules).
 - [ ] `/review` general link with spam traps; website vs Instagram consent separate.
 

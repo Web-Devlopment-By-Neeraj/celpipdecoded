@@ -373,18 +373,33 @@ export function AssistantBubble() {
           : null;
 
   return (
-    <div className="fixed bottom-4 right-4 z-40 max-w-[calc(100vw-2rem)]">
+    <div
+      data-assistant-bubble=""
+      className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] right-4 z-40 flex max-w-[calc(100vw-2rem)] flex-col items-end"
+    >
       {open ? (
         <section
-          className="mb-3 flex h-[min(36rem,78vh)] w-[min(100vw-2rem,24rem)] flex-col rounded-3xl bg-white p-4 shadow-xl ring-1 ring-ink/10"
+          className="mb-3 flex h-[min(36rem,calc(100dvh-10rem))] w-[min(100vw-2rem,24rem)] flex-col rounded-3xl bg-white p-4 shadow-xl ring-1 ring-ink/10 motion-safe:animate-fade-up"
           aria-label="Alex, practice coach"
         >
           <div className="flex items-center justify-between gap-3">
-            <div>
-              <p className="text-sm font-semibold">Alex</p>
-              <p className="text-xs text-ink/60">Practice coach. Type or talk.</p>
+            <div className="flex items-center gap-3">
+              <span
+                aria-hidden
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-brand text-sm font-bold text-white"
+              >
+                A
+              </span>
+              <div>
+                <p className="text-sm font-semibold">Alex</p>
+                <p className="text-xs text-ink/60">Practice coach. Type or talk.</p>
+              </div>
             </div>
-            <button type="button" className="text-sm underline" onClick={() => setOpen(false)}>
+            <button
+              type="button"
+              className="rounded-full px-3 py-1.5 text-sm font-semibold text-ink/70 transition-colors hover:bg-academy-navy-soft hover:text-ink"
+              onClick={() => setOpen(false)}
+            >
               Close
             </button>
           </div>
@@ -485,10 +500,24 @@ export function AssistantBubble() {
       <button
         type="button"
         data-tour="assistant"
-        className="h-12 rounded-full bg-ink px-4 text-sm font-semibold text-cream"
+        aria-expanded={open}
+        className="inline-flex h-12 min-w-12 items-center justify-center gap-2 rounded-full bg-ink px-3.5 text-sm font-semibold text-cream shadow-lg shadow-ink/20 ring-1 ring-white/10 transition-transform hover:-translate-y-0.5 sm:px-4"
         onClick={() => setOpen((value) => !value)}
       >
-        AI assistant
+        <svg
+          className="h-5 w-5 shrink-0"
+          viewBox="0 0 22 22"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h9A2.5 2.5 0 0 1 18 5.5v7a2.5 2.5 0 0 1-2.5 2.5H9l-4 3.5V15a2.5 2.5 0 0 1-1-2z" />
+          <path d="M8 8.5h6M8 11.5h4" />
+        </svg>
+        <span className="sr-only sm:not-sr-only">AI assistant</span>
       </button>
     </div>
   );

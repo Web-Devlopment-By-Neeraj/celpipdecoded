@@ -9,6 +9,7 @@ export type SectionInstructionVideoScreenProps = {
   helperText?: string;
   metaText?: string;
   onNext?: () => void;
+  onVideoEnded?: () => void;
   onSkip?: () => void;
   onBack?: () => void;
   backHref?: string;
@@ -24,6 +25,7 @@ export function SectionInstructionVideoScreen({
   helperText,
   metaText,
   onNext,
+  onVideoEnded,
   onSkip,
   onBack,
   backHref,
@@ -42,6 +44,7 @@ export function SectionInstructionVideoScreen({
       preload={INSTRUCTIONAL_VIDEO_PRELOAD}
       autoPlayVideo={autoPlayVideo}
       onNext={onNext}
+      onVideoEnded={onVideoEnded}
       onSkip={onSkip}
       onBack={onBack}
       backHref={backHref}

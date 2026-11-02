@@ -57,6 +57,7 @@ export type SpeakingEvaluationErrorScreenProps = {
   // Returns to the completion screen with the recordings still held.
   onBackToRecordings?: () => void;
   dashboardHref?: string;
+  leaveLabel?: string;
   copy?: SpeakingMockCopy;
   metaText?: string;
   onBack?: () => void;
@@ -70,6 +71,7 @@ export function SpeakingEvaluationErrorScreen({
   onRetry,
   onBackToRecordings,
   dashboardHref = "/dashboard",
+  leaveLabel,
   copy = speakingMockCopy,
   metaText,
   onBack,
@@ -123,7 +125,7 @@ export function SpeakingEvaluationErrorScreen({
             href={dashboardHref}
             uppercase={false}
           >
-            {copy.backToDashboardLabel}
+            {leaveLabel ?? copy.backToDashboardLabel}
           </ExamButton>
         </div>
 

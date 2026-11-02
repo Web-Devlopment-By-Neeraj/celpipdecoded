@@ -15,8 +15,8 @@ export type ProductTourStep = {
 export const PRODUCT_TOUR_STEPS: readonly ProductTourStep[] = [
   {
     id: "app-menu",
-    title: "The menu",
-    body: "On a phone, mock tests, speaking, writing, courses, live classes, and your account are in this menu.",
+    title: "More",
+    body: "On a phone, the bar at the bottom holds your main pages. More opens courses, live classes, your account, the theme switch, and this tour.",
   },
   {
     id: "nav-dashboard",
@@ -46,12 +46,12 @@ export const PRODUCT_TOUR_STEPS: readonly ProductTourStep[] = [
   {
     id: "account",
     title: "Your account",
-    body: "This menu shows the email you are signed in with, and it is where you sign out.",
+    body: "Your initial opens the account area. It shows the email you are signed in with, and it is where you sign out.",
   },
   {
     id: "tour-button",
     title: "Replay this tour",
-    body: "Take a tour stays in the bar, so you can walk through these steps again whenever you want.",
+    body: "Take a tour stays in the top bar, and in More on a phone, so you can walk through these steps again whenever you want.",
   },
   {
     id: "assistant",

@@ -114,9 +114,12 @@ export const playerBar = {
     "min-w-0 basis-full truncate text-[15px] font-semibold leading-6 text-player-ink sm:basis-auto sm:flex-1",
   meta: "min-w-0 truncate text-[12px] leading-4 text-player-ink/60",
   readings: "flex min-w-0 flex-wrap items-center gap-x-3 gap-y-0.5",
-  actions: "flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1.5 sm:ml-auto",
+  actions: "flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-1.5 sm:flex-none",
+  // Back and Next. A full width row of equal buttons on a phone, a compact
+  // pair at the right on anything wider.
+  nav: "flex shrink-0 basis-full items-center gap-2 whitespace-nowrap *:flex-1 sm:ml-auto sm:basis-auto sm:*:flex-none",
   back: "flex min-w-0 items-center gap-2",
-  secondary: "flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1.5 sm:ml-auto",
+  secondary: "ml-auto flex min-w-0 flex-wrap items-center justify-end gap-x-3 gap-y-1.5",
 } as const;
 
 // The white content area between the bars.
@@ -510,7 +513,7 @@ export const playerSplit = {
   column: "flex min-w-0 flex-col gap-2 p-3 sm:p-4",
   columnFill: "lg:min-h-0 lg:overflow-hidden",
   columnLabel:
-    "shrink-0 text-[12px] font-semibold uppercase tracking-[0.06em] text-player-ink/55",
+    "shrink-0 border-b border-player-ink/30 pb-1 text-[15px] font-semibold leading-6 text-player-ink",
   columnBody: "min-w-0",
   columnBodyFill:
     "min-w-0 lg:min-h-0 lg:grow lg:overflow-y-auto lg:overscroll-contain lg:pr-1",

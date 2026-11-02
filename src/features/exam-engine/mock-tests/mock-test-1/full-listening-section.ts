@@ -43,7 +43,7 @@ import type { ListeningSectionContent } from "../../listening-section-types";
 // screen of the run says the same thing as the dashboard card that opened
 // it. The six part titles are deliberately left alone: they are shared
 // with the part level routes, which are internal and stay that way.
-const SECTION_TITLE = "Mock Test 1 - Listening Test";
+const SECTION_TITLE = "Mock Test 1 - Listening";
 
 export const mockTest1ListeningSection: ListeningSectionContent = {
   testId: "mock-test-1",

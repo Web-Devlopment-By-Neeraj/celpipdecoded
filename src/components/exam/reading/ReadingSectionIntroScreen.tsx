@@ -1,16 +1,6 @@
 import { ExamInstructionScreen } from "../ExamInstructionScreen";
-import { ExamSectionIntroCard } from "../ExamSectionIntroCard";
-import { examCopy } from "@/features/exam-engine/exam-copy";
-import {
-  formatReadingSectionMinutes,
-  readingSectionCopy,
-} from "@/features/exam-engine/reading-copy";
-import {
-  countReadingSectionQuestions,
-  sumReadingSectionSeconds,
-} from "@/features/exam-engine/reading-section-flow";
+import { ExamInstructionCountdown } from "../timer/ExamInstructionCountdown";
 import type { ReadingSectionCopy } from "@/features/exam-engine/reading-copy";
-import type { ExamSectionIntroDetail } from "@/features/exam-engine/instruction-screen-types";
 import type { ReadingSectionContent } from "@/features/exam-engine/reading-section-types";
 
 // Reading section intro screen (EXAM-24).
@@ -49,6 +39,7 @@ export type ReadingSectionIntroScreenProps = {
   content: ReadingSectionContent;
   copy?: ReadingSectionCopy;
   metaText?: string;
+  onTimeExpire?: () => void;
   onNext?: () => void;
   onBack?: () => void;
   showBack?: boolean;
@@ -58,8 +49,8 @@ export type ReadingSectionIntroScreenProps = {
 
 export function ReadingSectionIntroScreen({
   content,
-  copy = readingSectionCopy,
   metaText,
+  onTimeExpire,
   onNext,
   onBack,
   showBack = true,
@@ -68,18 +59,6 @@ export function ReadingSectionIntroScreen({
 }: ReadingSectionIntroScreenProps) {
   const screen = content.instructionScreen;
 
-  const introDetails: ExamSectionIntroDetail[] = screen.introDetails ?? [
-    { label: copy.introPartsLabel, value: String(content.parts.length) },
-    {
-      label: copy.introQuestionsLabel,
-      value: String(countReadingSectionQuestions(content)),
-    },
-    {
-      label: copy.introTimeLabel,
-      value: formatReadingSectionMinutes(sumReadingSectionSeconds(content)),
-    },
-  ];
-
   return (
     <ExamInstructionScreen
       title={screen.title}
@@ -87,19 +66,19 @@ export function ReadingSectionIntroScreen({
       instructions={screen.instructions}
       noticeText={screen.noticeText}
       metaText={metaText}
+      timerSlot={
+        onTimeExpire ? (
+          <ExamInstructionCountdown
+            screenKey={`${screen.title}-instructions`}
+            onExpire={onTimeExpire}
+          />
+        ) : undefined
+      }
       onNext={onNext}
       onBack={onBack}
       showBack={showBack}
       backHref={backHref}
       backLabel={backLabel}
-      intro={
-        <ExamSectionIntroCard
-          label={examCopy.practiceLabel}
-          title={screen.introTitle}
-          summary={screen.introSummary}
-          details={introDetails}
-        />
-      }
     />
   );
 }

@@ -1,4 +1,7 @@
-import { BrandPromiseTagline } from "@/components/brand/BrandPromiseTagline";
+import {
+  BrandPromiseTagline,
+  type BrandPromiseTaglineTone,
+} from "@/components/brand/BrandPromiseTagline";
 import { cx } from "@/features/design/design-tokens";
 import { BRAND_NAME } from "@/features/brand/brand-copy";
 
@@ -33,6 +36,8 @@ export type CelpipDecodedLogoProps = {
   showWordmark?: boolean;
   // Small Decode · Practice · Succeed line under the wordmark only (hero, footer).
   showPromiseBelow?: boolean;
+  // Colour of that line. Defaults to the muted tone that matches the logo.
+  promiseTone?: BrandPromiseTaglineTone;
   className?: string;
 };
 
@@ -144,10 +149,11 @@ export function CelpipDecodedLogo({
   size = "md",
   showWordmark = true,
   showPromiseBelow = false,
+  promiseTone,
   className,
 }: CelpipDecodedLogoProps) {
   const styles = toneStyles[tone];
-  const promiseTone = tone === "reversed" ? "onDark" : "onLight";
+  const taglineTone = promiseTone ?? (tone === "reversed" ? "onDark" : "onLight");
   const lockupWithPromise = showWordmark && showPromiseBelow;
 
   if (lockupWithPromise) {
@@ -165,7 +171,8 @@ export function CelpipDecodedLogo({
           <LogoWordmark size={size} styles={styles} />
         </span>
         <BrandPromiseTagline
-          tone={promiseTone}
+          tone={taglineTone}
+          compact
           className="col-start-2 row-start-2 self-start"
         />
       </span>

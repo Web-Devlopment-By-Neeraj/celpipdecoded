@@ -67,7 +67,7 @@ const SECTION_DURATION_LABEL = "About 1 to 1.5 minutes";
 export const listeningPart1: ListeningPartContent = {
   testId: "mock-test-1",
   sectionId: "listening-part-1",
-  title: "Practice Test 1 - Listening Part 1: Listening to Problem Solving",
+  title: "Mock Test 1 - Listening Part 1: Listening to Problem Solving",
   partTitle: "Listening to Problem Solving",
   subtitle:
     "Read the following information before this part of the practice test begins.",

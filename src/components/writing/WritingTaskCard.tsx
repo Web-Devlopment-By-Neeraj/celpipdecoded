@@ -14,7 +14,7 @@ export function WritingTaskCard({ task }: { task: WritingTask }) {
   const taskNumber = getTaskNumber(task);
 
   return (
-    <article className="flex flex-col rounded-3xl bg-white p-6 shadow-sm ring-1 ring-ink/5">
+    <article className="flex flex-col rounded-2xl bg-white p-6 shadow-sm ring-1 ring-ink/5">
       <div className="flex items-start justify-between gap-3">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink/50">
           Task {taskNumber}
@@ -24,7 +24,7 @@ export function WritingTaskCard({ task }: { task: WritingTask }) {
         </span>
       </div>
 
-      <h3 className="mt-2 font-serif text-xl font-semibold tracking-tight text-ink">
+      <h3 className="mt-2 font-serif text-xl font-bold tracking-tight text-ink">
         {task.title}
       </h3>
 

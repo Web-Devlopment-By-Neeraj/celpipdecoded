@@ -18,9 +18,9 @@ export function LevelProgressCard({ bestLevel }: { bestLevel: number | null }) {
   return (
     <section
       aria-label={progressCopy.levelCardHeading}
-      className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-ink/5 sm:p-8"
+      className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-ink/5 sm:p-8"
     >
-      <h2 className="font-serif text-xl font-semibold tracking-tight text-ink">
+      <h2 className="font-serif text-xl font-bold tracking-tight text-ink">
         {progressCopy.levelCardHeading}
       </h2>
 
@@ -35,7 +35,7 @@ export function LevelProgressCard({ bestLevel }: { bestLevel: number | null }) {
           </p>
 
           <div className="mt-4 flex items-baseline gap-2">
-            <span className="font-serif text-4xl font-semibold leading-none text-brand">
+            <span className="font-serif text-4xl font-bold leading-none text-brand">
               {rounded}
             </span>
             <span className="text-xs font-semibold uppercase tracking-wide text-ink/50">

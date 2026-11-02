@@ -12,7 +12,7 @@ import {
 export const MOCK_TEST_FLOW_QUERY = "flow";
 export const MOCK_TEST_FULL_FLOW_VALUE = "full";
 
-export const MOCK_TEST_FULL_PREP_SECONDS = 10;
+export const MOCK_TEST_FULL_PREP_SECONDS = 0;
 
 export const MOCK_TEST_1_SECTION_ORDER = [
   "listening",
@@ -67,6 +67,24 @@ export function sectionPath(
   mode: MockTestFlowMode = "section",
 ): string {
   return withMockTestFlowQuery(MOCK_TEST_1_SECTION_PATHS[slug], mode);
+}
+
+const COMPLETE_TEST_SKIP_KINDS = new Set(["part-transition", "task-transition"]);
+
+// In a complete test, part-complete and task-complete screens are not shown.
+// One-section practice still stops on them.
+export function nextExamScreenIndex<T extends { kind: string }>(
+  screens: readonly T[],
+  screenIndex: number,
+  flow: MockTestFlowMode | undefined,
+): number {
+  let next = Math.min(screenIndex + 1, Math.max(screens.length - 1, 0));
+
+  if (flow === "full" && COMPLETE_TEST_SKIP_KINDS.has(screens[next]?.kind ?? "")) {
+    next = Math.min(next + 1, Math.max(screens.length - 1, 0));
+  }
+
+  return next;
 }
 
 export function buildMockTestPlayerContext(

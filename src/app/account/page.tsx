@@ -20,7 +20,7 @@ export default async function AccountPage() {
   return (
     <main className="min-h-screen overflow-x-hidden bg-cream px-4 py-10 text-ink">
       <div className="mx-auto max-w-xl">
-        <h1 className="font-serif text-3xl font-semibold">Account</h1>
+        <h1 className="font-serif text-3xl font-bold">Account</h1>
         <p className="mt-3 text-sm leading-6">Signed in as {user.email}.</p>
         <ul className="mt-6 space-y-3 text-sm">
           <li className="rounded-2xl bg-white p-4 ring-1 ring-ink/10">Email changes and password resets are sent by the auth provider.</li>

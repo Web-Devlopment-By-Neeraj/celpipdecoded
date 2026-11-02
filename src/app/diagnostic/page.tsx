@@ -24,7 +24,7 @@ export default async function DiagnosticPage({
   return (
     <main className="min-h-screen overflow-x-hidden bg-cream px-4 py-10 text-ink">
       <div className="mx-auto max-w-xl">
-        <h1 className="font-serif text-3xl font-semibold">What should you practice?</h1>
+        <h1 className="font-serif text-3xl font-bold">What should you practice?</h1>
         <p className="mt-3 text-sm leading-6">
           This is a practice estimate for general information. It is not an official result and it does not predict an invitation.
         </p>

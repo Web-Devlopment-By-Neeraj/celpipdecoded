@@ -89,6 +89,8 @@ export type ListeningAudioPlayerProps = {
   // Ask the browser to start the clip when the player appears. It can
   // refuse, in which case the notice under the controls says so.
   autoPlay?: boolean;
+  // Complete test: play once, with no pause, replay or seek bar.
+  lockPlayback?: boolean;
   onEnded?: () => void;
   fallbackText?: string;
   className?: string;
@@ -103,6 +105,7 @@ export function ListeningAudioPlayer({
   showPlaybarNote = true,
   preload = "metadata",
   autoPlay = false,
+  lockPlayback = false,
   onEnded,
   fallbackText,
   className,
@@ -117,7 +120,7 @@ export function ListeningAudioPlayer({
   const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
-    if (!autoPlay) {
+    if (!autoPlay && !lockPlayback) {
       return;
     }
 
@@ -133,7 +136,7 @@ export function ListeningAudioPlayer({
     void element.play()?.catch(() => {
       setAutoplayBlocked(true);
     });
-  }, [autoPlay, src]);
+  }, [autoPlay, lockPlayback, src]);
 
   const caption = captionText ?? title;
 
@@ -158,7 +161,7 @@ export function ListeningAudioPlayer({
       status={status}
       progress={progress}
       title={captionLine}
-      showNote={showPlaybarNote}
+      showNote={lockPlayback ? false : showPlaybarNote}
       hasError={hasError}
       fallbackHeading={listeningCopy.audioFallbackHeading}
       fallbackText={fallbackText ?? listeningCopy.audioFallbackText}
@@ -176,8 +179,8 @@ export function ListeningAudioPlayer({
           ref={audioRef}
           className={playerAudioVisual.element}
           src={resolveExamMediaSrc(src)}
-          controls
-          preload={preload}
+          controls={!lockPlayback}
+          controlsList={lockPlayback ? "nodownload noplaybackrate" : undefined}
           aria-label={`${listeningCopy.audioPlayerLabel}: ${title}`}
           onError={() => setHasError(true)}
           onLoadedMetadata={(event) =>

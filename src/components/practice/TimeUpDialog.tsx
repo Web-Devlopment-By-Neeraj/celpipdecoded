@@ -66,7 +66,7 @@ export function TimeUpDialog({
         aria-labelledby="time-up-title"
         className="w-full max-w-sm rounded-3xl bg-white p-6 text-ink shadow-xl"
       >
-        <h2 id="time-up-title" className="font-serif text-2xl font-semibold">
+        <h2 id="time-up-title" className="font-serif text-2xl font-bold">
           Time is up
         </h2>
         <p className="mt-2 text-sm leading-6 text-ink/70">

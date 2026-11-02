@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>How to make a mock test - CELPIP Decoded</title>
+  <style>
+    @page {
+      size: letter;
+      margin: 0.7in 0.75in 0.75in;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: #1c2430;
+      font-family: "Iowan Old Style", Palatino, "Palatino Linotype", Georgia, serif;
+      font-size: 11.5pt;
+      line-height: 1.45;
+    }
+
+    h1, h2, h3, .step-no, .label, th, .brand {
+      font-family: "Avenir Next", "Segoe UI", Helvetica, Arial, sans-serif;
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: 26pt;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: #142033;
+    }
+
+    .brand {
+      margin: 0 0 18px;
+      font-size: 10pt;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #5c6b82;
+    }
+
+    .lede {
+      margin: 0 0 18px;
+      font-size: 12.5pt;
+      line-height: 1.45;
+    }
+
+    h2 {
+      margin: 16px 0 6px;
+      font-size: 13.5pt;
+      color: #142033;
+    }
+
+    p { margin: 0 0 8px; }
+
+    ol.steps {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    ol.steps li {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 10px;
+      margin: 0 0 10px;
+    }
+
+    .step-no {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #142033;
+      color: #fff;
+      font-size: 12pt;
+      font-weight: 700;
+      line-height: 28px;
+      text-align: center;
+    }
+
+    .note, .prompt {
+      border: 1px solid #d7deea;
+      border-radius: 8px;
+      background: #f6f8fb;
+      padding: 12px 14px;
+    }
+
+    .note { margin: 12px 0 4px; }
+    .note strong { font-family: "Avenir Next", "Segoe UI", Helvetica, Arial, sans-serif; }
+
+    ul { margin: 6px 0 8px; padding-left: 18px; }
+    li { margin: 0 0 4px; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 8px 0 4px;
+      font-size: 10pt;
+      page-break-inside: avoid;
+    }
+
+    th, td {
+      text-align: left;
+      vertical-align: top;
+      padding: 6px 8px;
+      border-bottom: 1px solid #e3e8f0;
+    }
+
+    th {
+      font-size: 9pt;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #5c6b82;
+    }
+
+    code, .code {
+      font-family: "SF Mono", Menlo, Consolas, monospace;
+      font-size: 9pt;
+    }
+
+    .prompt {
+      page-break-inside: avoid;
+      font-family: "Avenir Next", "Segoe UI", Helvetica, Arial, sans-serif;
+      font-size: 10pt;
+      line-height: 1.45;
+    }
+
+    .label {
+      margin: 0 0 6px;
+      font-size: 9pt;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #5c6b82;
+    }
+
+  </style>
+</head>
+<body>
+  <p class="brand">CELPIP Decoded</p>
+  <h1>How to make a mock test</h1>
+  <p class="lede">You do not fill the spreadsheet by hand. Download the template, give it to an AI with your questions, then upload the file the AI returns.</p>
+
+  <h2>What you need</h2>
+  <ul>
+    <li>The template, downloaded from the admin mock tests page. You can also use the copy sent with this guide.</li>
+    <li>Your questions and answers, in Word, PDF, or notes. Any layout is fine.</li>
+    <li>A free AI such as Claude. Attach both files and paste the prompt at the end of this guide.</li>
+  </ul>
+
+  <h2>The five steps</h2>
+  <ol class="steps">
+    <li>
+      <span class="step-no">1</span>
+      <div>On the admin mock tests page, download the template. Keep the header row. Keep every row whose <span class="code">use</span> column says <span class="code">example</span>. Those rows are a guide and are not saved.</div>
+    </li>
+    <li>
+      <span class="step-no">2</span>
+      <div>Attach the template and your question file to the AI. Paste the prompt from the last page. Ask for one CSV file and nothing else.</div>
+    </li>
+    <li>
+      <span class="step-no">3</span>
+      <div>On the same admin page, enter a title such as Mock Test 3 and a slug such as <span class="code">mock-test-3</span>. Use <span class="code">mock-test-2</span> or later. <span class="code">mock-test-1</span> is the free built-in test and cannot be replaced.</div>
+    </li>
+    <li>
+      <span class="step-no">4</span>
+      <div>Upload the CSV. Read the checklist. If it names a problem, fix the file and upload it again. A file with an error is not saved. A warning does not block the draft.</div>
+    </li>
+    <li>
+      <span class="step-no">5</span>
+      <div>A clean file becomes a draft. Open it, then press Publish. Students on Test Sprint can then sit the test. It uses the same screens, instructions, and videos as Mock Test 1. Only the passage, the questions, the clip, and the picture change.</div>
+    </li>
+  </ol>
+
+  <div class="note">
+    <strong>Do not add instructions, timers, or videos to the file.</strong>
+    Those already live in the app and are the same on every test.
+  </div>
+
+  <h2>What to put in your question file</h2>
+  <p>Listening and Reading need the passage, then each question: the question, the options, and the correct letter. An explanation is useful and optional.</p>
+  <p>Writing and Speaking are tasks. Write what the student must do. There is no correct answer and no options.</p>
+  <p>Name the part so the AI can pick the right type. The names are on the next page. A full test is six Listening parts, four Reading parts, two Writing tasks, and the Speaking tasks you want. A shorter file is allowed. A skill you leave out is shown as not in this test yet.</p>
+
+  <h2>Audio and pictures</h2>
+  <p>There is no button to upload an audio file or a photo. Put a public link in your question file, and the AI copies it into the spreadsheet.</p>
+  <ul>
+    <li>A Listening clip goes in <span class="code">audio_url</span>. A part with no clip still saves, and the checklist warns you.</li>
+    <li>A picture goes in <span class="code">image_url</span>, with a short description in <span class="code">image_alt</span>. Use this for a Reading diagram, a Writing picture, or a Speaking picture.</li>
+    <li>A diagram with no picture is rejected. A picture with no description is rejected.</li>
+    <li>The link must open in a browser. A private Drive file will not play for the student.</li>
+  </ul>
+
+  <h2>Part names</h2>
+  <p>Tell the AI which part each set of questions belongs to. It must use the code in the right column, exactly.</p>
+  <table>
+    <thead>
+      <tr><th>Part</th><th>Code</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Listening to Problem Solving</td><td class="code">listening_problem_solving</td></tr>
+      <tr><td>Listening to a Daily Life Conversation</td><td class="code">listening_daily_conversation</td></tr>
+      <tr><td>Listening for Information</td><td class="code">listening_information</td></tr>
+      <tr><td>Listening to a News Item</td><td class="code">listening_news_item</td></tr>
+      <tr><td>Listening to a Discussion</td><td class="code">listening_discussion</td></tr>
+      <tr><td>Listening to Viewpoints</td><td class="code">listening_viewpoints</td></tr>
+      <tr><td>Reading Correspondence</td><td class="code">reading_correspondence</td></tr>
+      <tr><td>Reading to Apply a Diagram</td><td class="code">reading_diagram</td></tr>
+      <tr><td>Reading for Information</td><td class="code">reading_information</td></tr>
+      <tr><td>Reading for Viewpoints</td><td class="code">reading_viewpoints</td></tr>
+      <tr><td>Writing an Email</td><td class="code">writing_email</td></tr>
+      <tr><td>Responding to Survey Questions</td><td class="code">writing_survey</td></tr>
+      <tr><td>Speaking task</td><td class="code">speaking_task</td></tr>
+      <tr><td>Speaking task with a picture</td><td class="code">speaking_image_task</td></tr>
+      <tr><td>Speaking comparison task</td><td class="code">speaking_comparison_task</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Prompt to paste</h2>
+  <p>Attach the template and your question file, then paste this.</p>
+  <div class="prompt">
+    <p class="label">Copy from here</p>
+    Fill the attached CSV template using the questions and answers in my other file. Keep the header row exactly as it is. Keep every row whose use column says example. Add new rows under those, and leave the use column empty on every new row. Use only these part types: listening_problem_solving, listening_daily_conversation, listening_information, listening_news_item, listening_discussion, listening_viewpoints, reading_correspondence, reading_diagram, reading_information, reading_viewpoints, writing_email, writing_survey, speaking_task, speaking_image_task, speaking_comparison_task. Listening and Reading need a question number, a prompt, options, and a correct letter that matches an option with text. Writing and Speaking are tasks: put the task in the content column and leave question_number, prompt, the option columns, correct, and explanation empty. If I give an audio link or an image link, copy it exactly. If a picture is used, write a short description in image_alt. Do not add instruction videos, timers, or scoring notes. Return one CSV file and nothing else.
+  </div>
+</body>
+</html>

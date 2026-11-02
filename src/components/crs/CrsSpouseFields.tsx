@@ -18,7 +18,7 @@ export function CrsSpouseFields({
   const [open, setOpen] = useState(checked);
 
   return (
-    <fieldset className="space-y-4 rounded-3xl bg-white p-4 shadow-sm ring-1 ring-ink/5">
+    <fieldset className="space-y-4 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-ink/5">
       <legend className="px-1 text-base font-semibold">Spouse or partner</legend>
       <label className="flex items-center gap-2 text-sm">
         <input

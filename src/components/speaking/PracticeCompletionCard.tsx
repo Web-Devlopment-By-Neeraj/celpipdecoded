@@ -7,7 +7,7 @@ export function PracticeCompletionCard({ taskId }: { taskId: string }) {
   return (
     <section
       aria-label={practiceCopy.completionHeading}
-      className="rounded-3xl bg-white p-6 text-center ring-1 ring-ink/5 sm:p-8"
+      className="rounded-2xl bg-white p-6 text-center ring-1 ring-ink/5 sm:p-8"
     >
       <span
         aria-hidden
@@ -15,7 +15,7 @@ export function PracticeCompletionCard({ taskId }: { taskId: string }) {
       >
         &#10003;
       </span>
-      <h2 className="mt-4 font-serif text-2xl font-semibold tracking-tight text-ink">
+      <h2 className="mt-4 font-serif text-2xl font-bold tracking-tight text-ink">
         {practiceCopy.completionHeading}
       </h2>
       <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-ink/70">

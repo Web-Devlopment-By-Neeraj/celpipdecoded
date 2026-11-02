@@ -754,18 +754,18 @@ export const examWritingReview = {
   cardList: "flex min-w-0 flex-col gap-4",
   card: "min-w-0 overflow-hidden rounded-sm border border-academy-line bg-academy-paper",
   cardHeader:
-    "flex min-w-0 flex-wrap items-baseline gap-x-3 gap-y-1 border-b border-academy-line bg-academy-navy-soft/60 px-3 py-2",
-  cardTitle: "min-w-0 flex-1 text-[15px] font-semibold leading-5 text-academy-navy",
+    "flex min-w-0 flex-wrap items-baseline gap-x-3 gap-y-1 border-b border-academy-navy bg-academy-navy px-3 py-3",
+  cardTitle: "min-w-0 flex-1 text-[16px] font-semibold leading-6 text-white",
   cardLevel:
-    "ml-auto shrink-0 text-[15px] font-semibold leading-5 text-academy-navy",
+    "ml-auto shrink-0 text-[22px] font-semibold leading-7 text-white",
   cardLevelLabel:
-    "block text-[12px] font-normal uppercase tracking-[0.06em] text-academy-navy/55",
+    "block text-[15px] font-semibold leading-6 text-white/80",
   cardBody: "flex min-w-0 flex-col gap-3.5 px-3 py-3",
 
   // Word count row at the top of a card body.
   metaRow: "flex min-w-0 flex-wrap items-baseline gap-x-5 gap-y-1",
   metaItem: "flex min-w-0 items-baseline gap-1.5 text-[12px] leading-4",
-  metaLabel: "font-semibold uppercase tracking-[0.06em] text-academy-navy/55",
+  metaLabel: "text-[15px] font-semibold leading-6 text-academy-navy",
   metaValue: "font-semibold tabular-nums text-academy-navy",
   // Within or outside the word target. A word rather than a badge, and
   // outside is quiet navy rather than red: the target is guidance from
@@ -774,8 +774,7 @@ export const examWritingReview = {
 
   // A labelled block inside a card body.
   section: "flex min-w-0 flex-col gap-1.5",
-  sectionTitle:
-    "text-[12px] font-semibold uppercase tracking-[0.06em] text-academy-navy/55",
+  sectionTitle: "text-[15px] font-semibold leading-6 text-academy-navy",
   sectionText: "text-[15px] leading-7 text-academy-navy/85",
 
   // What worked and what held it back, side by side from the small
@@ -794,10 +793,11 @@ export const examWritingReview = {
     "flex min-w-0 flex-col gap-1.5 rounded-sm border border-academy-line bg-academy-navy-soft/25 px-2.5 py-2",
   mistakePair: "flex min-w-0 flex-col gap-1.5 sm:flex-row sm:gap-4",
   mistakeHalf: "flex min-w-0 flex-1 flex-col gap-0.5",
-  mistakeLabel:
-    "text-[12px] font-semibold uppercase tracking-[0.06em] text-academy-navy/55",
-  mistakeOriginal: "text-[15px] leading-6 text-academy-navy/70 line-through",
-  mistakeCorrection: "text-[15px] font-semibold leading-5 text-academy-navy",
+  mistakeLabel: "text-[15px] font-semibold leading-6 text-academy-navy",
+  mistakeOriginal:
+    "rounded-sm bg-red-50 px-2 py-1 text-[15px] leading-6 text-academy-navy line-through",
+  mistakeCorrection:
+    "rounded-sm bg-emerald-50 px-2 py-1 text-[15px] font-semibold leading-6 text-academy-navy",
   mistakeCriterion: "text-[12px] leading-4 text-academy-navy/55",
 
   // A rewrite or a model response. The prose keeps its paragraph breaks.

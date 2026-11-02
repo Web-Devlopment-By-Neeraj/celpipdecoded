@@ -44,9 +44,11 @@ import { SectionInstructionVideoScreen } from "../SectionInstructionVideoScreen"
 import { MockTestSectionPrepScreen } from "@/components/mock-tests/MockTestSectionPrepScreen";
 import {
   appendMockTestFullSectionResult,
+  nextExamScreenIndex,
   type MockTestPlayerContext,
 } from "@/features/mock-tests/mock-test-flow";
 import { mockTestExitBackProps } from "@/features/mock-tests/mock-test-player-ui";
+import { MOCK_TEST_1_SECTION_PATHS } from "@/features/mock-tests/mock-test-1-routes";
 
 // Mock Test 1 Writing section (EXAM-25, extended by EXAM-26).
 //
@@ -179,6 +181,8 @@ export function WritingSectionPrototype({
   dashboardHref,
   mockTestContext,
 }: WritingSectionPrototypeProps) {
+  const leaveHref = mockTestContext?.exitHref ?? dashboardHref ?? "/dashboard";
+  const leaveLabel = mockTestContext ? "Back to mock test" : undefined;
   const screens = useMemo(() => buildWritingSectionFlow(content), [content]);
 
   const [screenIndex, setScreenIndex] = useState(0);
@@ -208,7 +212,11 @@ export function WritingSectionPrototype({
   const totalTasks = content.tasks.length;
 
   const goNext = () => {
-    const nextIndex = Math.min(screenIndex + 1, totalScreens - 1);
+    const nextIndex = nextExamScreenIndex(
+      screens,
+      screenIndex,
+      mockTestContext?.flow,
+    );
 
     if (
       mockTestContext?.flow === "full" &&
@@ -429,7 +437,7 @@ export function WritingSectionPrototype({
             timerScreenKey={task.taskId}
             // The window closing raises the time up message and does
             // nothing else. The typed response is untouched (TIMER-01).
-            onTimeExpire={showTimeUp}
+            onTimeExpire={mockTestContext?.flow === "full" ? goNext : showTimeUp}
             copy={copy}
             nextLabel={taskNextLabel}
             metaText={taskMetaText}
@@ -450,7 +458,7 @@ export function WritingSectionPrototype({
           timerScreenKey={screen.id}
           // The window closing raises the time up message and does
           // nothing else. The typed response is untouched (TIMER-01).
-          onTimeExpire={showTimeUp}
+          onTimeExpire={mockTestContext?.flow === "full" ? goNext : showTimeUp}
           copy={copy}
           nextLabel={taskNextLabel}
           metaText={taskMetaText}
@@ -469,6 +477,9 @@ export function WritingSectionPrototype({
           content={content}
           copy={copy}
           metaText={metaText}
+          onTimeExpire={
+            mockTestContext?.flow === "full" ? goNext : showTimeUp
+          }
           onNext={goNext}
           onBack={goBack}
           showBack={exitBack.showBack || showBack}
@@ -487,6 +498,9 @@ export function WritingSectionPrototype({
           helperText={content.videoScreen.helperText}
           metaText={metaText}
           onNext={goNext}
+          onVideoEnded={
+            mockTestContext?.flow === "full" ? goNext : undefined
+          }
           onSkip={goNext}
           showBack={exitBack.showBack || showBack}
           backHref={exitBack.backHref}
@@ -543,7 +557,8 @@ export function WritingSectionPrototype({
           message={review.message}
           onRetry={() => void requestReview()}
           onBackToResponses={dismissReview}
-          dashboardHref={dashboardHref}
+          dashboardHref={leaveHref}
+          leaveLabel={leaveLabel}
           copy={copy}
           metaText={metaText}
           onBack={goBack}
@@ -559,8 +574,15 @@ export function WritingSectionPrototype({
           evaluation={review.evaluation}
           tasks={content.tasks}
           onRestart={restart}
-          dashboardHref={dashboardHref}
+          dashboardHref={leaveHref}
+          leaveLabel={leaveLabel}
           copy={copy}
+          continueHref={
+            mockTestContext?.flow === "full"
+              ? undefined
+              : MOCK_TEST_1_SECTION_PATHS.speaking
+          }
+          continueLabel="Continue to Speaking"
           metaText={metaText}
           onBack={goBack}
           showBack={showBack}
@@ -572,7 +594,15 @@ export function WritingSectionPrototype({
       <WritingSectionCompleteScreen
         title={content.title}
         tasks={summarizeWritingSection(content, responses, choices)}
-        dashboardHref={dashboardHref}
+        dashboardHref={leaveHref}
+        leaveLabel={leaveLabel}
+        copy={copy}
+        continueHref={
+          mockTestContext?.flow === "full"
+            ? undefined
+            : MOCK_TEST_1_SECTION_PATHS.speaking
+        }
+        continueLabel="Continue to Speaking"
         onRestart={restart}
         // The review block is drawn only where an action was passed, so
         // a run with no server behind it shows no control that cannot
@@ -585,7 +615,6 @@ export function WritingSectionPrototype({
             ? openFullMockBridge
             : undefined
         }
-        copy={copy}
         metaText={metaText}
         onBack={goBack}
         showBack={showBack}

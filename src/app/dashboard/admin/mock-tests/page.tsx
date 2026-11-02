@@ -1,26 +1,19 @@
 import type { Metadata } from "next";
-import { AppButtonLink } from "@/components/app/AppButtonLink";
 import { AppCard } from "@/components/app/AppCard";
 import { AdminAccessDenied } from "@/components/admin/mock-tests/AdminAccessDenied";
 import { AdminMockTestList } from "@/components/admin/mock-tests/AdminMockTestList";
 import { AdminPageHeader } from "@/components/admin/mock-tests/AdminPageHeader";
+import { MockTestUploadForm } from "@/components/admin/mock-tests/MockTestUploadForm";
 import { cx, text } from "@/features/design/design-tokens";
 import { listMockTests } from "@/features/admin/mock-test-queries";
 import { getAdminSession } from "@/lib/admin/require-admin";
 
 export const metadata: Metadata = {
   title: "Mock test builder - CELPIP Decoded",
-  description: "Staff tool for building CELPIP practice tests.",
+  description: "Staff tool for uploading CELPIP practice tests.",
   robots: { index: false, follow: false },
 };
 
-// ADMIN-01: the mock test builder home screen.
-//
-// The dashboard layout already requires a session. This page requires
-// more than that: the signed in email has to be on the ADMIN_EMAILS
-// allow list. The check runs here rather than in a layout, because a
-// layout does not re-render on client navigation and an authorization
-// check has to sit next to the data it protects.
 export default async function AdminMockTestsPage() {
   const admin = await getAdminSession();
 
@@ -34,27 +27,19 @@ export default async function AdminMockTestsPage() {
     <div className="space-y-8">
       <AdminPageHeader
         title="Mock test builder"
-        description="Build CELPIP practice tests: sections, parts and timing. Everything here is staff only, and nothing built here is visible to students yet."
+        description="Upload a content file, check the list, then press Publish. Students with Test Sprint open it from Mock tests, in the same exam screens as Mock Test 1."
         breadcrumbs={[
           { label: "Dashboard", href: "/dashboard" },
           { label: "Mock test builder" },
         ]}
-        action={
-          <AppButtonLink href="/dashboard/admin/mock-tests/new" size="sm">
-            New practice test
-          </AppButtonLink>
-        }
       />
 
-      <AdminMockTestList
-        mockTests={mockTests}
-        newHref="/dashboard/admin/mock-tests/new"
-      />
+      <MockTestUploadForm />
 
-      <AppCard variant="subtle" as="section" ariaLabel="What this builder does">
-        <h2 className={cx(text.heading, "text-base")}>
-          What this version of the builder does
-        </h2>
+      <AdminMockTestList mockTests={mockTests} />
+
+      <AppCard variant="subtle" as="section" ariaLabel="What the file contains">
+        <h2 className={cx(text.heading, "text-base")}>What you put in the file</h2>
         <ul
           className={cx(
             "mt-3 list-disc space-y-1.5 pl-5 text-sm leading-6",
@@ -62,36 +47,20 @@ export default async function AdminMockTestsPage() {
           )}
         >
           <li>
-            Create a practice test draft, and edit its title, slug,
-            description, version, status and internal notes.
+            The passage, the conversation, the task, the picture link, the
+            audio link, the questions and the correct letter.
           </li>
           <li>
-            Add Listening, Reading, Writing and Speaking sections, and add
-            parts inside them with basic timing values.
+            Rows marked example are a guide. They are not saved.
           </li>
           <li>
-            Preview the structure and run the structure checks.
+            The instruction videos and the repeated part instructions stay
+            in the app. A picture task uses the same instruction on every
+            test. Only the picture changes.
           </li>
-        </ul>
-
-        <h2 className={cx(text.heading, "mt-6 text-base")}>
-          What it does not do yet
-        </h2>
-        <ul
-          className={cx(
-            "mt-3 list-disc space-y-1.5 pl-5 text-sm leading-6",
-            text.secondary,
-          )}
-        >
           <li>
-            Questions, answer options and answer keys. Those arrive in
-            ADMIN-02.
-          </li>
-          <li>Media links, timer rules, scoring rules and AI rubrics.</li>
-          <li>
-            Publishing. A practice test built here cannot reach a student,
-            and the student dashboard still runs the existing Mock Test 1
-            from its content files.
+            A clean file is a draft. Publish is a separate button. The slug
+            mock-test-1 is reserved for the built-in free test.
           </li>
         </ul>
       </AppCard>

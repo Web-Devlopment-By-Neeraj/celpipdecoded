@@ -57,6 +57,9 @@ export type WritingSectionCompleteScreenProps = {
   tasks: WritingTaskSummary[];
   // Where Return to dashboard goes.
   dashboardHref?: string;
+  leaveLabel?: string;
+  continueHref?: string;
+  continueLabel?: string;
   // Clears the writing and returns to the first screen. Omit to hide the
   // control.
   onRestart?: () => void;
@@ -84,6 +87,9 @@ export function WritingSectionCompleteScreen({
   title,
   tasks,
   dashboardHref = "/dashboard",
+  leaveLabel,
+  continueHref,
+  continueLabel,
   onRestart,
   onRequestReview,
   reviewPending = false,
@@ -213,13 +219,23 @@ export function WritingSectionCompleteScreen({
           ) : null}
 
           <div className={examScreenBody.actions}>
+            {continueHref ? (
+              <ExamButton
+                variant="primary"
+                size="md"
+                href={continueHref}
+                uppercase={false}
+              >
+                {continueLabel}
+              </ExamButton>
+            ) : null}
             <ExamButton
               variant="secondary"
               size="md"
               href={dashboardHref}
               uppercase={false}
             >
-              {copy.backToDashboardLabel}
+              {leaveLabel ?? copy.backToDashboardLabel}
             </ExamButton>
 
             {onRestart ? (

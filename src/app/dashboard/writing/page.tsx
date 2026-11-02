@@ -160,7 +160,7 @@ export default async function WritingPage() {
         className="mt-10"
         aria-label={writingHistoryCopy.taskLibraryHeading}
       >
-        <h2 className="font-serif text-xl font-semibold tracking-tight text-ink">
+        <h2 className="font-serif text-xl font-bold tracking-tight text-ink">
           {writingHistoryCopy.taskLibraryHeading}
         </h2>
 

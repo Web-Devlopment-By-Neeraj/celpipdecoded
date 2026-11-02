@@ -1,5 +1,5 @@
 import { ExamInstructionScreen } from "../ExamInstructionScreen";
-import { ExamSectionIntroCard } from "../ExamSectionIntroCard";
+import { ExamInstructionCountdown } from "../timer/ExamInstructionCountdown";
 import { listeningCopy } from "@/features/exam-engine/listening-copy";
 import type {
   ExamInstruction,
@@ -55,6 +55,7 @@ export type ListeningPartIntroScreenProps = {
   // usual three.
   details?: ExamSectionIntroDetail[];
   metaText?: string;
+  onTimeExpire?: () => void;
   onNext?: () => void;
   onBack?: () => void;
   showBack?: boolean;
@@ -62,23 +63,12 @@ export type ListeningPartIntroScreenProps = {
 
 export function ListeningPartIntroScreen({
   content,
-  questionCount,
-  sectionCount,
-  formatLabel = "Audio and questions",
-  details,
   metaText,
+  onTimeExpire,
   onNext,
   onBack,
   showBack = true,
 }: ListeningPartIntroScreenProps) {
-  const introDetails: ExamSectionIntroDetail[] = details ?? [
-    ...(sectionCount === undefined
-      ? []
-      : [{ label: "Sections", value: String(sectionCount) }]),
-    { label: "Questions", value: String(questionCount) },
-    { label: "Format", value: formatLabel },
-  ];
-
   return (
     <ExamInstructionScreen
       title={content.title}
@@ -86,19 +76,17 @@ export function ListeningPartIntroScreen({
       instructions={content.instructions}
       noticeText={listeningCopy.partIntroNotice}
       metaText={metaText}
+      timerSlot={
+        onTimeExpire ? (
+          <ExamInstructionCountdown
+            screenKey={`${content.title}-instructions`}
+            onExpire={onTimeExpire}
+          />
+        ) : undefined
+      }
       onNext={onNext}
       onBack={onBack}
       showBack={showBack}
-      intro={
-        // No practice eyebrow above the part name. The window this screen
-        // sits in is the practice test, and a screen inside it saying so
-        // in small caps is a product label on an exam (reference pass).
-        <ExamSectionIntroCard
-          title={content.partTitle}
-          summary={content.scenario.text}
-          details={introDetails}
-        />
-      }
     />
   );
 }

@@ -10,7 +10,7 @@ export default function AskPage() {
   return (
     <main className="min-h-screen overflow-x-hidden bg-cream px-4 py-10 text-ink">
       <div className="mx-auto max-w-xl">
-        <h1 className="font-serif text-3xl font-semibold">Ask Amar</h1>
+        <h1 className="font-serif text-3xl font-bold">Ask Amar</h1>
         <p className="mt-3 text-sm leading-6">
           The corner button is an AI assistant. It answers from help articles. Questions about immigration, refunds, or your account go to Amar. Sign in so the question is attached to you.
         </p>

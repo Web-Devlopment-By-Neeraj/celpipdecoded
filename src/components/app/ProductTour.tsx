@@ -146,7 +146,7 @@ export function ProductTour() {
         <p className="text-xs font-semibold uppercase tracking-[0.14em] text-ink/50">
           {stepIndex + 1} of {PRODUCT_TOUR_STEPS.length}
         </p>
-        <h2 id="product-tour-title" className="mt-2 font-serif text-xl font-semibold text-ink">
+        <h2 id="product-tour-title" className="mt-2 font-serif text-xl font-bold text-ink">
           {step.title}
         </h2>
         <p className="mt-2 text-sm leading-6 text-ink/75">{step.body}</p>

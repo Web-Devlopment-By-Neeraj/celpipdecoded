@@ -40,6 +40,7 @@ export function MockTestInstructionList({
       {items.map((item) => {
         const heading = typeof item === "string" ? undefined : item.heading;
         const body = typeof item === "string" ? item : item.text;
+        const emphasis = typeof item === "string" ? false : Boolean(item.emphasis);
 
         return (
           <li key={body} className={playerInstruction.item}>

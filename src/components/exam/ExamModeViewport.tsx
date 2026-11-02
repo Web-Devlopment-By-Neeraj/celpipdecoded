@@ -94,6 +94,7 @@ export function ExamModeViewport({ children, label }: ExamModeViewportProps) {
       className={playerViewport.overlay}
       role="region"
       aria-label={label}
+      data-theme-scope="light"
     >
       <div className={playerViewport.inner}>{children}</div>
     </div>

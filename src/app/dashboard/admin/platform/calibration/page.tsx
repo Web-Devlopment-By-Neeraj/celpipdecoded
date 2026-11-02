@@ -30,7 +30,7 @@ export default async function CalibrationPage() {
 
   return (
     <main className="mx-auto max-w-3xl overflow-x-hidden px-4 py-8">
-      <h1 className="font-serif text-3xl font-semibold text-academy-navy">Calibration</h1>
+      <h1 className="font-serif text-3xl font-bold text-academy-navy">Calibration</h1>
       <p className="mt-2 text-sm leading-6 text-academy-navy/75">
         Sample answers with known levels. A run uses the same evaluator as a student and does not spend a student&apos;s allowance. Mean signed error above {defaultSettings()["calibration.generous_alert"]} is marked drifting generous.
       </p>

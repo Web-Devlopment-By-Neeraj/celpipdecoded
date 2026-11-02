@@ -298,7 +298,7 @@ export async function evaluateWritingMockSection(
   let parsedJson: unknown;
 
   try {
-    parsedJson = JSON.parse(raw);
+    parsedJson = JSON.parse(raw.replaceAll("\u2014", " - ").replaceAll("\u2013", " - "));
   } catch (error) {
     console.error("Writing mock review returned invalid JSON:", error);
 

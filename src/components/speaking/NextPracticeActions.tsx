@@ -8,9 +8,9 @@ export function NextPracticeActions({ taskId }: { taskId: string | null }) {
   return (
     <section
       aria-label={resultCopy.actionsLabel}
-      className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-ink/5 sm:p-8"
+      className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-ink/5 sm:p-8"
     >
-      <h2 className="text-center font-serif text-xl font-semibold tracking-tight text-ink sm:text-left">
+      <h2 className="text-center font-serif text-xl font-bold tracking-tight text-ink sm:text-left">
         {resultCopy.actionsLabel}
       </h2>
       <div className="mt-5 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">

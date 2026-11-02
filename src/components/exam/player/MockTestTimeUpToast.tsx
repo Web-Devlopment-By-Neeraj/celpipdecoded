@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { examCopy } from "@/features/exam-engine/exam-copy";
 import { playerTimeUpToast } from "@/features/exam-engine/mock-test-player-theme";
 
@@ -113,29 +113,8 @@ export function MockTestTimeUpToast({
 }
 
 function MockTestTimeUpToastWindow({ text }: { text: string }) {
-  // Hiding is owned here rather than pushed back to the section, and the
-  // effect has no dependencies at all, which is the point. A callback prop
-  // would change identity on every render of a section that re-renders
-  // whenever an option is picked, and the effect would then clear and
-  // reschedule the timeout each time, leaving a message that never quite
-  // runs out. One mount, one timeout.
-  const [isDone, setIsDone] = useState(false);
-
-  useEffect(() => {
-    const id = window.setTimeout(() => {
-      setIsDone(true);
-    }, MOCK_TEST_TIME_UP_TOAST_MS);
-
-    // Cleared on unmount as well as on the way to a new message, so
-    // leaving the section, or the learner pressing Next, cannot leave a
-    // timeout behind pointing at a component that is gone.
-    return () => window.clearTimeout(id);
-  }, []);
-
-  if (isDone) {
-    return null;
-  }
-
+  // The banner stays until the learner presses Next. The section clears
+  // it by unmounting this window, which is dismissTimeUp on a screen change.
   return (
     <div className={playerTimeUpToast.region}>
       {/* Polite, and it says its piece exactly once: the region is mounted

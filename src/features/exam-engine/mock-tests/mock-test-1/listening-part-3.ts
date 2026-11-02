@@ -117,7 +117,7 @@ const Q1_AUDIO_URL = `${AUDIO_BASE}/v1786331722/Listening_Test_1_-_Part_3_-_Q1_e
 export const listeningPart3: ListeningPartContent = {
   testId: "mock-test-1",
   sectionId: "listening-part-3",
-  title: "Practice Test 1 - Listening Part 3: Listening for Information",
+  title: "Mock Test 1 - Listening Part 3: Listening for Information",
   partTitle: "Listening for Information",
   subtitle:
     "Read the following information before this part of the practice test begins.",

@@ -31,7 +31,7 @@ export function MockTestSectionPrepScreen({
   const [secondsLeft, setSecondsLeft] = useState(prepSeconds);
 
   useEffect(() => {
-    if (secondsLeft <= 0) {
+    if (prepSeconds <= 0 || secondsLeft <= 0) {
       router.push(nextHref);
       return;
     }

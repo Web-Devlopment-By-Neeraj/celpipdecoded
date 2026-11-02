@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { ExamButton } from "../ExamButton";
 import { MockTestSpeakingRecorderFrame } from "../player/MockTestSpeakingRecorderFrame";
 import {
@@ -101,6 +102,11 @@ export type SpeakingRecorderProps = {
   // A take that could not be made or finished.
   onRecordingError: (kind: SpeakingRecordingErrorKind) => void;
 
+  // Complete test: a new number asks the recorder to start or stop
+  // without a button press. Practice leaves both at 0.
+  startToken?: number;
+  stopToken?: number;
+
   copy?: SpeakingMockCopy;
 };
 
@@ -173,6 +179,8 @@ export function SpeakingRecorder({
   onRecordingStopping,
   onRecorded,
   onRecordingError,
+  startToken = 0,
+  stopToken = 0,
   copy = speakingMockCopy,
 }: SpeakingRecorderProps) {
   const recordingSupported = useSpeakingRecordingSupported();
@@ -211,6 +219,31 @@ export function SpeakingRecorder({
     onRecordingStopping();
     recorder.stop();
   };
+
+  const seenStart = useRef(0);
+  const seenStop = useRef(0);
+
+  useEffect(() => {
+    if (!startToken || startToken === seenStart.current) {
+      return;
+    }
+
+    seenStart.current = startToken;
+    void beginRecording();
+    // The token is the trigger. beginRecording is read once for each new token.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startToken]);
+
+  useEffect(() => {
+    if (!stopToken || stopToken === seenStop.current) {
+      return;
+    }
+
+    seenStop.current = stopToken;
+    endRecording();
+    // The token is the trigger. endRecording is read once for each new token.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stopToken]);
 
   const recording = status === "recording";
   const requesting = status === "requesting";

@@ -37,7 +37,7 @@ export const listeningCopy = {
   partIntroSubtitle:
     "Read the following information before this part of the practice test begins.",
   partIntroNotice:
-    "Internal prototype. Answers are held on this screen only, nothing is saved, and no score is produced.",
+    "Scores are practice estimates, not official CELPIP scores.",
 
   // Scenario screen.
   scenarioHeading: "Instructions:",

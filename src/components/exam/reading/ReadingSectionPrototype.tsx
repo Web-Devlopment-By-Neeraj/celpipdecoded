@@ -5,6 +5,7 @@ import { SectionInstructionVideoScreen } from "../SectionInstructionVideoScreen"
 import { MockTestSectionPrepScreen } from "@/components/mock-tests/MockTestSectionPrepScreen";
 import {
   appendMockTestFullSectionResult,
+  nextExamScreenIndex,
   type MockTestPlayerContext,
 } from "@/features/mock-tests/mock-test-flow";
 import { mockTestExitBackProps } from "@/features/mock-tests/mock-test-player-ui";
@@ -163,6 +164,8 @@ export function ReadingSectionPrototype({
   dashboardHref,
   mockTestContext,
 }: ReadingSectionPrototypeProps) {
+  const leaveHref = mockTestContext?.exitHref ?? dashboardHref ?? "/dashboard";
+  const leaveLabel = mockTestContext ? "Back to mock test" : undefined;
   const screens = useMemo(() => buildReadingSectionFlow(content), [content]);
 
   const [screenIndex, setScreenIndex] = useState(0);
@@ -239,7 +242,11 @@ export function ReadingSectionPrototype({
   }, [sectionBridgeOpen, marking]);
 
   const goNext = () => {
-    const nextIndex = Math.min(screenIndex + 1, totalScreens - 1);
+    const nextIndex = nextExamScreenIndex(
+      screens,
+      screenIndex,
+      mockTestContext?.flow,
+    );
 
     if (
       mockTestContext?.flow === "full" &&
@@ -368,6 +375,9 @@ export function ReadingSectionPrototype({
           // part, and neither is true on this surface.
           noticeText={copy.partIntroNotice}
           metaText={metaText}
+          onTimeExpire={
+            mockTestContext?.flow === "full" ? goNext : showTimeUp
+          }
           onNext={goNext}
           onBack={goBack}
           showBack={showBack}
@@ -389,7 +399,7 @@ export function ReadingSectionPrototype({
       answers,
       onSelectOption: selectAnswer,
       timerScreenKey: partScreen.id,
-      onTimeExpire: showTimeUp,
+      onTimeExpire: mockTestContext?.flow === "full" ? goNext : showTimeUp,
       metaText,
       onNext: goNext,
       onBack: goBack,
@@ -459,6 +469,9 @@ export function ReadingSectionPrototype({
           content={content}
           copy={copy}
           metaText={metaText}
+          onTimeExpire={
+            mockTestContext?.flow === "full" ? goNext : showTimeUp
+          }
           onNext={goNext}
           onBack={goBack}
           showBack={exitBack.showBack || showBack}
@@ -477,6 +490,9 @@ export function ReadingSectionPrototype({
           helperText={content.videoScreen.helperText}
           metaText={metaText}
           onNext={goNext}
+          onVideoEnded={
+            mockTestContext?.flow === "full" ? goNext : undefined
+          }
           onSkip={goNext}
           showBack={exitBack.showBack || showBack}
           backHref={exitBack.backHref}
@@ -523,7 +539,8 @@ export function ReadingSectionPrototype({
           // moves the flow forward onto the review.
           onReviewAnswers={goNext}
           onRestart={restart}
-          dashboardHref={dashboardHref}
+          dashboardHref={leaveHref}
+          leaveLabel={leaveLabel}
           metaText={metaText}
           onBack={goBack}
           showBack={showBack}

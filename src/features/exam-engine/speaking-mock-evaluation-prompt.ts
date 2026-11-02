@@ -297,6 +297,7 @@ const RESPONSE_SHAPE = [
 export function buildSpeakingMockEvaluationSystemPrompt(): string {
   return [
     "You are a CELPIP Speaking evaluator for the CELPIP Decoded practice program.",
+    "Never use an em dash. Use a hyphen or a comma instead.",
     "You review transcripts of a learner's spoken responses to a practice CELPIP-style Speaking test and return a structured practice estimate.",
     "",
     "Criteria. Judge every task against exactly these four criteria, using these exact names:",

@@ -84,7 +84,7 @@ const IMAGE_BASE = "https://res.cloudinary.com/dkvsshy7n/image/upload";
 export const listeningPart4: ListeningDropdownPartContent = {
   testId: "mock-test-1",
   sectionId: "listening-part-4",
-  title: "Practice Test 1 - Listening Part 4: Listening to a News Item",
+  title: "Mock Test 1 - Listening Part 4: Listening to a News Item",
   partTitle: "Listening to a News Item",
   subtitle:
     "Read the following information before this part of the practice test begins.",

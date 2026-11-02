@@ -50,9 +50,11 @@ import { SectionInstructionVideoScreen } from "../SectionInstructionVideoScreen"
 import { MockTestFullCompleteScreen } from "@/components/mock-tests/MockTestFullCompleteScreen";
 import {
   appendMockTestFullSectionResult,
+  nextExamScreenIndex,
   type MockTestPlayerContext,
 } from "@/features/mock-tests/mock-test-flow";
 import { mockTestExitBackProps } from "@/features/mock-tests/mock-test-player-ui";
+import { MOCK_TEST_2_HUB_PATH } from "@/features/mock-tests/mock-test-1-routes";
 
 // Mock Test 1 Speaking section (EXAM-27, extended by EXAM-28).
 //
@@ -230,6 +232,8 @@ export function SpeakingSectionPrototype({
   enableReview = true,
   mockTestContext,
 }: SpeakingSectionPrototypeProps) {
+  const leaveHref = mockTestContext?.exitHref ?? dashboardHref ?? "/dashboard";
+  const leaveLabel = mockTestContext ? "Back to mock test" : undefined;
   const screens = useMemo(() => buildSpeakingSectionFlow(content), [content]);
 
   const [screenIndex, setScreenIndex] = useState(0);
@@ -261,7 +265,11 @@ export function SpeakingSectionPrototype({
   const totalTasks = content.tasks.length;
 
   const goNext = () => {
-    const nextIndex = Math.min(screenIndex + 1, totalScreens - 1);
+    const nextIndex = nextExamScreenIndex(
+      screens,
+      screenIndex,
+      mockTestContext?.flow,
+    );
 
     if (
       mockTestContext?.flow === "full" &&
@@ -551,7 +559,7 @@ export function SpeakingSectionPrototype({
           chosenOption={getSpeakingChosenOption(task, choices)}
           choiceSource={choice?.source}
           timerScreenKey={screen.id}
-          onTimeExpire={showTimeUp}
+          onTimeExpire={mockTestContext?.flow === "full" ? goNext : showTimeUp}
           copy={copy}
           metaText={taskMetaText}
           onNext={goNext}
@@ -596,6 +604,8 @@ export function SpeakingSectionPrototype({
             // does nothing else. It does not stop the take and it does
             // not advance to Task 6 (TIMER-01).
             onTimeExpire={showTimeUp}
+            completeTest={mockTestContext?.flow === "full"}
+            onAdvance={goNext}
             copy={copy}
             nextLabel={taskNextLabel}
             metaText={taskMetaText}
@@ -617,6 +627,8 @@ export function SpeakingSectionPrototype({
           // Either window closing raises the time up message and does
           // nothing else (TIMER-01).
           onTimeExpire={showTimeUp}
+          completeTest={mockTestContext?.flow === "full"}
+          onAdvance={goNext}
           copy={copy}
           nextLabel={taskNextLabel}
           metaText={taskMetaText}
@@ -635,6 +647,9 @@ export function SpeakingSectionPrototype({
           content={content}
           copy={copy}
           metaText={metaText}
+          onTimeExpire={
+            mockTestContext?.flow === "full" ? goNext : showTimeUp
+          }
           onNext={goNext}
           onBack={goBack}
           showBack={exitBack.showBack || showBack}
@@ -653,6 +668,9 @@ export function SpeakingSectionPrototype({
           helperText={content.videoScreen.helperText}
           metaText={metaText}
           onNext={goNext}
+          onVideoEnded={
+            mockTestContext?.flow === "full" ? goNext : undefined
+          }
           onSkip={goNext}
           showBack={exitBack.showBack || showBack}
           backHref={exitBack.backHref}
@@ -717,7 +735,8 @@ export function SpeakingSectionPrototype({
           code={review.code}
           onRetry={() => void requestReview()}
           onBackToRecordings={dismissReview}
-          dashboardHref={dashboardHref}
+          dashboardHref={leaveHref}
+          leaveLabel={leaveLabel}
           copy={copy}
           metaText={metaText}
           onBack={goBack}
@@ -732,8 +751,11 @@ export function SpeakingSectionPrototype({
           title={content.title}
           evaluation={review.evaluation}
           onRestart={restart}
-          dashboardHref={dashboardHref}
+          dashboardHref={leaveHref}
+          leaveLabel={leaveLabel}
           copy={copy}
+          continueHref={MOCK_TEST_2_HUB_PATH}
+          continueLabel="Go to Mock Test 2"
           metaText={metaText}
           onBack={goBack}
           showBack={showBack}
@@ -745,7 +767,11 @@ export function SpeakingSectionPrototype({
       <SpeakingSectionCompleteScreen
         title={content.title}
         tasks={summarizeSpeakingSection(content, responses)}
-        dashboardHref={dashboardHref}
+        dashboardHref={leaveHref}
+        leaveLabel={leaveLabel}
+        copy={copy}
+        continueHref={MOCK_TEST_2_HUB_PATH}
+        continueLabel="Go to Mock Test 2"
         onRestart={restart}
         // The review block is drawn only where the review is enabled, so
         // a run with no server behind it shows no control that cannot
@@ -757,7 +783,6 @@ export function SpeakingSectionPrototype({
             ? finishFullMockTest
             : undefined
         }
-        copy={copy}
         metaText={metaText}
         onBack={goBack}
         showBack={showBack}

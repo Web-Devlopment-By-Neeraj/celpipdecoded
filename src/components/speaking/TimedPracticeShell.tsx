@@ -284,11 +284,11 @@ export function TimedPracticeShell({ task }: { task: PracticeTask }) {
         </Link>
       </nav>
 
-      <article className="mt-4 rounded-3xl bg-white p-5 shadow-sm ring-1 ring-ink/5 sm:p-8">
+      <article className="mt-4 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-ink/5 sm:p-8">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink/50">
           {practiceCopy.screenBadge} - Task {task.taskNumber}
         </p>
-        <h1 className="mt-1 font-serif text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
+        <h1 className="mt-1 font-serif text-2xl font-bold tracking-tight text-ink sm:text-3xl">
           {task.title}
         </h1>
 
@@ -304,6 +304,7 @@ export function TimedPracticeShell({ task }: { task: PracticeTask }) {
                 seconds={timerSeconds}
                 totalSeconds={timerTotal}
                 running={timerIsRunning}
+                grows={phase === "preparation"}
               />
               <PracticePromptCard prompt={task.prompt} />
               {phase === "speaking" && (
