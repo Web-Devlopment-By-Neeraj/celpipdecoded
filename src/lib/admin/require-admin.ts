@@ -61,6 +61,14 @@ export function isAdminAllowListConfigured(): boolean {
   return readAdminEmailAllowList().length > 0;
 }
 
+// Staff on ADMIN_EMAILS can review course videos without a learner purchase.
+// The check is the allow list only. It does not grant this to every signed-in user.
+export function isAdminEmail(email: string | null | undefined): boolean {
+  const value = email?.trim().toLowerCase() ?? "";
+  if (!value) return false;
+  return readAdminEmailAllowList().includes(value);
+}
+
 // Resolves the caller against the allow list. Never throws for an
 // ordinary refusal, so a page can render an access denied screen.
 export async function getAdminSession(): Promise<AdminSessionResult> {

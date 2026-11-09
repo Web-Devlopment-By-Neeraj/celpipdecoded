@@ -69,7 +69,12 @@ export function AppShellFrame({
         {topNav}
 
         <main className="w-full flex-1 px-4 py-6 sm:px-6 sm:py-10 lg:px-8">
-          <div className="mx-auto w-full max-w-5xl">
+          <div
+            className={cx(
+              "mx-auto w-full",
+              /^\/dashboard\/courses\/[^/]+/.test(pathname) ? "max-w-7xl" : "max-w-5xl",
+            )}
+          >
             {breadcrumbs}
             {children}
           </div>

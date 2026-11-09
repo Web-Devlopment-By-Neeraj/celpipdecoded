@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
-import { CourseCatalog } from "@/components/courses/CourseCatalog";
-import { userHasCourseAccess } from "@/features/platform/fulfill-stripe-purchase";
+import { CourseLibrary } from "@/components/courses/CourseLibrary";
+import { loadCourseCards, viewerCanWatchCourse } from "@/features/courses/page-data";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
-  title: "Course videos - CELPIP Decoded",
-  description: "Course lessons stay visible when they are locked. English and Hindi are the live languages.",
+  title: "Courses - CELPIP Decoded",
+  description: "Video lessons for CELPIP Listening, Writing, and Speaking.",
 };
 
 export default async function CoursesPage() {
@@ -13,11 +15,17 @@ export default async function CoursesPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const unlocked = user ? await userHasCourseAccess(user.id) : false;
+  const signedIn = Boolean(user);
+  const [courses, unlocked] = await Promise.all([
+    loadCourseCards({ userId: user?.id ?? null, signedIn }),
+    user ? viewerCanWatchCourse(user.id, user.email, "course") : Promise.resolve(false),
+  ]);
 
   return (
-    <main className="min-h-screen overflow-x-hidden bg-cream px-4 py-10 text-ink">
-      <CourseCatalog unlocked={unlocked} />
+    <main className="min-h-screen overflow-x-hidden bg-cream px-4 py-10 text-ink sm:px-6">
+      <div className="mx-auto w-full max-w-5xl">
+        <CourseLibrary courses={courses} unlocked={unlocked} signedIn={signedIn} />
+      </div>
     </main>
   );
 }
