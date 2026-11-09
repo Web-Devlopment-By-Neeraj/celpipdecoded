@@ -1,3 +1,4 @@
+import { settlePaidBooking } from "@/features/booking/booking-store";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import { can, type Entitlement } from "./entitlements";
 import { DEFAULT_PRODUCTS } from "./payments";
@@ -13,10 +14,16 @@ export type StripePurchaseInput = {
   amountCents: number;
   taxCents: number;
   periodEnd?: Date | null;
+  bookingId?: string | null;
 };
 
 export type FulfillmentResult =
-  | { ok: true; alreadyGranted: boolean; productCode: string }
+  | {
+      ok: true;
+      alreadyGranted: boolean;
+      productCode: string;
+      bookingOutcome?: "confirmed" | "needs_slot" | null;
+    }
   | { ok: false; message: string };
 
 function dateOnly(value: Date): string {
@@ -63,7 +70,17 @@ export async function fulfillStripePurchase(
     .maybeSingle();
 
   if (existing?.id) {
-    return { ok: true, alreadyGranted: true, productCode: product.code };
+    const bookingOutcome =
+      product.code === "private_1to1"
+        ? await settlePaidBooking({
+            userId: input.userId,
+            bookingId: input.bookingId,
+            stripeSessionId: input.providerRef,
+            purchaseId: existing.id,
+            studentEmail: input.email,
+          })
+        : null;
+    return { ok: true, alreadyGranted: true, productCode: product.code, bookingOutcome };
   }
 
   const { data: purchase, error: purchaseError } = await supabase
@@ -137,7 +154,18 @@ export async function fulfillStripePurchase(
     if (usageError) return { ok: false, message: usageError.message };
   }
 
-  return { ok: true, alreadyGranted: false, productCode: product.code };
+  const bookingOutcome =
+    product.code === "private_1to1"
+      ? await settlePaidBooking({
+          userId: input.userId,
+          bookingId: input.bookingId,
+          stripeSessionId: input.providerRef,
+          purchaseId: purchase.id,
+          studentEmail: input.email,
+        })
+      : null;
+
+  return { ok: true, alreadyGranted: false, productCode: product.code, bookingOutcome };
 }
 
 export async function userHasCourseAccess(userId: string): Promise<boolean> {

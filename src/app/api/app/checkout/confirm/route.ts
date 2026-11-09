@@ -29,6 +29,7 @@ export async function POST(request: Request) {
     providerRef: session.id,
     amountCents: session.amountCents,
     taxCents: session.taxCents,
+    bookingId: session.bookingId,
   });
 
   if (!result.ok) {
@@ -39,5 +40,6 @@ export async function POST(request: Request) {
     ok: true,
     productCode: result.productCode,
     alreadyGranted: result.alreadyGranted,
+    bookingOutcome: result.bookingOutcome ?? null,
   });
 }

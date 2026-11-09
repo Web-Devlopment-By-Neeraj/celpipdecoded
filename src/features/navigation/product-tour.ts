@@ -40,8 +40,8 @@ export const PRODUCT_TOUR_STEPS: readonly ProductTourStep[] = [
   },
   {
     id: "nav-live",
-    title: "Live classes",
-    body: "This opens class times on the public page. You stay signed in, so the header shows Dashboard instead of Sign in.",
+    title: "1:1 with Amar",
+    body: "Open times start the day after tomorrow. Pick one, then pay. The time is yours after the payment is confirmed.",
   },
   {
     id: "account",

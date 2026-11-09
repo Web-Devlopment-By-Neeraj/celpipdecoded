@@ -103,8 +103,8 @@ export function EarlyAccessForm() {
             Get CELPIP program information
           </h2>
           <p className="mt-6 max-w-md text-lg leading-8 text-cream/75">
-            Share your CELPIP goal and our team will use your answers to guide
-            the next step.
+            Share your CELPIP goal and Amar will use your answers to guide the
+            next step.
           </p>
         </div>
 
@@ -129,8 +129,7 @@ export function EarlyAccessForm() {
                 Thank you. Your information has been received.
               </h3>
               <p className="mt-3 text-sm text-foreground/60">
-                Our team will review your answers and follow up with the next
-                step.
+                Amar will review your answers and follow up with the next step.
               </p>
             </div>
           ) : (

@@ -7,6 +7,7 @@ export type PaidCheckoutSession = {
   amountCents: number;
   taxCents: number;
   paid: boolean;
+  bookingId: string | null;
 };
 
 type StripeSessionPayload = {
@@ -15,7 +16,7 @@ type StripeSessionPayload = {
   status?: string;
   amount_total?: number;
   client_reference_id?: string;
-  metadata?: { user_id?: string; product_code?: string };
+  metadata?: { user_id?: string; product_code?: string; booking_id?: string };
   total_details?: { amount_tax?: number };
   error?: { message?: string };
 };
@@ -47,5 +48,6 @@ export async function retrievePaidCheckoutSession(
     amountCents: payload.amount_total ?? 0,
     taxCents: payload.total_details?.amount_tax ?? 0,
     paid: payload.payment_status === "paid" || payload.status === "complete",
+    bookingId: payload.metadata?.booking_id ?? null,
   };
 }

@@ -17,7 +17,7 @@ export const DEFAULT_PRODUCTS: Product[] = [
   { code: "sprint", name: "Test Sprint", priceCents: 4900, currency: "CAD", providerPriceId: "price_sprint", active: true },
   { code: "course", name: "Decoded Course", priceCents: 19900, currency: "CAD", providerPriceId: "price_course", active: true },
   { code: "batch", name: "Live Batch", priceCents: 9900, currency: "CAD", providerPriceId: "price_batch", active: true },
-  { code: "private_1to1", name: "Private 1:1", priceCents: 4900, currency: "CAD", providerPriceId: "price_private", active: true },
+  { code: "private_1to1", name: "Do 1:1 with Amar", priceCents: 4900, currency: "CAD", providerPriceId: "price_private", active: true },
 ];
 
 export type StoredPurchase = Purchase & {
