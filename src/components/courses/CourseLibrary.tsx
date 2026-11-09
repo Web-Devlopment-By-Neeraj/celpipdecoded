@@ -9,6 +9,7 @@ import {
   focus,
   text,
 } from "@/features/design/design-tokens";
+import { DEFAULT_LANGUAGES } from "@/features/platform/video";
 
 export type CourseCardModel = {
   slug: string;
@@ -48,9 +49,8 @@ export function CourseLibrary({
               Some courses open with the Decoded Course
             </p>
             <p className={cx("mt-1 text-sm", text.secondary)}>
-              {signedIn
-                ? "You can still open every lesson and watch a short preview."
-                : "Free accounts can watch a short preview. Sign in to pick up where you left off."}
+              Locked. A short preview plays until you buy the course.
+              {signedIn ? "" : " Sign in to pick up where you left off."}
             </p>
           </div>
           {signedIn ? (
@@ -69,11 +69,11 @@ export function CourseLibrary({
             </Link>
           )}
         </div>
-      ) : (
+      ) : unlocked ? (
         <p className={cx("mt-6 text-sm", text.secondary)}>
           Your course is open. Pick a lesson and your place is saved.
         </p>
-      )}
+      ) : null}
 
       {courses.length === 0 ? (
         <p className={cx(cardStyles.default, "mt-6 px-5 py-8 text-sm", text.secondary)}>
@@ -88,6 +88,21 @@ export function CourseLibrary({
           ))}
         </ul>
       )}
+
+      <ul className="mt-8 grid gap-2 sm:grid-cols-2">
+        {DEFAULT_LANGUAGES.filter((language) => language.status !== "live").map((language) => (
+          <li
+            key={language.code}
+            className={cx(cardStyles.subtle, "flex items-center justify-between px-4 py-3 text-sm")}
+          >
+            <span>
+              <span className="font-semibold">{language.name}</span>
+              <span className={cx("ml-2", text.muted)}>{language.nativeName}</span>
+            </span>
+            <span className="text-xs font-semibold uppercase tracking-wide">Soon</span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
