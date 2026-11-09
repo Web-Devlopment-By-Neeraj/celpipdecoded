@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { PlanUpgradeButton } from "@/components/pricing/PlanUpgradeButton";
 import { DEFAULT_PRODUCTS } from "@/features/platform/payments";
 import {
@@ -70,13 +71,22 @@ export function PricingPlanCard({
       <p className="mt-4 text-xs leading-5 text-ink/50">{content.billingNote}</p>
 
       <div className="mt-6 pt-2">
-        <PlanUpgradeButton
-          productCode={productCode}
-          offer={offer}
-          withTopMargin={false}
-          label="Choose this plan"
-          className="inline-flex h-12 w-full items-center justify-center rounded-full bg-brand text-sm font-semibold text-white transition-colors hover:bg-brand-dark"
-        />
+        {productCode === "private_1to1" ? (
+          <Link
+            href="/dashboard/live-classes"
+            className="inline-flex h-12 w-full items-center justify-center rounded-full bg-brand text-sm font-semibold text-white transition-colors hover:bg-brand-dark"
+          >
+            Choose a time
+          </Link>
+        ) : (
+          <PlanUpgradeButton
+            productCode={productCode}
+            offer={offer}
+            withTopMargin={false}
+            label="Choose this plan"
+            className="inline-flex h-12 w-full items-center justify-center rounded-full bg-brand text-sm font-semibold text-white transition-colors hover:bg-brand-dark"
+          />
+        )}
       </div>
     </article>
   );

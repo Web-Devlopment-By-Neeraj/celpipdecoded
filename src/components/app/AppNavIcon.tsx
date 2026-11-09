@@ -14,6 +14,8 @@ const PATHS: Record<AppNavIconName, string> = {
     "M11 2.5a2.5 2.5 0 0 0-2.5 2.5v5a2.5 2.5 0 0 0 5 0V5A2.5 2.5 0 0 0 11 2.5zM5.5 9.5a5.5 5.5 0 0 0 11 0M11 15v3.5M8 18.5h6",
   writing: "M4 16.5 15.5 5a2.1 2.1 0 0 1 3 3L7 19.5l-4 1z",
   courses: "M5 3.5h9a3 3 0 0 1 3 3V18.5H8a3 3 0 0 0-3 3zM5 3.5v15",
+  miniCourses: "M4 7.5h14v10H4zM7 7.5V5h8v2.5",
+  askAmar: "M4 4.5h14v9H8.5L4 17.5z",
   liveClasses:
     "M2.5 5.5h11v9h-11zM13.5 9l5-3v8l-5-3z",
   more: "M4 6.5h14M4 11h14M4 15.5h14",

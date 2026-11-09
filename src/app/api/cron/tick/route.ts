@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { releaseUnderfilled, type BatchState } from "@/features/platform/batches";
+import { releaseExpiredHolds } from "@/features/booking/booking-store";
 import { releaseUnpaidHolds } from "@/features/platform/calendar";
 import { defaultSettings } from "@/features/platform/settings";
 
@@ -28,6 +29,11 @@ export async function POST(request: Request) {
     null,
   );
   const holds = releaseUnpaidHolds([], new Date());
+  try {
+    await releaseExpiredHolds();
+  } catch (err) {
+    console.error("1:1 holds could not be released:", err);
+  }
 
   return NextResponse.json({
     ok: true,

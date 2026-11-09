@@ -300,9 +300,9 @@ Not built yet or explicitly out of scope until a ticket is done.
 
 **Plan**
 
-- [ ] **Search:** `team`, “our team”, “with the team” in `src/`, landing forms, pricing (`plan-upgrade-copy.ts` private_1to1), book page, assistant strings (keep “Ask Amar” where intentional).
-- [ ] **Replace:** Early access form (“our team will…”), batch/private checkout copy, any generic support lines — align with client wording.
-- [ ] **Do not change:** Internal docs, “Sahil (and team)” in this tracker, or Vercel “team” in deployment docs unless user-facing.
+- [x] **Search:** `team`, “our team”, “with the team” in `src/`, landing forms, pricing (`plan-upgrade-copy.ts` private_1to1), book page, assistant strings (keep “Ask Amar” where intentional). The only student-facing hits were the inquiry form, private checkout, and the book page. “Ask Amar” and the mailbox filter that ignores an address named team were left as they are.
+- [x] **Replace:** Early access form now says Amar will use the answers and follow up. Private checkout is “Do 1:1 with Amar”. Live batch cancel copy says move or cancel with Amar. The book page uses the same 1:1 name.
+- [x] **Do not change:** Internal docs, “Sahil (and team)” in this tracker, and deployment docs were left alone. Tick the staging pass separately; these boxes record the copy change, not a merge.
 
 **Suggested branch:** `sahil/task-7-amar-copy-audit` · **Severity:** `P2`
 
@@ -329,11 +329,26 @@ Not built yet or explicitly out of scope until a ticket is done.
 
 **Plan**
 
-- [ ] **Sidebar / mobile row:** Add routes per §9: **Mock tests** (hub), **Mini-courses**, **Ask Amar** (`/ask` or in-app), **Live classes** inside app (not only `/#live-classes`). Keep Speaking/Writing or fold under “Practice” if mockup uses one Practice area — follow attached mockup when implementing.
-- [ ] **Dashboard:** Test **countdown**, **evaluations left** (today/month when Sprint), **target CLB**, **one next-step card** from intake rules, **next live class** — reduce duplicate “everything on one scroll” layout where mockup differs.
-- [ ] **Phase 2 nav items:** Performance, My answers, Referral — link as locked/stubs or omit until Phase 2 (**Task 20**).
+- [x] **Sidebar / mobile row:** Existing items stay. Mini-courses and Ask Amar were added under Learn with Amar. Live classes now opens `/dashboard/live-classes` instead of the public home section. Speaking and Writing stay separate. Mini-courses says coming soon.
+- [x] **Dashboard cards:** Days until the test, target CLB, AI evaluations (today and this month when the account is Test Sprint; free speaking and writing otherwise), and one Do this next card from the sign-up answers. The rest of the dashboard is unchanged.
+- [x] **1:1 with Amar.** Students see open times from the day after tomorrow in Eastern time only, hold one for 15 minutes, and pay. The time is theirs only after Stripe says paid. If that time was taken, the payment stays and they pick another time. There is no refund. Amar's calendar shows the same time on his own clock. His bookable hours stay 4:00 PM to 10:00 PM on that clock. Google Calendar turns on when `GOOGLE_CALENDAR_ID`, `GOOGLE_SERVICE_ACCOUNT_EMAIL`, and `GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY` are set. Until then the Meet link waits. Apply `supabase/migrations/019_private_session_bookings.sql`.
+- [x] **Phase 2 nav items:** Performance, My answers, and Referral are omitted until Task 20.
 
 **Suggested branch:** `sahil/task-9-app-shell-dashboard` · **Severity:** `P1` · overlaps **Task 5b**
+
+---
+
+### Task 21 — Group live classes
+
+**Goal:** The weekday group class, separate from 1:1 with Amar. Not part of the 1:1 booking page.
+
+**Plan**
+
+- [ ] **Group schedule.** Monday, Tuesday, Thursday, and Friday at 7:30 PM Eastern, shown inside the app.
+- [ ] **Seats.** A student reserves a seat. The card is charged when the batch is confirmed, not when they click.
+- [ ] **Do not mix with 1:1.** Group times must block 1:1 slots once this exists. Google Calendar for the group session can reuse the 1:1 connection.
+
+**Suggested branch:** `sahil/task-21-group-live-classes` · **Severity:** `P1`
 
 ---
 

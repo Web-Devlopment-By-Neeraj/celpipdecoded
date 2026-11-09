@@ -3,10 +3,8 @@
 // The sidebar, the mobile drawer and the breadcrumbs all read from this
 // list, so a route only ever has to be described once.
 //
-// Live classes has no route inside /dashboard yet. The public program
-// page already has a live classes section, so the item points there
-// instead of inventing a new feature. See
-// docs/product/app-shell-navigation.md.
+// Live classes, mini-courses, and Ask Amar are pages inside the app.
+// Speaking and Writing stay separate. See docs/product/app-shell-navigation.md.
 
 export type AppNavIconName =
   | "dashboard"
@@ -14,6 +12,8 @@ export type AppNavIconName =
   | "speaking"
   | "writing"
   | "courses"
+  | "miniCourses"
+  | "askAmar"
   | "liveClasses"
   // Tab bar only.
   | "more"
@@ -95,18 +95,35 @@ export const APP_NAV_ITEMS: readonly AppNavItem[] = [
     group: "learn",
     href: "/dashboard/courses",
     icon: "courses",
-    description: "Course lessons and the locked preview",
+    description: "Video lessons, your progress, and lesson comments",
     tourId: "nav-courses",
   },
   {
-    label: "Live classes",
-    shortLabel: "Live",
+    label: "1:1 with Amar",
+    shortLabel: "1:1",
     group: "learn",
-    href: "/#live-classes",
+    href: "/dashboard/live-classes",
     icon: "liveClasses",
-    description: "Class options on the program page",
-    leavesApp: true,
+    description: "Choose a time, then pay",
     tourId: "nav-live",
+  },
+  {
+    label: "Mini-courses",
+    shortLabel: "Minis",
+    group: "learn",
+    href: "/dashboard/mini-courses",
+    icon: "miniCourses",
+    description: "Short lessons, coming soon",
+    tourId: "nav-mini-courses",
+  },
+  {
+    label: "Ask Amar",
+    shortLabel: "Ask",
+    group: "learn",
+    href: "/dashboard/ask",
+    icon: "askAmar",
+    description: "Practice questions, and Amar for your account",
+    tourId: "nav-ask",
   },
 ] as const;
 
@@ -126,6 +143,9 @@ const SEGMENT_LABELS: Record<string, string> = {
   speaking: "Speaking practice",
   writing: "Writing practice",
   courses: "Courses",
+  "live-classes": "1:1 with Amar",
+  "mini-courses": "Mini-courses",
+  ask: "Ask Amar",
   attempts: "Attempt history",
   practice: "Practice",
   tasks: "Task",

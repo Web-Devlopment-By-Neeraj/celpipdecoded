@@ -26,6 +26,8 @@ export function AppBreadcrumbs() {
   if (crumbs.length < 2) return null;
   const path = pathname.replace(/\/+$/, "");
   if (PATHS_WITH_OWN_BACK_LINK.has(path)) return null;
+  // The course player has its own "All courses" link.
+  if (path.startsWith("/dashboard/courses/")) return null;
   // Task and practice pages already have their own back link. The trail
   // above them only repeats Dashboard / Speaking practice / Task.
   if (

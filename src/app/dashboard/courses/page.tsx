@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
-import { CourseCatalog } from "@/components/courses/CourseCatalog";
-import { userHasCourseAccess } from "@/features/platform/fulfill-stripe-purchase";
+import { redirect } from "next/navigation";
+import { CourseLibrary } from "@/components/courses/CourseLibrary";
+import { loadCourseCards, viewerCanWatchCourse } from "@/features/courses/page-data";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Courses - CELPIP Decoded",
-  description: "Course lessons stay visible when they are locked. English and Hindi are the live languages.",
+  description: "Video lessons for CELPIP Listening, Writing, and Speaking.",
 };
 
 export default async function DashboardCoursesPage() {
@@ -15,7 +16,13 @@ export default async function DashboardCoursesPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const unlocked = user ? await userHasCourseAccess(user.id) : false;
 
-  return <CourseCatalog unlocked={unlocked} />;
+  if (!user) redirect("/login?next=/dashboard/courses");
+
+  const [courses, unlocked] = await Promise.all([
+    loadCourseCards({ userId: user.id, signedIn: true }),
+    viewerCanWatchCourse(user.id, user.email, "course"),
+  ]);
+
+  return <CourseLibrary courses={courses} unlocked={unlocked} signedIn />;
 }

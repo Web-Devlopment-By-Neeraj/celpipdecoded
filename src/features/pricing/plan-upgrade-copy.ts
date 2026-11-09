@@ -15,7 +15,7 @@ const BILLING_NOTES: Record<string, string> = {
   sprint: "Billed monthly in CAD. Cancel anytime in your account.",
   course: "One-time payment in CAD. Course access does not expire.",
   batch: "One-time reservation in CAD. You are charged when the batch is confirmed.",
-  private_1to1: "One-time payment in CAD when you book.",
+  private_1to1: "One-time payment in CAD after you choose a time. The time is yours when the payment is confirmed.",
 };
 
 const BENEFITS: Record<string, string[]> = {
@@ -34,12 +34,12 @@ const BENEFITS: Record<string, string[]> = {
   batch: [
     "Reserve a seat in a live batch schedule",
     "Card is not charged until the batch meets its minimum size",
-    "Move or cancel through the academy when plans change",
+    "Move or cancel with Amar when plans change",
   ],
   private_1to1: [
-    "Book a private 1:1 session with the team",
-    "Paid when you confirm the booking",
-    "Best when you want focused time outside group practice",
+    "The session is with Amar only",
+    "Choose an open time, then pay",
+    "If that time is taken, you pick another one. No second charge",
   ],
 };
 
@@ -49,7 +49,11 @@ const INTROS: Record<string, string> = {
   course:
     "Decoded Course unlocks the video library and includes a three-month practice boost.",
   batch: "Live Batch holds your place in scheduled group classes.",
-  private_1to1: "Private 1:1 is for a single focused session with the team.",
+  private_1to1: "One focused session with Amar.",
+};
+
+const HEADLINES: Record<string, string> = {
+  private_1to1: "Do 1:1 with Amar",
 };
 
 export const PRICING_PLAN_ORDER = [
@@ -100,7 +104,7 @@ export function getPlanUpgradeContent(productCode: string): PlanUpgradeContent |
     name: product.name,
     priceLabel: formatCad(product.priceCents),
     billingNote: BILLING_NOTES[product.code] ?? "Price in CAD.",
-    headline: `Unlock ${product.name}`,
+    headline: HEADLINES[product.code] ?? `Unlock ${product.name}`,
     intro: INTROS[product.code] ?? "This plan unlocks the features listed below.",
     benefits,
   };

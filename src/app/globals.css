@@ -515,3 +515,14 @@ body:has([data-theme-scope="light"], [data-mock-test-player]) [data-mobile-tab-b
   --academy-exam-surface: var(--player-desk);
   --academy-exam-gutter: var(--player-paper);
 }
+
+/* Course watermark drifts a short distance so a still frame of one corner
+   does not hide the learner's email. Reduced motion keeps it still. */
+@keyframes course-watermark-drift {
+  from {
+    transform: translate(-50%, -50%) rotate(-22deg) translateY(0);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(-22deg) translateY(-56px);
+  }
+}

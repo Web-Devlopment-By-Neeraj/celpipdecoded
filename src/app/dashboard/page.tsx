@@ -22,6 +22,18 @@ import {
   type DashboardAttemptRow,
 } from "@/features/dashboard/dashboard-summary";
 import type { DashboardBadgeItem } from "@/features/dashboard/dashboard-types";
+import { DashboardNextSession } from "@/components/dashboard/DashboardNextSession";
+import { DashboardStudySnapshot } from "@/components/dashboard/DashboardStudySnapshot";
+import { bookingForUser } from "@/features/booking/booking-store";
+import {
+  DASHBOARD_TIME_ZONE,
+  describeEvaluations,
+  describeNextStep,
+  describeTargetClb,
+  describeTestCountdown,
+} from "@/features/dashboard/dashboard-home";
+import { loadIntakeAnswers } from "@/features/onboarding/onboarding-store";
+import { startOfZonedDay } from "@/features/platform/time";
 import { getUsageAccessSummary } from "@/features/usage/get-usage-access-summary";
 
 export const metadata: Metadata = {
@@ -237,6 +249,20 @@ export default async function DashboardPage() {
   // service role, so no key reaches the browser. When the read fails the
   // access card falls back to its safe placeholder.
   const accessResult = await getUsageAccessSummary(user.id);
+  const answers = await loadIntakeAnswers(supabase, user.id);
+  const dayStart = startOfZonedDay(new Date(), DASHBOARD_TIME_ZONE);
+  const usedTodayQuery = await supabase
+    .from("scored_attempt_consumptions")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", user.id)
+    .gte("created_at", dayStart.toISOString());
+
+  let nextSession = null;
+  try {
+    nextSession = await bookingForUser(user.id);
+  } catch (err) {
+    console.error("1:1 booking could not be read:", err);
+  }
 
   return (
     <>
@@ -256,6 +282,22 @@ export default async function DashboardPage() {
         continueHref={recommendation.href}
         continueLabel={recommendation.ctaLabel}
       />
+
+      <div className="mt-8">
+        <DashboardStudySnapshot
+          countdown={describeTestCountdown(answers.next_test, new Date())}
+          targetClb={describeTargetClb(answers.target_clb)}
+          evaluations={describeEvaluations({
+            summary: accessResult.ok ? accessResult.summary : null,
+            usedToday: usedTodayQuery.error ? null : usedTodayQuery.count,
+          })}
+          nextStep={describeNextStep(answers)}
+        />
+      </div>
+
+      <div className="mt-5">
+        <DashboardNextSession booking={nextSession} />
+      </div>
 
       <div className="mt-8 grid grid-cols-1 gap-5 lg:grid-cols-2">
         <DashboardAccessSummary

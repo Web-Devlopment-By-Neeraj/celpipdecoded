@@ -15,7 +15,7 @@ type StripeEvent = {
       amount_total?: number;
       amount_paid?: number;
       billing_reason?: string;
-      metadata?: { user_id?: string; product_code?: string };
+      metadata?: { user_id?: string; product_code?: string; booking_id?: string };
       total_details?: { amount_tax?: number };
       parent?: { subscription_details?: { metadata?: { user_id?: string; product_code?: string } } };
       subscription_details?: { metadata?: { user_id?: string; product_code?: string } };
@@ -29,6 +29,7 @@ function readPurchase(event: StripeEvent): {
   providerRef: string;
   amountCents: number;
   taxCents: number;
+  bookingId: string | null;
 } | null {
   const object = event.data?.object;
   if (!object) return null;
@@ -45,6 +46,7 @@ function readPurchase(event: StripeEvent): {
     providerRef: object.id ?? event.id ?? "",
     amountCents: object.amount_total ?? object.amount_paid ?? 0,
     taxCents: object.total_details?.amount_tax ?? 0,
+    bookingId: object.metadata?.booking_id ?? null,
   };
 }
 
@@ -88,7 +90,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: "Payment metadata is missing." }, { status: 400 });
   }
 
-  const result = await fulfillStripePurchase(purchase);
+  const result = await fulfillStripePurchase({
+    userId: purchase.userId,
+    productCode: purchase.productCode,
+    providerRef: purchase.providerRef,
+    amountCents: purchase.amountCents,
+    taxCents: purchase.taxCents,
+    bookingId: purchase.bookingId,
+  });
   if (!result.ok) {
     return NextResponse.json({ ok: false, error: result.message }, { status: 500 });
   }

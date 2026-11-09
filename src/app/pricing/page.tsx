@@ -6,7 +6,7 @@ import { brandCopy } from "@/features/brand/brand-copy";
 export const metadata: Metadata = {
   title: "Pricing - CELPIP Decoded",
   description:
-    "Practice plans in Canadian dollars. Choose Test Sprint, Decoded Course, live batch, or private 1:1.",
+    "Practice plans in Canadian dollars. Choose Test Sprint, Decoded Course, live batch, or 1:1 with Amar.",
 };
 
 export default async function PricingPage({
