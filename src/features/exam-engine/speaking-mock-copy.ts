@@ -79,17 +79,17 @@ export function buildSpeakingMockCopy({ testLabel }: { testLabel: string }) {
       },
       {
         heading: "Preparation, then recording",
-        text: "In a complete test, recording starts when preparation time ends. In a Speaking section on its own, click Record your answer when preparation ends. When you have finished, click Next, or Record again if you want another try.",
+        text: "In a full mock test, recording starts when preparation time ends. In a Speaking section on its own, click Record your answer when preparation ends. When you have finished, click Next, or Record again if you want another try.",
       },
       {
         heading: "Moving forward",
-        text: "In a complete test you cannot go back to an earlier task. In a Speaking section on its own, press Next when you are ready.",
+        text: "In a full mock test you cannot go back to an earlier task. In a Speaking section on its own, press Next when you are ready.",
       },
       {
         text: "In the real test, each Speaking task moves on by itself when its time runs out, and you can't go back to an earlier task. Here, it depends on how you started:",
       },
       {
-        heading: "Complete test:",
+        heading: "Full mock test:",
         text: "works the same as the real test. Recording starts as soon as preparation time ends.",
       },
       {

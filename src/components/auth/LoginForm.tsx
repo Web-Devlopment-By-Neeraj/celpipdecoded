@@ -2,12 +2,10 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 // Email and password login form. Uses the browser Supabase client only.
 export function LoginForm({ nextPath = "/dashboard" }: { nextPath?: string }) {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -18,10 +16,16 @@ export function LoginForm({ nextPath = "/dashboard" }: { nextPath?: string }) {
     setErrorMessage(null);
     setIsSubmitting(true);
 
+    // The browser can fill these fields before React's state updates.
+    // Reading the form itself is what the first click actually contains.
+    const form = new FormData(event.currentTarget);
+    const submittedEmail = String(form.get("email") ?? "").trim();
+    const submittedPassword = String(form.get("password") ?? "");
+
     const supabase = createSupabaseBrowserClient();
     const { error } = await supabase.auth.signInWithPassword({
-      email: email.trim(),
-      password,
+      email: submittedEmail,
+      password: submittedPassword,
     });
 
     if (error) {
@@ -34,8 +38,10 @@ export function LoginForm({ nextPath = "/dashboard" }: { nextPath?: string }) {
       return;
     }
 
-    router.push(nextPath);
-    router.refresh();
+    // A full load sends the new session cookie. A client navigation can
+    // reach the dashboard before that cookie is visible, and the dashboard
+    // then sends the student back here.
+    window.location.assign(nextPath);
   }
 
   return (

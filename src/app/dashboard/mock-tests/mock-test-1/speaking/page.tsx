@@ -9,6 +9,7 @@ import {
   buildMockTestPlayerContext,
   parseMockTestFlowMode,
 } from "@/features/mock-tests/mock-test-flow";
+import { loadOpenMockDraft } from "@/features/mock-tests/mock-run-store";
 
 export const metadata: Metadata = {
   title: speakingMockCopy.pageTitle,
@@ -112,11 +113,19 @@ export default async function MockTest1SpeakingSectionPage({
   // step to match the Reading route's, because a Speaking task has no
   // answer key: nothing in this content object is something a learner
   // could be given an unfair advantage by reading.
+  const savedDraft = await loadOpenMockDraft(
+    user.id,
+    "mock-test-1",
+    mockTestContext.flow,
+    "speaking",
+  );
+
   return (
     <ExamModeViewport label={speakingMockCopy.examRegionLabel}>
       <SpeakingSectionPrototype
         content={mockTest1SpeakingSection}
         mockTestContext={mockTestContext}
+        savedDraft={savedDraft}
       />
     </ExamModeViewport>
   );

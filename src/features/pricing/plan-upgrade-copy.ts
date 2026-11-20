@@ -14,8 +14,8 @@ export type PlanUpgradeContent = {
 const BILLING_NOTES: Record<string, string> = {
   sprint: "Billed monthly in CAD. Cancel anytime in your account.",
   course: "One-time payment in CAD. Course access does not expire.",
-  batch: "One-time reservation in CAD. You are charged when the batch is confirmed.",
-  private_1to1: "One-time payment in CAD after you choose a time. The time is yours when the payment is confirmed.",
+  batch: "$99 CAD for a 2-week batch. Dates and times are shared when you book.",
+  private_1to1: "$49 CAD for one hour. The time is yours when the payment is confirmed.",
 };
 
 const BENEFITS: Record<string, string[]> = {
@@ -32,12 +32,12 @@ const BENEFITS: Record<string, string[]> = {
     "Preview stays available for visitors who have not purchased yet",
   ],
   batch: [
-    "Reserve a seat in a live batch schedule",
-    "Card is not charged until the batch meets its minimum size",
-    "Move or cancel with Amar when plans change",
+    "8 live classes, one hour each, on Google Meet",
+    "Week 1 is Listening and Reading. Week 2 is Writing and Speaking",
+    "Dates and times are shared when you book",
   ],
   private_1to1: [
-    "The session is with Amar only",
+    "One hour with Amar on Google Meet",
     "Choose an open time, then pay",
     "If that time is taken, you pick another one. No second charge",
   ],
@@ -48,8 +48,8 @@ const INTROS: Record<string, string> = {
     "Test Sprint adds scored AI feedback and mock test access on top of free practice.",
   course:
     "Decoded Course unlocks the video library and includes a three-month practice boost.",
-  batch: "Live Batch holds your place in scheduled group classes.",
-  private_1to1: "One focused session with Amar.",
+  batch: "Eight live classes over two weeks.",
+  private_1to1: "One hour with Amar.",
 };
 
 const HEADLINES: Record<string, string> = {
@@ -66,8 +66,8 @@ export const PRICING_PLAN_ORDER = [
 const PRICE_PERIODS: Record<string, string> = {
   sprint: "per month",
   course: "one-time",
-  batch: "one-time",
-  private_1to1: "one-time",
+  batch: "per 2 weeks",
+  private_1to1: "per hour",
 };
 
 const PLAN_BADGES: Partial<Record<string, string>> = {

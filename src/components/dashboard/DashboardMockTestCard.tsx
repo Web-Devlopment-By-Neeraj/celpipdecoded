@@ -3,10 +3,17 @@ import { AppCard } from "@/components/app/AppCard";
 import { AppSectionHeader } from "@/components/app/AppSectionHeader";
 import { cx, text } from "@/features/design/design-tokens";
 import { listeningCopy } from "@/features/exam-engine/listening-copy";
+import { MockAttemptNote } from "@/components/mock-tests/MockAttemptNote";
 import {
   MOCK_TEST_1_HUB_PATH,
   MOCK_TESTS_HUB_PATH,
 } from "@/features/mock-tests/mock-test-1-routes";
+import {
+  mockResultsHref,
+  sectionLabel,
+  type MockRunView,
+} from "@/features/mock-tests/mock-run";
+import Link from "next/link";
 
 const DASHBOARD_MOCKS = [
   {
@@ -31,13 +38,29 @@ const DASHBOARD_MOCKS = [
   },
 ] as const;
 
-export function DashboardMockTestCard() {
+export function DashboardMockTestCard({ runs = [] }: { runs?: MockRunView[] }) {
+  const latest = runs.find((run) => run.status === "submitted");
+
   return (
     <section aria-label={listeningCopy.mockTestsHeading}>
       <AppSectionHeader
         title={listeningCopy.mockTestsHeading}
         description="Choose a mock test, or open the full list."
       />
+
+      {latest ? (
+        <p className={cx("mt-4 text-sm leading-6", text.secondary)}>
+          Latest result: {sectionLabel(latest.section)}
+          {latest.summary ? ` · ${latest.summary.detail}` : ""}.{" "}
+          <Link href={mockResultsHref(latest.slug)} className="font-semibold text-academy-navy underline-offset-2 hover:underline">
+            See full results
+          </Link>
+        </p>
+      ) : null}
+
+      <div className="mt-3">
+        <MockAttemptNote runs={runs} slug="mock-test-1" />
+      </div>
 
       <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
         {DASHBOARD_MOCKS.map((mock) => (

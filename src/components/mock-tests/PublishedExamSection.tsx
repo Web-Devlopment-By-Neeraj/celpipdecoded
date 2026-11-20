@@ -24,6 +24,7 @@ import {
   learnerMockPath,
   type LearnerMockTest,
 } from "@/features/mock-tests/published-mock-catalog";
+import type { MockSectionDraft } from "@/features/mock-tests/mock-run";
 import type { SectionType } from "@/features/admin/mock-test-types";
 import {
   markPublishedListening,
@@ -38,10 +39,12 @@ export async function PublishedExamSection({
   test,
   section,
   mode,
+  savedDraft = null,
 }: {
   test: LearnerMockTest;
   section: SectionType;
   mode: "section" | "full";
+  savedDraft?: MockSectionDraft | null;
 }) {
   const present = test.sections.map((item) => item.sectionType);
   const mockTestContext = buildPublishedPlayerContext({
@@ -71,6 +74,7 @@ export async function PublishedExamSection({
           markAnswers={markListening}
           copy={buildListeningSectionCopy({ testLabel: test.title })}
           mockTestContext={mockTestContext}
+          savedDraft={savedDraft}
         />
       </ExamModeViewport>
     );
@@ -96,6 +100,7 @@ export async function PublishedExamSection({
           copy={buildReadingSectionCopy({ testLabel: test.title })}
           dashboardHref={`/dashboard/mock-tests/${test.slug}`}
           mockTestContext={mockTestContext}
+          savedDraft={savedDraft}
         />
       </ExamModeViewport>
     );
@@ -115,6 +120,7 @@ export async function PublishedExamSection({
           copy={buildWritingMockCopy({ testLabel: test.title })}
           dashboardHref={`/dashboard/mock-tests/${test.slug}`}
           mockTestContext={mockTestContext}
+          savedDraft={savedDraft}
         />
       </ExamModeViewport>
     );
@@ -134,6 +140,7 @@ export async function PublishedExamSection({
         dashboardHref={`/dashboard/mock-tests/${test.slug}`}
         enableReview={false}
         mockTestContext={mockTestContext}
+        savedDraft={savedDraft}
       />
     </ExamModeViewport>
   );

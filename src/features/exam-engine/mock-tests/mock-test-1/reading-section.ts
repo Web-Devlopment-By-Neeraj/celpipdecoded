@@ -77,9 +77,11 @@ export const mockTest1ReadingSection: ReadingSectionContent = {
   },
 
   videoScreen: {
-    title: `${SECTION_TITLE}: Instructional video`,
+    title: `${SECTION_TITLE} Instructional Video`,
     video: getInstructionalVideoAsset("reading"),
-    description: getInstructionalVideoAsset("reading").description,
+    description:
+      "This video comes from the official CELPIP website. It shows how the real test runs from start to finish, and what to expect in each of the four sections. Our mock tests follow the same flow. CELPIP updates its test from time to time, so some details may have changed. For the latest format, check celpip.ca.",
+    helperText: "Video Source: CELPIP official website, celpip.ca",
   },
   // The four parts, in test order.
   //

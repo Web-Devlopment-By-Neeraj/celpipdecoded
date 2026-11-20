@@ -237,13 +237,8 @@ export type WritingSectionScreen =
   // 3. Shown before a task that is not the first one. It carries no
   // score, because Writing produces none in this ticket.
   | { kind: "task-transition"; id: string; taskIndex: number }
-  // 4. Shown before a task that offers positions to choose between, which
-  // in Mock Test 1 is Task 2 and only Task 2 (EXAM-UI-04).
-  //
-  // It carries the same situation and the same prompt instruction the
-  // task screen after it carries, and the positions, and no editor. A
-  // task with no options never produces one of these, so Task 1 goes
-  // straight from the intro to its editor as it always has.
+  // Kept so an older screen id still type-checks. The flow no longer
+  // builds this screen. Task 2 shows the positions on the editor screen.
   | { kind: "task-choice"; id: string; taskIndex: number }
   // 6. Writing section complete.
   | { kind: "section-complete"; id: string };

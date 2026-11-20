@@ -140,7 +140,7 @@ export const readingPart2: ReadingPartContent = {
   // answered. Nothing here promises official test behaviour the screen
   // does not have.
   instructions: [
-    "You will study a course brochure and read an email about it.",
+    "You will see a diagram and read an email about it.",
     "There are 8 questions: 5 inside the email and 3 about the situation.",
     "Choose the best option for each question from the drop-down menu.",
   ],

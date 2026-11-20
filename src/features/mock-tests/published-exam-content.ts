@@ -60,7 +60,7 @@ export function buildPublishedListeningContent(
       title: `${test.title} - Listening`,
       heading: "Listening test instructions",
       instructions: SECTION_EXAM_LINES.listening,
-      noticeText: "Answers stay on this screen. Nothing is saved.",
+      noticeText: "Your answers are saved as you go.",
       introTitle: test.title,
       introSummary: "Listening",
       introDetails: [
@@ -70,7 +70,9 @@ export function buildPublishedListeningContent(
     videoScreen: {
       title: `${test.title} - Listening Instructional Video`,
       video,
-      description: video.description,
+      description:
+        "This video comes from the official CELPIP website. It shows how the real test runs from start to finish, and what to expect in each of the four sections. Our mock tests follow the same flow. CELPIP updates its test from time to time, so some details may have changed. For the latest format, check celpip.ca.",
+      helperText: "Video Source: CELPIP official website, celpip.ca",
     },
     parts: section.parts.flatMap((part, index) => {
       if (!part.partType || !part.partType.startsWith("listening_")) {
@@ -148,14 +150,16 @@ export function buildPublishedReadingContent(
     instructionScreen: {
       title: `${test.title} - Reading`,
       instructions: SECTION_EXAM_LINES.reading,
-      noticeText: "Answers stay on this screen. Nothing is saved.",
+      noticeText: "Your answers are saved as you go.",
       introTitle: test.title,
       introSummary: "Reading",
     },
     videoScreen: {
       title: `${test.title} - Reading Instructional Video`,
       video,
-      description: video.description,
+      description:
+        "This video comes from the official CELPIP website. It shows how the real test runs from start to finish, and what to expect in each of the four sections. Our mock tests follow the same flow. CELPIP updates its test from time to time, so some details may have changed. For the latest format, check celpip.ca.",
+      helperText: "Video Source: CELPIP official website, celpip.ca",
     },
     parts: section.parts.flatMap((part, index) => {
       const template =
@@ -263,7 +267,9 @@ export function buildPublishedWritingContent(
     videoScreen: {
       title: `${test.title} - Writing Instructional Video`,
       video,
-      description: video.description,
+      description:
+        "This video comes from the official CELPIP website. It shows how the real test runs from start to finish, and what to expect in each of the four sections. Our mock tests follow the same flow. CELPIP updates its test from time to time, so some details may have changed. For the latest format, check celpip.ca.",
+      helperText: "Video Source: CELPIP official website, celpip.ca",
     },
     tasks: section.parts.flatMap((part, index) => {
       const template =
@@ -331,7 +337,9 @@ export function buildPublishedSpeakingContent(
     videoScreen: {
       title: `${test.title} - Speaking Instructional Video`,
       video,
-      description: video.description,
+      description:
+        "This video comes from the official CELPIP website. It shows how the real test runs from start to finish, and what to expect in each of the four sections. Our mock tests follow the same flow. CELPIP updates its test from time to time, so some details may have changed. For the latest format, check celpip.ca.",
+      helperText: "Video Source: CELPIP official website, celpip.ca",
     },
     tasks: section.parts.flatMap((part, index) => {
       const template =

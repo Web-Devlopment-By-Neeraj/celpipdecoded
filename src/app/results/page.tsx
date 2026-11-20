@@ -55,7 +55,7 @@ export default function ResultsPage() {
               Your score could be next.
             </p>
             <p className="mt-1 text-sm leading-6 text-ink/65">
-              Start a free trial and practise in the real CELPIP format,
+              Start free and practice in the real CELPIP format,
               with feedback after every attempt.
             </p>
           </div>
@@ -63,7 +63,7 @@ export default function ResultsPage() {
             href="/signup"
             className="inline-flex h-12 w-full shrink-0 items-center justify-center rounded-full bg-brand px-6 text-sm font-semibold text-white shadow-sm shadow-brand/25 transition-colors hover:bg-brand-dark sm:w-auto"
           >
-            Start free trial
+            Start free
           </Link>
         </div>
 

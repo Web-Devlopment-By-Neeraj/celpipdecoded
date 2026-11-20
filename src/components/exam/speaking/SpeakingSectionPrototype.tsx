@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useMemo, useRef, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import {
   MockTestTimeUpToast,
   useMockTestTimeUpToast,
@@ -53,6 +53,15 @@ import {
   nextExamScreenIndex,
   type MockTestPlayerContext,
 } from "@/features/mock-tests/mock-test-flow";
+import { seedExamTimerResume } from "@/features/exam-engine/exam-timer-resume";
+import { recordMockSectionResultAction } from "@/app/dashboard/mock-tests/run-actions";
+import { MockSaveStatusProvider } from "../player/MockSaveStatusBadge";
+import {
+  mockDraftStorageKey,
+  mockRunIdentity,
+  useMockSectionDraft,
+} from "@/features/mock-tests/mock-draft";
+import type { MockSectionDraft } from "@/features/mock-tests/mock-run";
 import { mockTestExitBackProps } from "@/features/mock-tests/mock-test-player-ui";
 import { MOCK_TEST_2_HUB_PATH } from "@/features/mock-tests/mock-test-1-routes";
 
@@ -223,6 +232,7 @@ export type SpeakingSectionPrototypeProps = {
   // where the flow is being walked through without a server behind it.
   enableReview?: boolean;
   mockTestContext?: MockTestPlayerContext;
+  savedDraft?: MockSectionDraft | null;
 };
 
 export function SpeakingSectionPrototype({
@@ -231,18 +241,47 @@ export function SpeakingSectionPrototype({
   dashboardHref,
   enableReview = true,
   mockTestContext,
+  savedDraft = null,
 }: SpeakingSectionPrototypeProps) {
   const leaveHref = mockTestContext?.exitHref ?? dashboardHref ?? "/dashboard";
   const leaveLabel = mockTestContext ? "Back to mock test" : undefined;
   const screens = useMemo(() => buildSpeakingSectionFlow(content), [content]);
 
-  const [screenIndex, setScreenIndex] = useState(0);
+  if (typeof window !== "undefined" && savedDraft?.timer) {
+    seedExamTimerResume(savedDraft.timer);
+  }
+
+  const [screenIndex, setScreenIndex] = useState(savedDraft?.screenIndex ?? 0);
   const [responses, setResponses] = useState<SpeakingResponseMap>({});
   // The Task 5 choices, and what would be the other tasks' if any of them
   // ever offered one (SPEAKING-05A).
-  const [choices, setChoices] = useState<SpeakingChoiceMap>({});
+  const [choices, setChoices] = useState<SpeakingChoiceMap>(
+    (savedDraft?.choices as SpeakingChoiceMap | undefined) ?? {},
+  );
   const [review, setReview] = useState<ReviewState>({ status: "idle" });
   const [showFullMockComplete, setShowFullMockComplete] = useState(false);
+
+  const saveStatus = useMockSectionDraft(
+    mockDraftStorageKey(mockTestContext, "speaking"),
+    { screenIndex, choices },
+    (saved) => {
+      const draft = saved as {
+        screenIndex?: number;
+        choices?: SpeakingChoiceMap;
+      };
+      if (typeof draft.screenIndex === "number") {
+        const last = Math.max(screens.length - 1, 0);
+        setScreenIndex(Math.min(Math.max(draft.screenIndex, 0), last));
+      }
+      if (draft.choices && typeof draft.choices === "object") {
+        setChoices(draft.choices);
+      }
+    },
+    {
+      serverDraft: savedDraft,
+      run: mockRunIdentity(mockTestContext, "speaking"),
+    },
+  );
 
   // The one time up message for the whole section (TIMER-01). See
   // MockTestTimeUpToast for why it belongs here rather than to a screen.
@@ -261,6 +300,28 @@ export function SpeakingSectionPrototype({
   const reviewRequestId = useRef(0);
 
   const screen = screens[screenIndex];
+  const recordedResult = useRef(false);
+
+  useEffect(() => {
+    if (
+      screen?.kind !== "section-complete" ||
+      recordedResult.current ||
+      !mockTestContext
+    ) {
+      return;
+    }
+
+    recordedResult.current = true;
+    const summary = summarizeSpeakingSection(content, responses);
+    void recordMockSectionResultAction({
+      ...mockRunIdentity(mockTestContext, "speaking"),
+      screenIndex,
+      summary: {
+        label: "Speaking",
+        detail: `${summary.length} tasks finished`,
+      },
+    });
+  }, [screen?.kind, mockTestContext, screenIndex, content, responses]);
   const totalScreens = screens.length;
   const totalTasks = content.tasks.length;
 
@@ -818,12 +879,11 @@ export function SpeakingSectionPrototype({
   // screen would remount the message and start its few seconds again on a
   // screen it does not belong to.
   return (
-    <Fragment>
+    <MockSaveStatusProvider status={saveStatus}>
       <Fragment key={screen.id + "-" + review.status}>
         {renderCurrentScreen()}
       </Fragment>
-
       <MockTestTimeUpToast toastKey={toastKey} />
-    </Fragment>
+    </MockSaveStatusProvider>
   );
 }

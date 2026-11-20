@@ -108,8 +108,12 @@ export function getExamTimerDeadline(
 export function openExamTimerDeadline(
   autoStart: boolean,
   durationSeconds: number,
+  resumedSeconds?: number | null,
 ): number | null {
-  return autoStart ? getExamTimerDeadline(Date.now(), durationSeconds) : null;
+  if (!autoStart) return null;
+  const seconds =
+    typeof resumedSeconds === "number" ? resumedSeconds : durationSeconds;
+  return getExamTimerDeadline(Date.now(), seconds);
 }
 
 // Whole seconds left until the deadline.

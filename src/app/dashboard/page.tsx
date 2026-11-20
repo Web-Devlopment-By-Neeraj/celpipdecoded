@@ -34,6 +34,7 @@ import {
 } from "@/features/dashboard/dashboard-home";
 import { loadIntakeAnswers } from "@/features/onboarding/onboarding-store";
 import { startOfZonedDay } from "@/features/platform/time";
+import { listMockRuns } from "@/features/mock-tests/mock-run-store";
 import { getUsageAccessSummary } from "@/features/usage/get-usage-access-summary";
 
 export const metadata: Metadata = {
@@ -337,7 +338,7 @@ export default async function DashboardPage() {
           card per exam engine ticket. The internal routes still work, but
           they are no longer linked from the dashboard. */}
       <div className="mt-10">
-        <DashboardMockTestCard />
+        <DashboardMockTestCard runs={await listMockRuns(user.id)} />
       </div>
     </>
   );

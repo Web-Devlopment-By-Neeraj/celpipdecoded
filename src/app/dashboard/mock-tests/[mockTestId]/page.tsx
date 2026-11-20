@@ -33,7 +33,7 @@ export default async function PlaceholderMockTestPage({
   const match = /^mock-test-(\d+)$/.exec(mockTestId);
   const mockNumber = match ? Number(match[1]) : 0;
   const fallbackMockNumber =
-    Number.isInteger(mockNumber) && mockNumber >= 3 && mockNumber <= 5
+    Number.isInteger(mockNumber) && mockNumber >= 3 && mockNumber <= 20
       ? mockNumber
       : null;
   const query = searchParams ? await searchParams : {};

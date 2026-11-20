@@ -51,7 +51,7 @@ export const mockTest1ListeningSection: ListeningSectionContent = {
   title: SECTION_TITLE,
 
   instructionScreen: {
-    title: `${SECTION_TITLE}: Instructions`,
+    title: SECTION_TITLE,
     heading: listeningSectionCopy.instructionHeading,
     subtitle: listeningSectionCopy.instructionSubtitle,
     instructions: listeningSectionCopy.instructionLines,
@@ -70,10 +70,11 @@ export const mockTest1ListeningSection: ListeningSectionContent = {
   },
 
   videoScreen: {
-    title: `${SECTION_TITLE}: Instructional video`,
+    title: `${SECTION_TITLE} Instructional Video`,
     video: getInstructionalVideoAsset("listening"),
-    description: listeningSectionCopy.videoDescription,
-    helperText: listeningSectionCopy.videoHelperText,
+    description:
+      "This video comes from the official CELPIP website. It shows how the real test runs from start to finish, and what to expect in each of the four sections. Our mock tests follow the same flow. CELPIP updates its test from time to time, so some details may have changed. For the latest format, check celpip.ca.",
+    helperText: "Video Source: CELPIP official website, celpip.ca",
   },
 
   // The six parts, in test order. formatLabel is the Format row on each

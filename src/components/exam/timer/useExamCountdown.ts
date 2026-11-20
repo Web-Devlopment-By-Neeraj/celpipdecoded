@@ -2,9 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import {
+  noteExamTimer,
+  takeExamTimerResume,
+} from "@/features/exam-engine/exam-timer-resume";
+import {
   EXAM_TIMER_TICK_MS,
   getExamCountdownState,
   getExamTimerDeadline,
+  getExamTimerRemainingSeconds,
   openExamTimerDeadline,
   resolveExamTimerConfig,
 } from "@/features/exam-engine/exam-timer-utils";
@@ -100,7 +105,11 @@ export function useExamCountdown(
   // rule is concerned, so the one impure call the timer needs lives in
   // exam-timer-utils.ts and is called from here.
   const [endsAt, setEndsAt] = useState<number | null>(() =>
-    openExamTimerDeadline(autoStart, durationSeconds),
+    openExamTimerDeadline(
+      autoStart,
+      durationSeconds,
+      takeExamTimerResume(config.screenKey),
+    ),
   );
 
   // The last time the display was refreshed. An absolute timestamp rather
@@ -141,11 +150,18 @@ export function useExamCountdown(
     }
 
     const id = window.setInterval(() => {
-      setNowMs(Date.now());
+      const now = Date.now();
+      setNowMs(now);
+      if (endsAt !== null) {
+        noteExamTimer(
+          config.screenKey,
+          getExamTimerRemainingSeconds(endsAt, now, durationSeconds),
+        );
+      }
     }, EXAM_TIMER_TICK_MS);
 
     return () => window.clearInterval(id);
-  }, [endsAt, isExpired]);
+  }, [endsAt, isExpired, config.screenKey, durationSeconds]);
 
   // Which window has already reported that it finished.
   //

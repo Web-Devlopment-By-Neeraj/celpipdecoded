@@ -1,10 +1,10 @@
-import type { ReactNode } from "react";
-import Link from "next/link";
-import { AppCard } from "@/components/app/AppCard";
 import { AppSectionHeader } from "@/components/app/AppSectionHeader";
-import { AppStatusBadge } from "@/components/app/AppStatusBadge";
-import { cx, focus, text } from "@/features/design/design-tokens";
+import {
+  MockTestHubList,
+  type MockHubCard,
+} from "@/components/mock-tests/MockTestHubList";
 import { MOCK_TEST_1_HUB_PATH } from "@/features/mock-tests/mock-test-1-routes";
+import type { MockRunView } from "@/features/mock-tests/mock-run";
 import {
   buildMockTestHub,
   learnerMockPath,
@@ -14,112 +14,103 @@ import {
 export function MockTestsHub({
   mocksUnlocked,
   published,
+  runs,
 }: {
   mocksUnlocked: boolean;
   published: LearnerMockTestSummary[];
+  runs: MockRunView[];
 }) {
-  const entries = buildMockTestHub(published);
+  const cards = buildHubCards(mocksUnlocked, published);
+
   return (
     <div className="w-full">
       <AppSectionHeader
         title="Mock tests"
         description="Take a full mock test for the real exam experience, or practice one section at a time at your own pace."
       />
-
-      <div className="mt-6 space-y-5" aria-label="Mock test list">
-        <MockTestListCard
-          href={MOCK_TEST_1_HUB_PATH}
-          title="Mock Test 1"
-          description={
-            mocksUnlocked
-              ? "Open this test, then choose the complete test or one section."
-              : "Free. Open this test, then choose the complete test or one section."
-          }
-          badge={
-            mocksUnlocked ? null : (
-              <AppStatusBadge tone="success" className="shrink-0">
-                Free
-              </AppStatusBadge>
-            )
-          }
-        />
-
-        {entries.map((entry) => {
-          if (entry.kind === "placeholder") {
-            const number = entry.slot;
-
-            return (
-              <MockTestListCard
-                key={`placeholder-${number}`}
-                href={`/dashboard/mock-tests/mock-test-${number}`}
-                title={`Mock Test ${number}`}
-                description={
-                  mocksUnlocked
-                    ? "Coming soon."
-                    : "Included with Test Sprint. Open this test to see the plan."
-                }
-                badge={
-                  mocksUnlocked ? null : (
-                    <AppStatusBadge tone="neutral" className="shrink-0">
-                      Locked
-                    </AppStatusBadge>
-                  )
-                }
-              />
-            );
-          }
-
-          const { test } = entry;
-
-          return (
-            <MockTestListCard
-              key={test.slug}
-              href={learnerMockPath(test.slug)}
-              title={test.title}
-              description={
-                mocksUnlocked
-                  ? "Open this test, then choose the complete test or one section."
-                  : "Included with Test Sprint. Open this test to see the plan."
-              }
-              badge={
-                mocksUnlocked ? null : (
-                  <AppStatusBadge tone="neutral" className="shrink-0">
-                    Locked
-                  </AppStatusBadge>
-                )
-              }
-            />
-          );
-        })}
-      </div>
+      <MockTestHubList cards={cards} runs={runs} />
     </div>
   );
 }
 
-function MockTestListCard({
-  href,
-  title,
-  description,
-  badge,
-}: {
-  href: string;
-  title: string;
-  description: string;
-  badge: ReactNode;
-}) {
-  return (
-    <Link href={href} className={cx("block rounded-sm", focus.ring)}>
-      <AppCard as="article">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div className="min-w-0">
-            <h2 className={cx(text.heading, "text-xl")}>{title}</h2>
-            <p className={cx("mt-2 text-sm leading-6", text.secondary)}>
-              {description}
-            </p>
-          </div>
-          {badge}
-        </div>
-      </AppCard>
-    </Link>
-  );
+function buildHubCards(
+  mocksUnlocked: boolean,
+  published: LearnerMockTestSummary[],
+): MockHubCard[] {
+  const publishedBySlot = new Map<number, LearnerMockTestSummary>();
+  const extras: LearnerMockTestSummary[] = [];
+
+  for (const entry of buildMockTestHub(published)) {
+    if (entry.kind !== "published") continue;
+    if (entry.slot) publishedBySlot.set(entry.slot, entry.test);
+    else extras.push(entry.test);
+  }
+
+  const cards: MockHubCard[] = [
+    {
+      key: "mock-test-1",
+      href: MOCK_TEST_1_HUB_PATH,
+      title: "Mock Test 1",
+      slug: "mock-test-1",
+      comingSoon: false,
+      description: mocksUnlocked
+        ? "Click full mock test for timed practice or one section at a time."
+        : "Free. Click full mock test for timed practice or one section at a time.",
+      badge: mocksUnlocked ? null : "Free",
+    },
+  ];
+
+  for (let slot = 2; slot <= 20; slot += 1) {
+    const test = publishedBySlot.get(slot);
+    cards.push(test ? publishedCard(test, mocksUnlocked) : placeholderCard(slot, mocksUnlocked));
+  }
+
+  for (const test of extras) {
+    cards.push(publishedCard(test, mocksUnlocked));
+  }
+
+  for (let slot = 21; slot <= 30; slot += 1) {
+    cards.push({
+      key: `soon-${slot}`,
+      href: null,
+      title: `Mock Test ${slot}`,
+      slug: null,
+      comingSoon: true,
+      description: "Coming soon.",
+      badge: "Coming soon",
+    });
+  }
+
+  return cards;
+}
+
+function publishedCard(
+  test: LearnerMockTestSummary,
+  mocksUnlocked: boolean,
+): MockHubCard {
+  return {
+    key: test.slug,
+    href: learnerMockPath(test.slug),
+    title: test.title,
+    slug: test.slug,
+    comingSoon: false,
+    description: mocksUnlocked
+      ? "Click full mock test for timed practice or one section at a time."
+      : "Included with Test Sprint. Tap any option to see the plan and pay.",
+    badge: mocksUnlocked ? null : "Locked",
+  };
+}
+
+function placeholderCard(slot: number, mocksUnlocked: boolean): MockHubCard {
+  return {
+    key: `mock-test-${slot}`,
+    href: `/dashboard/mock-tests/mock-test-${slot}`,
+    title: `Mock Test ${slot}`,
+    slug: `mock-test-${slot}`,
+    comingSoon: false,
+    description: mocksUnlocked
+      ? "Coming soon."
+      : "Included with Test Sprint. Tap any option to see the plan and pay.",
+    badge: mocksUnlocked ? null : "Locked",
+  };
 }

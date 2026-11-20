@@ -11,6 +11,7 @@ import {
   buildMockTestPlayerContext,
   parseMockTestFlowMode,
 } from "@/features/mock-tests/mock-test-flow";
+import { loadOpenMockDraft } from "@/features/mock-tests/mock-run-store";
 
 export const metadata: Metadata = {
   title: readingSectionCopy.pageTitle,
@@ -103,6 +104,12 @@ export default async function MockTest1ReadingSectionPage({
   const learnerContent = withoutReadingSectionAnswerKeys(
     mockTest1ReadingSection,
   );
+  const savedDraft = await loadOpenMockDraft(
+    user.id,
+    "mock-test-1",
+    mockTestContext.flow,
+    "reading",
+  );
 
   return (
     <ExamModeViewport label={readingSectionCopy.examRegionLabel}>
@@ -110,6 +117,7 @@ export default async function MockTest1ReadingSectionPage({
         content={learnerContent}
         markAnswers={markReadingSection}
         mockTestContext={mockTestContext}
+        savedDraft={savedDraft}
       />
     </ExamModeViewport>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useMemo, useRef, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import {
   MockTestTimeUpToast,
   useMockTestTimeUpToast,
@@ -48,6 +48,15 @@ import {
   type MockTestPlayerContext,
 } from "@/features/mock-tests/mock-test-flow";
 import { mockTestExitBackProps } from "@/features/mock-tests/mock-test-player-ui";
+import { seedExamTimerResume } from "@/features/exam-engine/exam-timer-resume";
+import { recordMockSectionResultAction } from "@/app/dashboard/mock-tests/run-actions";
+import { MockSaveStatusProvider } from "../player/MockSaveStatusBadge";
+import {
+  mockDraftStorageKey,
+  mockRunIdentity,
+  useMockSectionDraft,
+} from "@/features/mock-tests/mock-draft";
+import type { MockSectionDraft } from "@/features/mock-tests/mock-run";
 import { MOCK_TEST_1_SECTION_PATHS } from "@/features/mock-tests/mock-test-1-routes";
 
 // Mock Test 1 Writing section (EXAM-25, extended by EXAM-26).
@@ -172,6 +181,7 @@ export type WritingSectionPrototypeProps = {
   // screens.
   dashboardHref?: string;
   mockTestContext?: MockTestPlayerContext;
+  savedDraft?: MockSectionDraft | null;
 };
 
 export function WritingSectionPrototype({
@@ -180,16 +190,77 @@ export function WritingSectionPrototype({
   copy = writingMockCopy,
   dashboardHref,
   mockTestContext,
+  savedDraft = null,
 }: WritingSectionPrototypeProps) {
   const leaveHref = mockTestContext?.exitHref ?? dashboardHref ?? "/dashboard";
   const leaveLabel = mockTestContext ? "Back to mock test" : undefined;
   const screens = useMemo(() => buildWritingSectionFlow(content), [content]);
 
-  const [screenIndex, setScreenIndex] = useState(0);
-  const [responses, setResponses] = useState<WritingResponseMap>({});
-  const [choices, setChoices] = useState<WritingChoiceMap>({});
+  if (typeof window !== "undefined" && savedDraft?.timer) {
+    seedExamTimerResume(savedDraft.timer);
+  }
+
+  const [screenIndex, setScreenIndex] = useState(savedDraft?.screenIndex ?? 0);
+  const [responses, setResponses] = useState<WritingResponseMap>(
+    savedDraft?.responses ?? {},
+  );
+  const [choices, setChoices] = useState<WritingChoiceMap>(
+    (savedDraft?.choices as WritingChoiceMap | undefined) ?? {},
+  );
   const [review, setReview] = useState<ReviewState>({ status: "idle" });
   const [sectionBridgeOpen, setSectionBridgeOpen] = useState(false);
+
+  const saveStatus = useMockSectionDraft(
+    mockDraftStorageKey(mockTestContext, "writing"),
+    { screenIndex, responses, choices },
+    (saved) => {
+      const draft = saved as {
+        screenIndex?: number;
+        responses?: WritingResponseMap;
+        choices?: WritingChoiceMap;
+      };
+      if (typeof draft.screenIndex === "number") {
+        const last = Math.max(screens.length - 1, 0);
+        setScreenIndex(Math.min(Math.max(draft.screenIndex, 0), last));
+      }
+      if (draft.responses && typeof draft.responses === "object") {
+        setResponses(draft.responses);
+      }
+      if (draft.choices && typeof draft.choices === "object") {
+        setChoices(draft.choices);
+      }
+    },
+    {
+      serverDraft: savedDraft,
+      run: mockRunIdentity(mockTestContext, "writing"),
+    },
+  );
+
+  const recordedResult = useRef(false);
+  const screen = screens[screenIndex];
+
+  useEffect(() => {
+    if (
+      screen?.kind !== "section-complete" ||
+      recordedResult.current ||
+      !mockTestContext
+    ) {
+      return;
+    }
+
+    recordedResult.current = true;
+    const summary = summarizeWritingSection(content, responses, choices);
+    void recordMockSectionResultAction({
+      ...mockRunIdentity(mockTestContext, "writing"),
+      screenIndex,
+      summary: {
+        label: "Writing",
+        detail: summary
+          .map((task) => `${task.taskLabel}: ${task.wordCount} words`)
+          .join(" · "),
+      },
+    });
+  }, [screen?.kind, mockTestContext, screenIndex, content, responses, choices]);
 
   // The one time up message for the whole section (TIMER-01). See
   // MockTestTimeUpToast for why it belongs here rather than to a screen.
@@ -207,11 +278,21 @@ export function WritingSectionPrototype({
   // effect immediately rather than at the next render.
   const reviewRequestId = useRef(0);
 
-  const screen = screens[screenIndex];
   const totalScreens = screens.length;
   const totalTasks = content.tasks.length;
 
-  const goNext = () => {
+  const advance = (force: boolean) => {
+    if (!force && screen?.kind === "task") {
+      const currentTask = content.tasks[screen.taskIndex];
+      if (
+        currentTask &&
+        writingTaskHasOptions(currentTask) &&
+        !getWritingChoice(choices, currentTask.taskId)
+      ) {
+        return;
+      }
+    }
+
     const nextIndex = nextExamScreenIndex(
       screens,
       screenIndex,
@@ -238,6 +319,9 @@ export function WritingSectionPrototype({
     dismissTimeUp();
     setScreenIndex(nextIndex);
   };
+
+  const goNext = () => advance(false);
+  const goNextOnTimeUp = () => advance(true);
 
   const goBack = () => {
     dismissTimeUp();
@@ -437,7 +521,7 @@ export function WritingSectionPrototype({
             timerScreenKey={task.taskId}
             // The window closing raises the time up message and does
             // nothing else. The typed response is untouched (TIMER-01).
-            onTimeExpire={mockTestContext?.flow === "full" ? goNext : showTimeUp}
+            onTimeExpire={mockTestContext?.flow === "full" ? goNextOnTimeUp : showTimeUp}
             copy={copy}
             nextLabel={taskNextLabel}
             metaText={taskMetaText}
@@ -458,7 +542,7 @@ export function WritingSectionPrototype({
           timerScreenKey={screen.id}
           // The window closing raises the time up message and does
           // nothing else. The typed response is untouched (TIMER-01).
-          onTimeExpire={mockTestContext?.flow === "full" ? goNext : showTimeUp}
+          onTimeExpire={mockTestContext?.flow === "full" ? goNextOnTimeUp : showTimeUp}
           copy={copy}
           nextLabel={taskNextLabel}
           metaText={taskMetaText}
@@ -645,12 +729,11 @@ export function WritingSectionPrototype({
   // screen would remount the message and start its few seconds again on a
   // screen it does not belong to.
   return (
-    <Fragment>
+    <MockSaveStatusProvider status={saveStatus}>
       <Fragment key={screen.id + "-" + review.status}>
         {renderCurrentScreen()}
       </Fragment>
-
       <MockTestTimeUpToast toastKey={toastKey} />
-    </Fragment>
+    </MockSaveStatusProvider>
   );
 }

@@ -11,6 +11,7 @@ import {
   buildMockTestPlayerContext,
   parseMockTestFlowMode,
 } from "@/features/mock-tests/mock-test-flow";
+import { loadOpenMockDraft } from "@/features/mock-tests/mock-run-store";
 
 export const metadata: Metadata = {
   title: "Mock Test 1 listening test - CELPIP Decoded",
@@ -96,6 +97,12 @@ export default async function MockTest1ListeningSectionPage({
   const learnerContent = withoutListeningSectionAnswerKeys(
     mockTest1ListeningSection,
   );
+  const savedDraft = await loadOpenMockDraft(
+    user.id,
+    "mock-test-1",
+    mockTestContext.flow,
+    "listening",
+  );
 
   return (
     <ExamModeViewport label={listeningCopy.fullSectionCardTitle}>
@@ -103,6 +110,7 @@ export default async function MockTest1ListeningSectionPage({
         content={learnerContent}
         markAnswers={markListeningSection}
         mockTestContext={mockTestContext}
+        savedDraft={savedDraft}
       />
     </ExamModeViewport>
   );

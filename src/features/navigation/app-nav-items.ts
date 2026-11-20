@@ -170,7 +170,7 @@ function breadcrumbLabel(segment: string, segments: string[]): string {
   const insideMock = segments.some((part) => part.startsWith("mock-test-"));
 
   if (insideMock && segment === "full") {
-    return "Complete test";
+    return "Full mock test";
   }
 
   if (
