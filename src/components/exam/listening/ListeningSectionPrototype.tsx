@@ -65,6 +65,15 @@ import {
   nextExamScreenIndex,
   type MockTestPlayerContext,
 } from "@/features/mock-tests/mock-test-flow";
+import { seedExamTimerResume } from "@/features/exam-engine/exam-timer-resume";
+import { recordMockSectionResultAction } from "@/app/dashboard/mock-tests/run-actions";
+import { MockSaveStatusProvider } from "../player/MockSaveStatusBadge";
+import {
+  mockDraftStorageKey,
+  mockRunIdentity,
+  useMockSectionDraft,
+} from "@/features/mock-tests/mock-draft";
+import type { MockSectionDraft } from "@/features/mock-tests/mock-run";
 import { mockTestExitBackProps } from "@/features/mock-tests/mock-test-player-ui";
 
 // Full Listening section prototype (EXAM-15).
@@ -184,6 +193,7 @@ export type ListeningSectionPrototypeProps = {
   markAnswers: ListeningSectionMarkAction;
   copy?: ListeningSectionCopy;
   mockTestContext?: MockTestPlayerContext;
+  savedDraft?: MockSectionDraft | null;
 };
 
 export function ListeningSectionPrototype({
@@ -191,6 +201,7 @@ export function ListeningSectionPrototype({
   markAnswers,
   copy = listeningSectionCopy,
   mockTestContext,
+  savedDraft = null,
 }: ListeningSectionPrototypeProps) {
   const screens = useMemo(() => buildListeningSectionFlow(content), [content]);
   const totalQuestions = useMemo(
@@ -198,10 +209,38 @@ export function ListeningSectionPrototype({
     [content],
   );
 
-  const [screenIndex, setScreenIndex] = useState(0);
-  const [answers, setAnswers] = useState<ListeningSectionAnswerMap>({});
+  if (typeof window !== "undefined" && savedDraft?.timer) {
+    seedExamTimerResume(savedDraft.timer);
+  }
+
+  const [screenIndex, setScreenIndex] = useState(savedDraft?.screenIndex ?? 0);
+  const [answers, setAnswers] = useState<ListeningSectionAnswerMap>(
+    savedDraft?.answers ?? {},
+  );
   const [marking, setMarking] = useState<MarkingState>({ status: "idle" });
   const [fullMockHandoff, setFullMockHandoff] = useState(false);
+
+  const saveStatus = useMockSectionDraft(
+    mockDraftStorageKey(mockTestContext, "listening"),
+    { screenIndex, answers },
+    (saved) => {
+      const draft = saved as {
+        screenIndex?: number;
+        answers?: ListeningSectionAnswerMap;
+      };
+      if (typeof draft.screenIndex === "number") {
+        const last = Math.max(screens.length - 1, 0);
+        setScreenIndex(Math.min(Math.max(draft.screenIndex, 0), last));
+      }
+      if (draft.answers && typeof draft.answers === "object") {
+        setAnswers(draft.answers);
+      }
+    },
+    {
+      serverDraft: savedDraft,
+      run: mockRunIdentity(mockTestContext, "listening"),
+    },
+  );
 
   // The one time up message for the whole run (TIMER-01). It lives here
   // rather than on a screen because a screen is unmounted by the very Next
@@ -219,6 +258,7 @@ export function ListeningSectionPrototype({
   // render.
   const markingRequestId = useRef(0);
   const savedFullMockListeningResult = useRef(false);
+  const recordedResult = useRef(false);
 
   const answeredCount = useMemo(
     () => countAnsweredListeningSectionQuestions(content, answers),
@@ -272,6 +312,23 @@ export function ListeningSectionPrototype({
       detail: `${marking.marked.summary.correctCount ?? 0}/${marking.marked.summary.totalQuestions} correct`,
     });
   }, [fullMockHandoff, marking]);
+
+  useEffect(() => {
+    if (marking.status !== "ready" || recordedResult.current || !mockTestContext) {
+      return;
+    }
+
+    recordedResult.current = true;
+    const summary = marking.marked.summary;
+    void recordMockSectionResultAction({
+      ...mockRunIdentity(mockTestContext, "listening"),
+      screenIndex,
+      summary: {
+        label: "Listening",
+        detail: `${summary.correctCount ?? 0}/${summary.totalQuestions} correct`,
+      },
+    });
+  }, [marking, mockTestContext, screenIndex]);
 
   const goNext = () => {
     const nextIndex = nextExamScreenIndex(
@@ -956,10 +1013,9 @@ export function ListeningSectionPrototype({
   // Inside it, a change of screen would remount the message and start its
   // few seconds again on a screen it does not belong to.
   return (
-    <Fragment>
+    <MockSaveStatusProvider status={saveStatus}>
       <Fragment key={screen.id}>{renderCurrentScreen()}</Fragment>
-
       <MockTestTimeUpToast toastKey={toastKey} />
-    </Fragment>
+    </MockSaveStatusProvider>
   );
 }

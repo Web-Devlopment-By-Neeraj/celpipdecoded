@@ -20,6 +20,7 @@ import {
 } from "@/features/mock-tests/published-mock-catalog";
 import { getPublishedMockTestForLearner } from "@/features/mock-tests/published-mock-queries";
 import { userHasPaidMockAccess } from "@/features/platform/fulfill-stripe-purchase";
+import { loadOpenMockDraft } from "@/features/mock-tests/mock-run-store";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 // One student page for every builder test. Mock Test 1 keeps its own
@@ -117,11 +118,19 @@ export async function LearnerMockTestPage({
     );
   }
 
+  const savedDraft = await loadOpenMockDraft(
+    user.id,
+    test.slug,
+    flow === "full" ? "full" : "section",
+    current.sectionType,
+  );
+
   return (
     <PublishedExamSection
       test={test}
       section={current.sectionType}
       mode={flow === "full" ? "full" : "section"}
+      savedDraft={savedDraft}
     />
   );
 }

@@ -36,9 +36,9 @@ Things that work but feel incomplete, confusing, or missing copy/empty states.
 
 - [x] *Pricing page UI — plan list looked plain:* `/pricing` uses a card grid (price, period, benefits, featured Decoded Course, full-width CTAs) with header and discount banner (`P2`) · branch: `sahil/qa-tracker-fixes`
 
-- [ ] *Home page "Choose how you prepare" prices are stale:* the landing section still shows "Free preview / $299 live classes / From $5 packages", while `/pricing` sells Test Sprint $49, Decoded Course $199 and so on. Styling was updated in Task 3a; the **content** needs the real plans from Task 10 (`P1`) · branch: `sahil/task-10-pricing-copy`
+- [ ] *Home page "Choose how you prepare" prices:* the old Free preview / $299 / From $5 cards were replaced in the working copy with Free $0, Test Sprint $49/month, and Decoded Course $199. Not a staging merge (`P1`) · branch: `sahil/amar-nov-6-plan-facts`
 
-- [ ] *Home page "Live classes" section also shows $299 per month:* confirm with Amar before launch (`P2`) · branch: `sahil/task-10-pricing-copy`
+- [ ] *Home page "Live classes" price:* the working copy now says $99 per 2 weeks, 8 classes, Google Meet, dates shared when you book. The old $299 per month and weekday list are gone. Not a staging merge (`P2`) · branch: `sahil/amar-nov-6-plan-facts`
 
 ---
 
@@ -514,6 +514,90 @@ Not built yet or explicitly out of scope until a ticket is done.
 - [ ] Revisit after Phase 1 tasks above and client sign-off.
 
 **Suggested branch:** n/a (documentation / milestone) · **Severity:** `P3`
+
+---
+
+## Amar pack, 6 Nov 2026
+
+Separate from Tasks 1-21 above. Source: the four files in `celpip docs` on the desktop (tickets spreadsheet, homepage change list, and the full-site prototype). The prototype is the picture of a later UI pass. Do not rebuild screens from that HTML. The tasks below are the product flow and the small facts.
+
+Checked against the app on 10 Nov 2026. Nothing here is ticked as merged to staging.
+
+### Task 22 - Plan facts
+
+**Goal:** The prices and what each plan means, without a new homepage layout.
+
+**Already in the working copy**
+
+- [ ] Home "Choose how you prepare" uses Free $0, Test Sprint $49/month, Decoded Course $199. The $299 class and the $5 / $10 / $20 packs are gone.
+- [ ] Live classes say $99 per 2 weeks, 8 classes, one hour each, Google Meet. No Monday-to-Friday 7:30 PM line.
+- [ ] `/pricing` and `/book` use that same batch and 1:1 wording. A 1:1 checkout is still one hour at $49.
+- [ ] The home form no longer asks about a $20/month plan. "Start free trial" on the hero and results page now says "Start free".
+
+**Still open**
+
+- [ ] **WEB-18.** A $129 pack for 3 sessions. Do not add it until Stripe has that product. The card still charges $49 for one hour.
+- [ ] **WEB-18.** A Free $0 card on `/pricing` beside the four paid plans. The home section has the free facts. The pricing page does not have a fifth card yet.
+- [ ] **WEB-19.** Live batch checkout still uses the old "charged when the batch is confirmed" path in code. The words now say $99 for the 2-week batch.
+
+### Task 23 - Mock test behaviour
+
+**Goal:** How a mock runs. The shared player is what a CSV test uses, so these changes apply to Mock Test 1 and to a published test.
+
+Working copy, not a staging merge: Writing Task 2 is one screen. Listening, Reading and Writing answers are kept in this browser and restored when that section is opened again. A chosen dropdown answer wraps instead of ending in "...". The writing box is at least 440px and can be resized. Student labels say Full mock test. The "first 3 answers" sentence is gone. Speaking audio still stays in the tab. There is no Resume button and no saved result after logout. The exam window still scrolls inside the frame.
+
+- [ ] **MT-01.** Full mock test: instruction screens move on after 30 seconds. One section waits for Next.
+- [ ] **MT-02.** Full mock test: time up saves the answers and moves on. One section shows a message and stays.
+- [x] **MT-03.** Autosave writes the section to the account (`learner_mock_runs`, migration 020). The mock card and the dashboard show Resume and See results. The header says Saving… / Answers saved. Time left is restored for the screen that was open. Working copy, not a staging merge. The table is created when this lands on main. Speaking audio is still not stored.
+- [x] **MT-04.** A chosen answer stays fully visible. No cut-off with "...". Working copy. The dropdown wraps the full option.
+- [x] **MT-05.** The section notice now says answers are saved in this browser. That is this browser only, not an account history. Speaking audio is still not saved.
+- [x] **MT-06.** Instructional video heading, body, and "Video Source: CELPIP official website, celpip.ca". Working copy. Shared by a published test.
+- [x] **MT-07.** Listening opens as "Mock Test 1 - Listening". Reading, Writing and Speaking already used that pattern. Working copy.
+- [x] **MT-08.** Reading Part 2 says "You will see a diagram and read an email about it." Working copy.
+- [x] **MT-11.** Writing Task 2 is one screen. The 26-minute timer starts once and does not restart when the option changes. Working copy. Next waits until an option is chosen. Time up in a full mock still moves on.
+- [x] **MT-13.** Student labels say "Full mock test". The start buttons already said that. The before-you-start lines, the breadcrumb, and the Writing and Speaking instruction headings now match. Working copy.
+- [ ] **MT-14.** Autosave, full answers, and the one writing screen also apply in One section. Auto-advance does not.
+
+- [x] **MT-12.** The writing box is at least 440px tall and can still be resized. Working copy. Shared by Mock Test 1 and a published test.
+- [ ] **MT-09.** The exam frame stays fixed and the passage scrolls inside it. A page-level scroll would fight that frame.
+- [ ] **MT-10.** Heading bands from the prototype are not built. The current exam headings stay.
+
+### Task 24 - After a mock
+
+- [ ] **MR-01.** End of a full mock saves everything and starts Writing and Speaking review without an extra click.
+- [ ] **MR-02.** Marking progress: Listening and Reading first, then AI for Writing and Speaking. The student can leave.
+- [ ] **MR-03.** A saved results page for every attempt, reachable again from the mock card and the dashboard.
+- [ ] **MR-04.** One end-of-section screen for Listening, Reading, Writing, and Speaking, with the same four actions.
+- [ ] **MR-05.** Answer review: correct, incorrect, and unanswered, with Your answer beside Correct answer.
+- [ ] **MR-06.** Dashboard card for the latest mock and a short history.
+
+### Task 25 - Mock tests list
+
+- [x] **ST-01.** Filters All, Not started, In progress, and Completed are on `/dashboard/mock-tests`. In progress and Completed use the saved runs. Working copy, not a staging merge.
+- [x] **ST-02.** Free Mock Test 1, paid, and Test Sprint lines match Amar's card wording. Working copy.
+- [ ] **ST-03.** Free accounts see Mock Tests 2-20 locked. Unlock opens the plan and Stripe. They cannot start the test.
+- [x] **ST-04.** Mock Tests 21-30 are Coming soon cards, under All only, with no link. Working copy.
+- [x] **ST-05.** The "first 3 answers are marked" sentence is removed. Working copy. A free account is described as 1 Speaking evaluation and 1 Writing evaluation. No separate mock marking pool was added.
+- [ ] **ST-06.** Mock Test 1 starts from one menu: Full mock test, or one of Listening, Reading, Writing, Speaking.
+- [ ] **Open question from Amar.** Does Mock Test 1 get its own Writing and Speaking marking, separate from the 2 free AI evaluations? Still unanswered. The page no longer promises 3 free marked answers. It does not promise a separate pool either.
+
+**Later, with the UI pass:** ST-07 logo and tagline on every signed-in screen.
+
+### Task 26 - Homepage and menu layout
+
+Do this later. The HTML prototype is the reference, and building it now would replace the current page structure.
+
+- [ ] **WEB-01 to WEB-07, WEB-08 to WEB-17, WEB-20 to WEB-24.** White header, menu (Mock tests, Courses, Live classes, Results, Free tools, Pricing), hero, quiz, results filters, FAQ, footer.
+- [ ] **WEB-25.** Remove remaining old lines when that page is rebuilt: Zoom, "I scored CLB 10+", and the word "practise". The results page spelling is already "practice".
+
+### Task 27 - Assistant
+
+- [ ] **AI-01.** One floating Ask a question button. No second WhatsApp bubble.
+- [ ] **AI-02.** Chips: What's free, Which plan, Next live batch, Talk to Amar.
+- [ ] **AI-03.** After the third question, or when they ask for a person, offer WhatsApp.
+- [ ] **AI-04.** The assistant's facts match Task 22: $49, $199, $99 per 2 weeks, $49 per hour, 2 free AI evaluations, 20+ mock tests, Google Meet, English and Hindi.
+
+**Amar still needs to send:** logo file, photo, WhatsApp number, booking links, Stripe products for the $129 pack, and the email that receives Ask Amar.
 
 ---
 

@@ -122,7 +122,7 @@ export const mockTest1WritingSection: WritingSectionContent = {
   videoScreen: {
     title: "Mock Test 1 - Writing Instructional Video",
     description: "This video comes from the official CELPIP website. It shows how the real test runs from start to finish, and what to expect in each of the four sections. Our mock tests follow the same flow. CELPIP updates its test from time to time, so some details may have changed. For the latest format, check celpip.ca.",
-    helperText: "Video: CELPIP official website, celpip.ca",
+    helperText: "Video Source: CELPIP official website, celpip.ca",
     video: getInstructionalVideoAsset("writing"),
   },
 

@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { cx } from "@/features/design/design-tokens";
+import { MockSaveStatusBadge } from "./MockSaveStatusBadge";
 import { MockTestButton } from "./MockTestButton";
 import { MockTestTimerBadge } from "./MockTestTimerBadge";
 import { playerBar } from "@/features/exam-engine/mock-test-player-theme";
@@ -82,6 +83,7 @@ export function MockTestTopBar({
       <h2 className={playerBar.title} title={title}>
         {title}
       </h2>
+      <MockSaveStatusBadge />
 
       {readings.length > 0 || timerSlot || metaText ? (
         <div className={playerBar.actions}>

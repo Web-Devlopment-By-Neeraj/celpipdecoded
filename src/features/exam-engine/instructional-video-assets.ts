@@ -43,7 +43,7 @@ export const INSTRUCTIONAL_VIDEO_ASSETS: Record<
 > = {
   overview: {
     section: "overview",
-    title: "Complete test overview video",
+    title: "Full mock test overview video",
     src: instructionalVideoSrc("overview"),
     description:
       "How a full CELPIP Decoded practice test runs from start to finish, and what to expect in each of the four sections.",

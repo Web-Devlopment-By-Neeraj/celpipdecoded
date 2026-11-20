@@ -45,7 +45,7 @@ export async function POST(request: Request) {
       test_date: toNull(data.test_date),
       current_practice_method: toNull(data.current_practice_method),
       hardest_part: toNull(data.hardest_part),
-      willingness_to_pay: data.willingness_to_pay,
+      willingness_to_pay: data.willingness_to_pay ?? "Not asked",
       notes: toNull(data.notes),
     });
 

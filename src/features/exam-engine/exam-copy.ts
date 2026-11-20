@@ -86,7 +86,7 @@ export const examCopy = {
   mediaPlaceholderTime: "0:00",
 
   // Instruction and instructional video screens (EXAM-02).
-  instructionalVideoLabel: "Instructional video",
+  instructionalVideoLabel: "Instructional Video",
   continueWhenReadyLabel: "Continue when you are ready",
   skipVideoLabel: "Skip video",
   // Accessible name for the player, so a screen reader announces the clip

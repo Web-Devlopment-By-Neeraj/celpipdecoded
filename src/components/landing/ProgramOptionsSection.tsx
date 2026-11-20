@@ -4,39 +4,39 @@ import { Container, Eyebrow } from "./primitives";
 
 const options = [
   {
-    name: "AI practice preview",
-    price: "Free preview",
-    priceNote: "to begin",
+    name: "Free",
+    price: "$0",
+    priceNote: "forever",
     features: [
-      "1 free scored speaking attempt planned",
-      "Practice report after submission",
-      "Upgrade options coming soon",
+      "Mock Test 1",
+      "2 AI evaluations",
+      "CRS calculator and free tools",
     ],
-    cta: { label: "Start free trial", href: "/signup" },
+    cta: { label: "Start free", href: "/signup" },
     featured: false,
   },
   {
-    name: "Live CELPIP classes",
-    price: "$299",
+    name: "Test Sprint",
+    price: "$49",
     priceNote: "per month",
     features: [
-      "Weekday and weekend options",
-      "Morning and evening availability",
-      "Schedule confirmation required",
+      "All 20+ mock tests",
+      "AI feedback on Writing and Speaking",
+      "Cancel any time",
     ],
-    cta: { label: "See class pricing", href: "/pricing" },
+    cta: { label: "See plans", href: "/pricing" },
     featured: true,
   },
   {
-    name: "AI practice packages",
-    price: "From $5",
-    priceNote: "per package",
+    name: "Decoded Course",
+    price: "$199",
+    priceNote: "one time",
     features: [
-      "Starter pack: $5 for 5 scored attempts",
-      "Practice pack: $10 for 12 scored attempts",
-      "Monthly practice plan: $20/month for up to 40 scored attempts",
+      "All modules in English and Hindi",
+      "3 months of Test Sprint included",
+      "Prices in CAD",
     ],
-    cta: { label: "Buy a practice plan", href: "/pricing" },
+    cta: { label: "See the course", href: "/pricing" },
     featured: false,
   },
 ];
@@ -51,8 +51,8 @@ export function ProgramOptionsSection() {
             Choose how you prepare
           </h2>
           <p className="mt-5 text-lg leading-8 text-foreground/70">
-            Combine live CELPIP classes with AI-supported speaking practice, or
-            start with the option that fits your goal today.
+            Start free, practice with Test Sprint, or get the Decoded Course.
+            Prices are in CAD.
           </p>
         </div>
 

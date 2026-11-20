@@ -8,6 +8,15 @@ import {
   nextExamScreenIndex,
   type MockTestPlayerContext,
 } from "@/features/mock-tests/mock-test-flow";
+import { seedExamTimerResume } from "@/features/exam-engine/exam-timer-resume";
+import { recordMockSectionResultAction } from "@/app/dashboard/mock-tests/run-actions";
+import { MockSaveStatusProvider } from "../player/MockSaveStatusBadge";
+import {
+  mockDraftStorageKey,
+  mockRunIdentity,
+  useMockSectionDraft,
+} from "@/features/mock-tests/mock-draft";
+import type { MockSectionDraft } from "@/features/mock-tests/mock-run";
 import { mockTestExitBackProps } from "@/features/mock-tests/mock-test-player-ui";
 import { ExamButton } from "../ExamButton";
 import { ExamInstructionRow } from "../ExamInstructionRow";
@@ -155,6 +164,7 @@ export type ReadingSectionPrototypeProps = {
   // Where Return to dashboard goes from the score screen.
   dashboardHref?: string;
   mockTestContext?: MockTestPlayerContext;
+  savedDraft?: MockSectionDraft | null;
 };
 
 export function ReadingSectionPrototype({
@@ -163,15 +173,44 @@ export function ReadingSectionPrototype({
   copy = readingSectionCopy,
   dashboardHref,
   mockTestContext,
+  savedDraft = null,
 }: ReadingSectionPrototypeProps) {
   const leaveHref = mockTestContext?.exitHref ?? dashboardHref ?? "/dashboard";
   const leaveLabel = mockTestContext ? "Back to mock test" : undefined;
   const screens = useMemo(() => buildReadingSectionFlow(content), [content]);
 
-  const [screenIndex, setScreenIndex] = useState(0);
-  const [answers, setAnswers] = useState<ReadingSectionAnswerMap>({});
+  if (typeof window !== "undefined" && savedDraft?.timer) {
+    seedExamTimerResume(savedDraft.timer);
+  }
+
+  const [screenIndex, setScreenIndex] = useState(savedDraft?.screenIndex ?? 0);
+  const [answers, setAnswers] = useState<ReadingSectionAnswerMap>(
+    savedDraft?.answers ?? {},
+  );
   const [marking, setMarking] = useState<MarkingState>({ status: "idle" });
   const [sectionBridgeOpen, setSectionBridgeOpen] = useState(false);
+
+  const saveStatus = useMockSectionDraft(
+    mockDraftStorageKey(mockTestContext, "reading"),
+    { screenIndex, answers },
+    (saved) => {
+      const draft = saved as {
+        screenIndex?: number;
+        answers?: ReadingSectionAnswerMap;
+      };
+      if (typeof draft.screenIndex === "number") {
+        const last = Math.max(screens.length - 1, 0);
+        setScreenIndex(Math.min(Math.max(draft.screenIndex, 0), last));
+      }
+      if (draft.answers && typeof draft.answers === "object") {
+        setAnswers(draft.answers);
+      }
+    },
+    {
+      serverDraft: savedDraft,
+      run: mockRunIdentity(mockTestContext, "reading"),
+    },
+  );
 
   // The one time up message for the whole run (TIMER-01). See
   // MockTestTimeUpToast for why it belongs to the section rather than to a
@@ -189,6 +228,7 @@ export function ReadingSectionPrototype({
   // render.
   const markingRequestId = useRef(0);
   const savedFullMockReadingResult = useRef(false);
+  const recordedResult = useRef(false);
 
   const screen = screens[screenIndex];
   const totalScreens = screens.length;
@@ -240,6 +280,23 @@ export function ReadingSectionPrototype({
       }`,
     });
   }, [sectionBridgeOpen, marking]);
+
+  useEffect(() => {
+    if (marking.status !== "ready" || recordedResult.current || !mockTestContext) {
+      return;
+    }
+
+    recordedResult.current = true;
+    const summary = marking.marked.summary;
+    void recordMockSectionResultAction({
+      ...mockRunIdentity(mockTestContext, "reading"),
+      screenIndex,
+      summary: {
+        label: "Reading",
+        detail: `${summary.correctCount}/${summary.totalQuestions} correct`,
+      },
+    });
+  }, [marking, mockTestContext, screenIndex]);
 
   const goNext = () => {
     const nextIndex = nextExamScreenIndex(
@@ -590,10 +647,9 @@ export function ReadingSectionPrototype({
   // Inside it, a change of screen would remount the message and start its
   // few seconds again on a screen it does not belong to.
   return (
-    <Fragment>
+    <MockSaveStatusProvider status={saveStatus}>
       <Fragment key={screen.id}>{renderCurrentScreen()}</Fragment>
-
       <MockTestTimeUpToast toastKey={toastKey} />
-    </Fragment>
+    </MockSaveStatusProvider>
   );
 }

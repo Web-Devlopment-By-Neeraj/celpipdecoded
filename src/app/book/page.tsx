@@ -4,7 +4,7 @@ import { PlanUpgradeButton } from "@/components/pricing/PlanUpgradeButton";
 
 export const metadata: Metadata = {
   title: "Book a session - CELPIP Decoded",
-  description: "Reserve a class seat or do 1:1 with Amar. A reserved seat is not charged until the batch is confirmed.",
+  description: "Join a 2-week live batch or book one hour with Amar.",
 };
 
 export default function BookPage() {
@@ -13,10 +13,10 @@ export default function BookPage() {
       <div className="mx-auto max-w-xl">
         <h1 className="font-serif text-3xl font-bold">Book</h1>
         <p className="mt-3 text-sm leading-6">
-          Live batches meet Monday, Tuesday, Thursday, and Friday at 7:30 PM Eastern. A card reservation does not charge you until enough students join. A 1:1 with Amar starts by choosing a time.
+          A live batch is 8 classes over two weeks, one hour each, on Google Meet. Dates and times are shared when you book. A 1:1 is one hour with Amar, and it starts by choosing a time.
         </p>
         <p className="mt-3 text-sm leading-6">
-          To move or cancel, contact Amar. A change made only in Google Calendar or Zoom does not email you.
+          To move or cancel, contact Amar. A change made only in Google Calendar does not email you.
         </p>
         <div className="mt-6 space-y-4">
           <div>

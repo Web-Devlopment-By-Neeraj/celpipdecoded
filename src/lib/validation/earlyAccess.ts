@@ -26,9 +26,7 @@ export const earlyAccessSchema = z.object({
   test_date: optionalTrimmed,
   current_practice_method: optionalTrimmed,
   hardest_part: optionalTrimmed,
-  willingness_to_pay: z.enum(willingnessToPayValues, {
-    message: "Please choose Yes, Maybe, or No.",
-  }),
+  willingness_to_pay: z.enum(willingnessToPayValues).optional(),
   notes: optionalTrimmed,
 });
 

@@ -45,13 +45,13 @@ export function buildWritingMockCopy({ testLabel }: { testLabel: string }) {
       },
       {
         heading: "Moving forward",
-        text: "In a complete test the screen moves on when its time ends, and you cannot go back. In a Writing section on its own, press Next when you are ready.",
+        text: "In a full mock test the screen moves on when its time ends, and you cannot go back. In a Writing section on its own, press Next when you are ready.",
       },
       {
         text: "In the real test, if Task 1 isn't finished after 27 minutes, the screen moves to Task 2 on its own, and you can't go back. Here, it depends on how you started:",
       },
       {
-        heading: "Complete test:",
+        heading: "Full mock test:",
         text: "works the same as the real test.",
       },
       {
@@ -122,7 +122,7 @@ export function buildWritingMockCopy({ testLabel }: { testLabel: string }) {
     // existed. It now says where the writing can go and that going there
     // is the learner's choice.
     editorHint:
-      "Your writing is held on this screen only and is not saved. At the end of the section you can choose to send it for AI review.",
+      "Your answers are saved as you go. At the end of the section you can choose to send your writing for AI review.",
     // Accessible name for the editor, and the visible label above it.
     editorLabel: "Your response",
     // Next label on the last task, which the ticket asks to read Finish
@@ -149,7 +149,7 @@ export function buildWritingMockCopy({ testLabel }: { testLabel: string }) {
     completeChoiceColumn: "Option chosen",
     completeNoChoiceValue: "No option chosen",
     completeNotice:
-      "Nothing from this run has been saved. Leaving or restarting clears the writing held on this page.",
+      "Your writing is saved in this browser. Restarting this section clears it.",
     restartLabel: "Restart Writing section",
     backToDashboardLabel: "Return to dashboard",
 
@@ -168,7 +168,7 @@ export function buildWritingMockCopy({ testLabel }: { testLabel: string }) {
     // the page, which is the one thing a learner should know before
     // pressing a button that sends their writing somewhere.
     reviewSubmitHint:
-      "Your two responses are sent for AI review. Nothing is saved and no attempt history is kept.",
+      "Your two responses are sent for AI review. A copy stays in this browser.",
     // Shown in place of the hint when both responses are empty.
     reviewEmptyHint:
       "You have not written anything yet. Go back to the tasks and write a response, or submit to see what an empty section reports.",

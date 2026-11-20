@@ -3,10 +3,12 @@ import { AppStatusBadge } from "@/components/app/AppStatusBadge";
 import { MockTest1PracticeButtons } from "@/components/mock-tests/MockTest1PracticeButtons";
 import { MockTestDetails } from "@/components/mock-tests/MockTestDetails";
 import { cx, focus } from "@/features/design/design-tokens";
+import { MockAttemptNote } from "@/components/mock-tests/MockAttemptNote";
 import { MOCK_TESTS_HUB_PATH } from "@/features/mock-tests/mock-test-1-routes";
+import type { MockRunView } from "@/features/mock-tests/mock-run";
 import Link from "next/link";
 
-export function MockTest1Hub() {
+export function MockTest1Hub({ runs }: { runs: MockRunView[] }) {
   return (
     <div className="w-full">
       <AppSectionHeader
@@ -31,7 +33,12 @@ export function MockTest1Hub() {
             Free
           </AppStatusBadge>
         }
-        start={<MockTest1PracticeButtons />}
+        start={
+          <>
+            <MockAttemptNote runs={runs} slug="mock-test-1" />
+            <MockTest1PracticeButtons />
+          </>
+        }
       />
     </div>
   );

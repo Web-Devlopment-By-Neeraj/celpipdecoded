@@ -436,7 +436,7 @@ export const playerDropdown = {
 export const playerSelect = {
   wrap: "relative inline-flex min-w-0 max-w-full align-middle",
   trigger:
-    `inline-flex h-7 max-w-[16rem] min-w-[6.5rem] cursor-pointer items-center justify-between gap-1.5 rounded-sm border border-player-line bg-player-paper px-2 text-left text-[14px] leading-5 text-player-ink transition-colors hover:border-player-green-line/50 hover:bg-player-green-soft ${focus.ring}`,
+    `inline-flex h-auto min-h-7 max-w-full min-w-[6.5rem] cursor-pointer items-center justify-between gap-1.5 rounded-sm border border-player-line bg-player-paper px-2 py-1 text-left text-[14px] leading-5 text-player-ink transition-colors hover:border-player-green-line/50 hover:bg-player-green-soft ${focus.ring}`,
   // The chosen value carries the same warm wash the chosen option row
   // does, so a finished question reads as finished at a glance.
   // The border carries most of the weight here. The wash is the same pale
@@ -446,7 +446,7 @@ export const playerSelect = {
     "border-player-orange-line/75 bg-player-orange-soft hover:border-player-orange-line/75 hover:bg-player-orange-soft",
   // While the menu is open, whatever the value is.
   triggerOpen: "border-player-blue/60",
-  triggerText: "min-w-0 truncate",
+  triggerText: "min-w-0 whitespace-normal break-words text-left",
   triggerTextEmpty: "text-player-ink/50",
   // Drawn, not imported. A small solid triangle built from borders.
   caret:
@@ -468,7 +468,7 @@ export const playerSelect = {
     "mt-[5px] flex h-4 w-4 shrink-0 items-center justify-center rounded-full border border-player-ink/40 bg-player-paper",
   radioSelected: "border-player-orange-line",
   radioDot: "h-2 w-2 rounded-full bg-player-orange-line",
-  optionText: "min-w-0",
+  optionText: "min-w-0 whitespace-normal break-words text-left",
 } as const;
 
 // Media frame: the box an image, an audio player or a video sits in.
@@ -601,7 +601,7 @@ export const playerWritingEditor = {
   // outline is drawn inset so it reads inside the frame rather than
   // doubling it.
   field:
-    "block min-h-[14rem] w-full min-w-0 resize-y border-0 bg-player-paper px-3 py-2.5 text-[15px] leading-7 text-player-ink outline-none placeholder:text-player-ink/40 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-player-blue sm:min-h-[17rem]",
+    "block min-h-[440px] w-full min-w-0 resize-y border-0 bg-player-paper px-3 py-2.5 text-[15px] leading-7 text-player-ink outline-none placeholder:text-player-ink/40 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-player-blue",
   meta: "flex min-w-0 shrink-0 flex-wrap items-baseline gap-x-3 gap-y-0.5 border-t border-player-line bg-player-chrome-soft px-3 py-1.5 text-[12px] leading-4",
   metaLabel: "font-semibold uppercase tracking-[0.06em] text-player-ink/55",
   metaValue: "font-semibold tabular-nums text-player-ink",

@@ -4,7 +4,6 @@ import { useState, type FormEvent } from "react";
 import { Eyebrow } from "./primitives";
 import {
   earlyAccessSchema,
-  willingnessToPayValues,
   type EarlyAccessInput,
 } from "@/lib/validation/earlyAccess";
 
@@ -233,30 +232,6 @@ export function EarlyAccessForm() {
                   placeholder="For example, timing, confidence, or organizing your answer"
                 />
               </div>
-
-              <fieldset className="mt-6">
-                <legend className={labelClass}>
-                  Would you consider a monthly practice plan around $20/month
-                  for AI-supported CELPIP speaking practice?
-                </legend>
-                <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:gap-6">
-                  {willingnessToPayValues.map((option) => (
-                    <label
-                      key={option}
-                      className="flex cursor-pointer items-center gap-2 text-sm text-foreground/80"
-                    >
-                      <input
-                        type="radio"
-                        name="willingness_to_pay"
-                        value={option}
-                        required
-                        className="h-4 w-4 border-foreground/30 text-brand focus:ring-brand"
-                      />
-                      {option}
-                    </label>
-                  ))}
-                </div>
-              </fieldset>
 
               <div className="mt-6">
                 <label htmlFor="notes" className={labelClass}>

@@ -10,6 +10,7 @@ import {
   buildMockTestPlayerContext,
   parseMockTestFlowMode,
 } from "@/features/mock-tests/mock-test-flow";
+import { loadOpenMockDraft } from "@/features/mock-tests/mock-run-store";
 
 export const metadata: Metadata = {
   title: writingMockCopy.pageTitle,
@@ -96,6 +97,13 @@ export default async function MockTest1WritingSectionPage({
   // withoutWritingAnswerKeys step to match the Reading route's, because a
   // Writing task has no answer key: nothing in this content object is
   // something a learner could be given an unfair advantage by reading.
+  const savedDraft = await loadOpenMockDraft(
+    user.id,
+    "mock-test-1",
+    mockTestContext.flow,
+    "writing",
+  );
+
   return (
     <ExamModeViewport label={writingMockCopy.examRegionLabel}>
       <WritingSectionPrototype
@@ -106,6 +114,7 @@ export default async function MockTest1WritingSectionPage({
         // renderable without a server behind it.
         evaluateResponses={evaluateWritingMockTest}
         mockTestContext={mockTestContext}
+        savedDraft={savedDraft}
       />
     </ExamModeViewport>
   );

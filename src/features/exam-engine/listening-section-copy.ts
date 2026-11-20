@@ -145,7 +145,7 @@ export function buildListeningSectionCopy({
     // build stage the screen is at. What it protects, that the result is
     // not an official CELPIP one, is unchanged.
     instructionNotice:
-      "Your answers are held on this screen only, nothing is saved, and the practice score is not an official CELPIP result.",
+      "Your answers are saved as you go. The practice score is not an official CELPIP result.",
     introTitle: "Listening section",
     introSummary:
       "Six parts in one run, with the answer review and the practice score at the end rather than after each part.",

@@ -2,10 +2,10 @@ import Image from "next/image";
 import { Container, Eyebrow } from "./primitives";
 
 const scheduleDetails = [
-  "Weekday classes",
-  "Tuesday and Thursday options",
-  "Weekend classes",
-  "Morning and evening availability",
+  "8 classes over two weeks",
+  "One hour each",
+  "On Google Meet",
+  "Dates and times shared when you book",
 ];
 
 export function LiveClassesSection() {
@@ -32,9 +32,8 @@ export function LiveClassesSection() {
               Learn live with structured support
             </h2>
             <p className="mt-5 text-lg leading-8 text-foreground/70">
-              Live CELPIP classes are available through CELPIP Decoded for
-              students who want structured support alongside the AI practice
-              tool.
+              Eight live classes over two weeks, one hour each, on Google Meet.
+              Class dates and times are shared when you book.
             </p>
 
             <ul className="mt-8 grid gap-3 sm:grid-cols-2">
@@ -55,16 +54,16 @@ export function LiveClassesSection() {
             <div className="mt-8 flex flex-wrap items-center justify-between gap-x-6 gap-y-4">
               <p className="text-lg text-foreground/80">
                 <span className="font-serif text-3xl font-bold text-foreground">
-                  $299
+                  $99
                 </span>{" "}
-                per month
+                per 2 weeks
               </p>
 
               <a
-                href="#inquiry"
+                href="/book"
                 className="inline-flex h-13 items-center justify-center rounded-full bg-brand px-8 text-base font-semibold text-white shadow-lg shadow-brand/20 transition-colors hover:bg-brand-dark"
               >
-                Request class schedule
+                Join the next batch
               </a>
             </div>
           </div>

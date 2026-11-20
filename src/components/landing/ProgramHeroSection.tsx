@@ -98,7 +98,7 @@ export function ProgramHeroSection({ signedIn = false }: { signedIn?: boolean })
               href={signedIn ? "/dashboard" : "/signup"}
               className="inline-flex h-13 items-center justify-center rounded-full bg-brand px-7 text-base font-semibold text-white shadow-lg shadow-brand/25 transition-colors hover:bg-brand-dark"
             >
-              {signedIn ? "Go to dashboard" : "Start free trial"}
+              {signedIn ? "Go to dashboard" : "Start free"}
             </Link>
             <Link
               href={signedIn ? MOCK_TEST_1_HUB_PATH : `/signup?next=${encodeURIComponent(MOCK_TEST_1_HUB_PATH)}`}

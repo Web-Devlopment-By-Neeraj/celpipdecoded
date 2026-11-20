@@ -8,24 +8,21 @@
 //
 // The order is derived from the content rather than typed out, so a
 // section with a different number of tasks needs no edit here. For Mock
-// Test 1 it produces 6 screens:
+// Test 1, with no video screen, it produces:
 //
 //    1  Writing section intro
 //    2  Writing Task 1, the situation, the prompt and the editor
 //    3  Task 1 to Task 2 transition
-//    4  Writing Task 2 choice, the survey, the prompt and the two
-//       positions, with no editor
-//    5  Writing Task 2, the survey, the chosen position and the editor
-//    6  Writing section complete
+//    4  Writing Task 2, the survey, the two positions and the editor
+//       on one screen
+//    5  Writing section complete
 //
-// Screen 4 arrived in EXAM-UI-04. Before it, choosing a position and
-// writing the response were the same screen, and the choice sat as a
-// small radio group above an editor that was already open, which made
-// the one decision the task turns on easy to walk past. It is now its
-// own step, and it is the only screen in the section that will not let a
-// learner move forward: the task cannot be answered before it has been
-// read one way round or the other. The rule is in the screen component,
-// not here.
+// Task 2 used to be two screens: a choice, then an editor. The 26 minute
+// window started on the choice screen and could be read as a second
+// window when the editor opened. The positions and the editor are one
+// screen now. The timer key is the task id, so changing the option does
+// not start the window again, and the typed response stays. Next waits
+// until a position is chosen. Time up in a full mock still moves on.
 //
 // There is no score screen and no review screen, which is the whole shape
 // of this ticket: nothing is marked, nothing is sent to an AI reviewer,
@@ -55,11 +52,9 @@ import type {
 
 // Whether a task asks for a position to be chosen before it is written.
 //
-// One test, used by the flow builder to decide whether the task gets a
-// choice screen and by the screens themselves to decide what to draw, so
-// the two can never disagree about which tasks have a choice. Mock Test
-// 1 Task 1 has no options and returns false; Task 2 has two and returns
-// true.
+// One test, used by the task screen to decide whether the positions are
+// shown. Mock Test 1 Task 1 has no options and returns false. Task 2 has
+// two and returns true.
 export function writingTaskHasOptions(task: WritingTaskContent): boolean {
   return (task.options?.length ?? 0) > 0;
 }
@@ -70,9 +65,8 @@ export function writingTaskHasOptions(task: WritingTaskContent): boolean {
 // which is what turns two editors into one run. A one task section
 // therefore gets no transition screen at all.
 //
-// A choice screen is inserted before every task that offers positions,
-// including a first task if one ever did, because the rule is a property
-// of the task and not of where it sits in the section.
+// A task with positions does not get its own choice screen. The editor
+// screen shows the positions and the response together.
 export function buildWritingSectionFlow(
   content: WritingSectionContent,
 ): WritingSectionScreen[] {
@@ -89,14 +83,6 @@ export function buildWritingSectionFlow(
       screens.push({
         kind: "task-transition",
         id: `${task.taskId}-transition`,
-        taskIndex,
-      });
-    }
-
-    if (writingTaskHasOptions(task)) {
-      screens.push({
-        kind: "task-choice",
-        id: `${task.taskId}-choice`,
         taskIndex,
       });
     }
